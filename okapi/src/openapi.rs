@@ -122,8 +122,8 @@ pub struct PathItem {
     pub patch: Option<Operation>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub trace: Option<Operation>,
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub servers: Vec<Server>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub servers: Option<Vec<Server>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub parameters: Vec<RefOr<Parameter>>,
     #[serde(flatten)]
@@ -234,12 +234,17 @@ pub struct Parameter {
 #[serde(untagged, rename_all = "camelCase")]
 pub enum ParameterValue {
     Schema {
-        style: ParameterStyle,
-        explode: bool,
-        allow_reserved: bool,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        style: Option<ParameterStyle>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        explode: Option<bool>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        allow_reserved: Option<bool>,
         schema: RefOr<SchemaObject>,
-        #[serde(flatten)]
-        examples: Examples,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        example: Option<Example>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        examples: Option<Map<String, Example>>,
     },
     Content {
         content: Map<String, MediaType>,
@@ -256,13 +261,6 @@ pub enum ParameterStyle {
     SpaceDelimited,
     PipeDelimited,
     DeepObject,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
-#[serde(rename_all = "camelCase")]
-pub enum Examples {
-    Example(Value),
-    Examples(Vec<Example>),
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
