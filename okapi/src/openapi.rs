@@ -4,6 +4,7 @@ use schemars::MakeSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 type Object = Map<String, Value>;
+
 type SecurityRequirement = Map<String, Vec<String>>;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
@@ -150,8 +151,8 @@ pub struct Operation {
     pub responses: Responses,
     #[serde(default, skip_serializing_if = "Map::is_empty")]
     pub callbacks: Map<String, RefOr<Callback>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub deprecated: Option<bool>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub deprecated: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub security: Option<Vec<SecurityRequirement>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -218,12 +219,12 @@ pub struct Parameter {
     pub location: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub required: Option<bool>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub deprecated: Option<bool>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub allow_empty_value: Option<bool>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub required: bool,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub deprecated: bool,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub allow_empty_value: bool,
     #[serde(flatten)]
     pub value: ParameterValue,
     #[serde(flatten)]
@@ -238,11 +239,11 @@ pub enum ParameterValue {
         style: Option<ParameterStyle>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         explode: Option<bool>,
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        allow_reserved: Option<bool>,
+        #[serde(default, skip_serializing_if = "is_false")]
+        allow_reserved: bool,
         schema: RefOr<SchemaObject>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        example: Option<Example>,
+        example: Option<Value>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         examples: Option<Map<String, Example>>,
     },
@@ -286,7 +287,11 @@ pub enum ExampleValue {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestBody {
-    // TODO https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#requestBodyObject
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub content: Map<String, MediaType>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub required: bool,
     #[serde(flatten)]
     pub extensions: Object,
 }
@@ -294,7 +299,16 @@ pub struct RequestBody {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Header {
-    // TODO https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#headerObject
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub required: bool,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub deprecated: bool,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub allow_empty_value: bool,
+    #[serde(flatten)]
+    pub value: ParameterValue,
     #[serde(flatten)]
     pub extensions: Object,
 }
@@ -302,7 +316,61 @@ pub struct Header {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct SecurityScheme {
-    // TODO https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#securitySchemeObject
+    #[serde(rename = "type")]
+    pub schema_type: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(flatten)]
+    pub data: SecuritySchemeData,
+    #[serde(flatten)]
+    pub extensions: Object,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[serde(tag = "type", rename_all = "camelCase")]
+pub enum SecuritySchemeData {
+    ApiKey {
+        name: String,
+        #[serde(rename = "in")]
+        location: String,
+    },
+    Http {
+        scheme: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        bearer_format: Option<String>,
+    },
+    #[serde(rename = "oauth2")]
+    OAuth2 {
+        flows: OAuthFlows,
+    },
+    OpenIdConnect {
+        open_id_connect_url: String,
+    },
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct OAuthFlows {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub implicit: Option<OAuthFlow>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub password: Option<OAuthFlow>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub client_credentials: Option<OAuthFlow>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub authorization_code: Option<OAuthFlow>,
+    #[serde(flatten)]
+    pub extensions: Object,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct OAuthFlow {
+    pub authorization_url: String,
+    pub token_url: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub refresh_url: Option<String>,
+    pub scopes: Map<String, String>,
     #[serde(flatten)]
     pub extensions: Object,
 }
@@ -310,7 +378,19 @@ pub struct SecurityScheme {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Link {
-    // TODO https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#linkObject
+    // TODO operationRef XOR operationId must be specified
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub operation_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub operation_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Map::is_empty")]
+    pub parameters: Map<String, Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub request_body: Option<Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub server: Option<Server>,
     #[serde(flatten)]
     pub extensions: Object,
 }
@@ -318,7 +398,8 @@ pub struct Link {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Callback {
-    // TODO https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#callbackObject
+    #[serde(flatten)]
+    pub callbacks: Map<String, PathItem>,
     #[serde(flatten)]
     pub extensions: Object,
 }
@@ -326,7 +407,14 @@ pub struct Callback {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct MediaType {
-    // TODO https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#mediaTypeObject
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub schema: Option<RefOr<SchemaObject>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub example: Option<Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub examples: Option<Map<String, Example>>,
+    #[serde(default, skip_serializing_if = "Map::is_empty")]
+    pub encoding: Map<String, Encoding>,
     #[serde(flatten)]
     pub extensions: Object,
 }
@@ -334,7 +422,11 @@ pub struct MediaType {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Tag {
-    // TODO https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#tagObject
+    pub name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub external_docs: Option<ExternalDocs>,
     #[serde(flatten)]
     pub extensions: Object,
 }
@@ -342,7 +434,30 @@ pub struct Tag {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct ExternalDocs {
-    // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#externalDocumentationObject
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub url: String,
     #[serde(flatten)]
     pub extensions: Object,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct Encoding {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub content_type: Option<String>,
+    #[serde(default, skip_serializing_if = "Map::is_empty")]
+    pub headers: Map<String, RefOr<Header>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub style: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub explode: Option<bool>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub allow_reserved: bool,
+    #[serde(flatten)]
+    pub extensions: Object,
+}
+
+pub fn is_false(b: &bool) -> bool {
+    !b
 }
