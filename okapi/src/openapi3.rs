@@ -1,5 +1,6 @@
 use crate::Map;
 pub use schemars::schema::{Ref, SchemaObject};
+#[cfg(feature = "make_schema")]
 use schemars::MakeSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -7,14 +8,16 @@ type Object = Map<String, Value>;
 
 type SecurityRequirement = Map<String, Vec<String>>;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(untagged)]
 pub enum RefOr<T> {
     Ref(Ref),
     Object(T),
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct OpenAPI {
     pub openapi: String,
@@ -34,7 +37,8 @@ pub struct OpenAPI {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
     pub title: String,
@@ -51,7 +55,8 @@ pub struct Info {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Contact {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -64,7 +69,8 @@ pub struct Contact {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct License {
     pub name: String,
@@ -74,7 +80,8 @@ pub struct License {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Server {
     pub url: String,
@@ -86,7 +93,8 @@ pub struct Server {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct ServerVariable {
     #[serde(default, rename = "enum", skip_serializing_if = "Option::is_none")]
@@ -98,7 +106,8 @@ pub struct ServerVariable {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct PathItem {
     #[serde(default, rename = "$ref", skip_serializing_if = "Option::is_none")]
@@ -131,7 +140,8 @@ pub struct PathItem {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Operation {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -161,7 +171,8 @@ pub struct Operation {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Responses {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -172,7 +183,8 @@ pub struct Responses {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Components {
     #[serde(default, skip_serializing_if = "Map::is_empty")]
@@ -197,7 +209,8 @@ pub struct Components {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
     pub description: String,
@@ -211,7 +224,8 @@ pub struct Response {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Parameter {
     pub name: String,
@@ -231,7 +245,8 @@ pub struct Parameter {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(untagged, rename_all = "camelCase")]
 pub enum ParameterValue {
     Schema {
@@ -252,7 +267,8 @@ pub enum ParameterValue {
     },
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub enum ParameterStyle {
     Matrix,
@@ -264,7 +280,8 @@ pub enum ParameterStyle {
     DeepObject,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Example {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -277,14 +294,16 @@ pub struct Example {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub enum ExampleValue {
     Value(Value),
     ExternalValue(String),
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct RequestBody {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -296,7 +315,8 @@ pub struct RequestBody {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Header {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -313,7 +333,8 @@ pub struct Header {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct SecurityScheme {
     #[serde(rename = "type")]
@@ -326,7 +347,8 @@ pub struct SecurityScheme {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum SecuritySchemeData {
     ApiKey {
@@ -348,7 +370,8 @@ pub enum SecuritySchemeData {
     },
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct OAuthFlows {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -363,7 +386,8 @@ pub struct OAuthFlows {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct OAuthFlow {
     pub authorization_url: String,
@@ -375,7 +399,8 @@ pub struct OAuthFlow {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Link {
     // TODO operationRef XOR operationId must be specified
@@ -395,7 +420,8 @@ pub struct Link {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Callback {
     #[serde(flatten)]
@@ -404,7 +430,8 @@ pub struct Callback {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct MediaType {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -419,7 +446,8 @@ pub struct MediaType {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Tag {
     pub name: String,
@@ -431,7 +459,8 @@ pub struct Tag {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct ExternalDocs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -441,7 +470,8 @@ pub struct ExternalDocs {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
+#[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Encoding {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -458,6 +488,6 @@ pub struct Encoding {
     pub extensions: Object,
 }
 
-pub fn is_false(b: &bool) -> bool {
+fn is_false(b: &bool) -> bool {
     !b
 }
