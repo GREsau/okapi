@@ -1,5 +1,5 @@
 use crate::Map;
-use schemars::schema::{Ref, SchemaObject};
+pub use schemars::schema::{Ref, SchemaObject};
 use schemars::MakeSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -54,11 +54,11 @@ pub struct Info {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Contact {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
     #[serde(flatten)]
     pub extensions: Object,
@@ -348,16 +348,16 @@ pub enum SecuritySchemeData {
     },
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
-#[serde(rename_all = "camelCase")]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[serde(default, rename_all = "camelCase")]
 pub struct OAuthFlows {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub implicit: Option<OAuthFlow>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub password: Option<OAuthFlow>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub client_credentials: Option<OAuthFlow>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub authorization_code: Option<OAuthFlow>,
     #[serde(flatten)]
     pub extensions: Object,
@@ -404,16 +404,16 @@ pub struct Callback {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
-#[serde(rename_all = "camelCase")]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[serde(default, rename_all = "camelCase")]
 pub struct MediaType {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub schema: Option<RefOr<SchemaObject>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub example: Option<Value>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub examples: Option<Map<String, Example>>,
-    #[serde(default, skip_serializing_if = "Map::is_empty")]
+    #[serde(skip_serializing_if = "Map::is_empty")]
     pub encoding: Map<String, Encoding>,
     #[serde(flatten)]
     pub extensions: Object,
@@ -441,18 +441,18 @@ pub struct ExternalDocs {
     pub extensions: Object,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, MakeSchema)]
-#[serde(rename_all = "camelCase")]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, MakeSchema)]
+#[serde(default, rename_all = "camelCase")]
 pub struct Encoding {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub content_type: Option<String>,
-    #[serde(default, skip_serializing_if = "Map::is_empty")]
+    #[serde(skip_serializing_if = "Map::is_empty")]
     pub headers: Map<String, RefOr<Header>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub style: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub explode: Option<bool>,
-    #[serde(default, skip_serializing_if = "is_false")]
+    #[serde(skip_serializing_if = "is_false")]
     pub allow_reserved: bool,
     #[serde(flatten)]
     pub extensions: Object,

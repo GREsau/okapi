@@ -1,6 +1,6 @@
 pub type Map<K, V> = schemars::Map<K, V>;
 
-pub mod openapi;
+pub mod openapi3;
 
 #[cfg(test)]
 mod tests {
