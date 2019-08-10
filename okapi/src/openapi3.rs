@@ -16,6 +16,12 @@ pub enum RefOr<T> {
     Object(T),
 }
 
+impl<T> From<T> for RefOr<T> {
+    fn from(o: T) -> Self {
+        RefOr::<T>::Object(o)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
