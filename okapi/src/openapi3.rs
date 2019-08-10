@@ -16,7 +16,7 @@ pub enum RefOr<T> {
     Object(T),
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct OpenAPI {
@@ -37,7 +37,7 @@ pub struct OpenAPI {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
@@ -69,7 +69,7 @@ pub struct Contact {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct License {
@@ -80,7 +80,7 @@ pub struct License {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Server {
@@ -93,7 +93,7 @@ pub struct Server {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct ServerVariable {
@@ -140,7 +140,7 @@ pub struct PathItem {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Operation {
@@ -209,7 +209,7 @@ pub struct Components {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
@@ -302,7 +302,7 @@ pub enum ExampleValue {
     ExternalValue(String),
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct RequestBody {
@@ -386,7 +386,7 @@ pub struct OAuthFlows {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct OAuthFlow {
@@ -399,7 +399,7 @@ pub struct OAuthFlow {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Link {
@@ -420,7 +420,7 @@ pub struct Link {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Callback {
@@ -446,7 +446,7 @@ pub struct MediaType {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Tag {
@@ -459,7 +459,7 @@ pub struct Tag {
     pub extensions: Object,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct ExternalDocs {
