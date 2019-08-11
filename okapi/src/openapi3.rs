@@ -25,7 +25,7 @@ impl<T> From<T> for RefOr<T> {
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(rename_all = "camelCase")]
-pub struct OpenAPI {
+pub struct OpenApi {
     pub openapi: String,
     pub info: Info,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
