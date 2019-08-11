@@ -1,4 +1,4 @@
-mod attr;
+mod route_attr;
 
 #[macro_use]
 extern crate quote;
@@ -7,6 +7,7 @@ extern crate syn;
 
 extern crate proc_macro;
 
+use darling::FromMeta;
 use proc_macro::TokenStream;
 use rocket_http::{uri::Origin, MediaType, Method};
 use syn::{AttributeArgs, ItemFn};
@@ -23,12 +24,34 @@ struct Route {
     //query_multi_param: Option<String>,
 }
 
-#[proc_macro_attribute]
-pub fn get(args: TokenStream, input: TokenStream) -> TokenStream {
-    let attr_args = parse_macro_input!(args as AttributeArgs);
-    let _input = parse_macro_input!(input as ItemFn);
+#[derive(Debug, Default, FromMeta)]
+#[darling(default)]
+struct OkapiAttribute {
+    pub skip: bool,
+}
 
-    let _args = match attr::parse_attr("get", &attr_args) {
+#[proc_macro_attribute]
+pub fn okapi(args: TokenStream, mut input: TokenStream) -> TokenStream {
+    input.extend(okapi_impl(args, input.clone()));
+    input
+}
+
+fn okapi_impl(args: TokenStream, input: TokenStream) -> TokenStream {
+    let attr_args = parse_macro_input!(args as AttributeArgs);
+    let input = parse_macro_input!(input as ItemFn);
+
+    let okapi_attr = match OkapiAttribute::from_list(&attr_args) {
+        Ok(v) => v,
+        Err(e) => {
+            return e.write_errors().into();
+        }
+    };
+
+    if okapi_attr.skip {
+        return TokenStream::new();
+    }
+
+    let _args = match route_attr::parse_attrs(input.attrs) {
         Ok(v) => v,
         Err(e) => {
             return e;
