@@ -37,7 +37,7 @@ impl OpenApiGenerator {
     }
 
     pub fn add_operation(&mut self, _op: OperationInfo) {
-        unimplemented!()
+        // unimplemented!()
     }
 
     pub fn json_schema<T: ?Sized + JsonSchema>(&mut self) -> schemars::Result<RefOr<SchemaObject>> {
@@ -57,6 +57,7 @@ impl OpenApiGenerator {
     }
 
     pub fn into_openapi(self) -> OpenApi {
-        unimplemented!()
+        // unimplemented!()
+        Default::default()
     }
 }

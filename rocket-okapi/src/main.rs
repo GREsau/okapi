@@ -4,7 +4,10 @@
 extern crate rocket;
 
 use rocket::response::status::NotFound;
+use rocket::State;
 use rocket_contrib::json::Json;
+use rocket_okapi::gen::{OpenApiGenerator, OpenApiSettings};
+use rocket_okapi::OpenApiResponses;
 
 //#[macro_use]
 //extern crate rocket_okapi;
@@ -15,41 +18,21 @@ fn index() -> Json<&'static str> {
     Json("Hello, world!")
 }
 
-/*fn okapi_make_operation_info_index() -> Option<::rocket_okapi::OperationInfo> {
-    Some(::rocket_okapi::OperationInfo {
+fn okapi_add_operation_index(
+    gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
+) -> ::rocket_okapi::Result<()> {
+    let responses = <Json<&'static str>>::responses(gen)?;
+    gen.add_operation(::rocket_okapi::OperationInfo {
         path: "/".to_owned(),
         method: ::rocket::http::Method::Get,
         operation: ::okapi::openapi3::Operation {
             operation_id: Some("index".to_owned()),
-            responses: ::okapi::openapi3::Responses {
-                responses: {
-                    let mut map = ::okapi::Map::new();
-                    map.insert(
-                        "200".to_owned(),
-                        ::okapi::openapi3::Response {
-                            content: {
-                                let mut map = ::okapi::Map::new();
-                                map.insert(
-                                    "application/json".to_owned(),
-                                    ::okapi::openapi3::MediaType {
-                                        schema: ,
-                                        ..Default::default()
-                                    },
-                                );
-                                map
-                            },
-                            ..Default::default()
-                        }
-                        .into(),
-                    );
-                    map
-                },
-                ..Default::default()
-            },
+            responses,
             ..Default::default()
         },
-    })
-}*/
+    });
+    Ok(())
+}
 
 #[get("/loud")]
 //#[okapi]
@@ -84,11 +67,31 @@ fn hidden() -> Json<&'static str> {
     Json("Hidden from swagger!")
 }
 
+#[get("/swagger")]
+fn okapi_swagger_endpoint<'r>(
+    spec: State<'r, okapi::openapi3::OpenApi>,
+) -> Json<&'r okapi::openapi3::OpenApi> {
+    Json(spec.inner())
+}
+
 fn main() {
+    let mut gen = OpenApiGenerator::new(OpenApiSettings::new());
+    okapi_add_operation_index(&mut gen).expect("Could not generate OpenAPI operation for `index`.");
     // let okapi = OkapiGenerator::new().mount("/", okapi_routes![index, loud, to_number, to_number_post, hidden]).generate("Test API", "0.1");
     rocket::ignite()
+        .manage(gen.into_openapi())
         // .mount_okapi("/swagger", okapi)
         // or .mount_okapi("/swagger", okapi_routes![index, loud, to_number, to_number_post, hidden])
-        .mount("/", routes![index, loud, to_number, to_number_post, hidden])
+        .mount(
+            "/",
+            routes![
+                index,
+                loud,
+                to_number,
+                to_number_post,
+                hidden,
+                okapi_swagger_endpoint
+            ],
+        )
         .launch();
 }

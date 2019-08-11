@@ -17,7 +17,7 @@ pub fn simple_responses(
                         map.insert(
                             media_type.to_string(),
                             MediaType {
-                                schema: Some(schema.into()),
+                                schema: Some(schema),
                                 ..Default::default()
                             },
                         );
