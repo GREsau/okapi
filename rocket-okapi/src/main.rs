@@ -4,9 +4,9 @@
 extern crate rocket;
 
 use rocket::response::status::NotFound;
-use rocket::State;
 use rocket_contrib::json::Json;
 use rocket_okapi::gen::{OpenApiGenerator, OpenApiSettings};
+use rocket_okapi::handler::ContentHandler;
 use rocket_okapi::OpenApiResponses;
 
 //#[macro_use]
@@ -67,31 +67,16 @@ fn hidden() -> Json<&'static str> {
     Json("Hidden from swagger!")
 }
 
-#[get("/swagger")]
-fn okapi_swagger_endpoint<'r>(
-    spec: State<'r, okapi::openapi3::OpenApi>,
-) -> Json<&'r okapi::openapi3::OpenApi> {
-    Json(spec.inner())
+fn routes_with_openapi() -> Vec<rocket::Route> {
+    let mut gen = OpenApiGenerator::new(OpenApiSettings::new());
+    okapi_add_operation_index(&mut gen).expect("Could not generate OpenAPI operation for `index`.");
+    let spec = gen.into_openapi();
+
+    let mut routes = routes![index, loud, to_number, to_number_post, hidden];
+    routes.push(ContentHandler::json(&spec).into_route("/swagger.json"));
+    routes
 }
 
 fn main() {
-    let mut gen = OpenApiGenerator::new(OpenApiSettings::new());
-    okapi_add_operation_index(&mut gen).expect("Could not generate OpenAPI operation for `index`.");
-    // let okapi = OkapiGenerator::new().mount("/", okapi_routes![index, loud, to_number, to_number_post, hidden]).generate("Test API", "0.1");
-    rocket::ignite()
-        .manage(gen.into_openapi())
-        // .mount_okapi("/swagger", okapi)
-        // or .mount_okapi("/swagger", okapi_routes![index, loud, to_number, to_number_post, hidden])
-        .mount(
-            "/",
-            routes![
-                index,
-                loud,
-                to_number,
-                to_number_post,
-                hidden,
-                okapi_swagger_endpoint
-            ],
-        )
-        .launch();
+    rocket::ignite().mount("/", routes_with_openapi()).launch();
 }

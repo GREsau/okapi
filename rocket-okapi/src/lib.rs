@@ -2,6 +2,7 @@ mod error;
 mod responses_impls;
 
 pub mod gen;
+pub mod handler;
 pub mod util;
 
 pub use error::*;
