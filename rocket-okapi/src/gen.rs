@@ -6,12 +6,14 @@ use schemars::{schema::Schema, JsonSchema};
 #[derive(Debug, PartialEq, Clone)]
 pub struct OpenApiSettings {
     pub schema_settings: SchemaSettings,
+    pub json_path: String,
 }
 
 impl Default for OpenApiSettings {
     fn default() -> Self {
         OpenApiSettings {
             schema_settings: SchemaSettings::openapi3(),
+            json_path: "/swagger/swagger.json".to_owned(),
         }
     }
 }
@@ -26,17 +28,22 @@ impl OpenApiSettings {
 
 #[derive(Debug, Clone)]
 pub struct OpenApiGenerator {
+    settings: OpenApiSettings,
     schema_generator: SchemaGenerator,
 }
 
 impl OpenApiGenerator {
     pub fn new(settings: OpenApiSettings) -> Self {
         OpenApiGenerator {
-            schema_generator: settings.schema_settings.into_generator(),
+            schema_generator: settings.schema_settings.clone().into_generator(),
+            settings,
         }
     }
 
-    pub fn add_operation(&mut self, _op: OperationInfo) {
+    pub fn add_operation(&mut self, mut op: OperationInfo) {
+        if let Some(op_id) = op.operation.operation_id {
+            op.operation.operation_id = Some(op_id.trim_start_matches(':').replace("::", "_"));
+        }
         // unimplemented!()
     }
 

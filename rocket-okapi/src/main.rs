@@ -20,13 +20,14 @@ fn index() -> Json<&'static str> {
 
 fn okapi_add_operation_index(
     gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
+    op_id: String,
 ) -> ::rocket_okapi::Result<()> {
     let responses = <Json<&'static str>>::responses(gen)?;
     gen.add_operation(::rocket_okapi::OperationInfo {
         path: "/".to_owned(),
         method: ::rocket::http::Method::Get,
         operation: ::okapi::openapi3::Operation {
-            operation_id: Some("index".to_owned()),
+            operation_id: Some(op_id),
             responses,
             ..Default::default()
         },
@@ -39,8 +40,8 @@ fn okapi_add_operation_index(
 //#[okapi(200 => &str)]
 //#[okapi(404 => ())]
 //#[okapi(401 => (), "Authentication failed.")]
-fn loud() -> Json<&'static str> {
-    Json("I AM SHOUTING!!!!!")
+fn loud() -> Json<Option<&'static str>> {
+    Json(Some("I AM SHOUTING!!!!!"))
 }
 
 #[get("/tonumber/<value>")]
@@ -68,12 +69,14 @@ fn hidden() -> Json<&'static str> {
 }
 
 fn routes_with_openapi() -> Vec<rocket::Route> {
-    let mut gen = OpenApiGenerator::new(OpenApiSettings::new());
-    okapi_add_operation_index(&mut gen).expect("Could not generate OpenAPI operation for `index`.");
+    let settings = OpenApiSettings::new();
+    let mut gen = OpenApiGenerator::new(settings.clone());
+    okapi_add_operation_index(&mut gen, "index".to_owned())
+        .expect("Could not generate OpenAPI operation for `index`.");
     let spec = gen.into_openapi();
 
     let mut routes = routes![index, loud, to_number, to_number_post, hidden];
-    routes.push(ContentHandler::json(&spec).into_route("/swagger.json"));
+    routes.push(ContentHandler::json(&spec).into_route(&settings.json_path));
     routes
 }
 
