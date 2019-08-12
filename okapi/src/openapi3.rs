@@ -127,7 +127,7 @@ pub struct PathItem {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub put: Option<Operation>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub pust: Option<Operation>,
+    pub post: Option<Operation>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub delete: Option<Operation>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
