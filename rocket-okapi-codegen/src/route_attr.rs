@@ -2,9 +2,9 @@ use crate::Route;
 use darling::{Error, FromMeta};
 use proc_macro::TokenStream;
 use rocket_http::{ext::IntoOwned, uri::Origin, MediaType, Method};
-use std::iter::FromIterator;
 use std::str::FromStr;
-use syn::{Attribute, AttributeArgs, Meta, MetaList, NestedMeta};
+use syn::spanned::Spanned;
+use syn::{Attribute, Meta, MetaList, NestedMeta};
 
 #[derive(Debug)]
 struct OriginMeta(Origin<'static>);
@@ -93,12 +93,11 @@ fn parse_method_route_attr(method: Method, args: &[NestedMeta]) -> Result<Route,
     })
 }
 
-fn parse_attr(name: &str, args: &[NestedMeta]) -> Result<Route, TokenStream> {
-    let parsed = match Method::from_str(name) {
+fn parse_attr(name: &str, args: &[NestedMeta]) -> Result<Route, Error> {
+    match Method::from_str(name) {
         Ok(method) => parse_method_route_attr(method, args),
         Err(()) => parse_route_attr(args),
-    };
-    parsed.map_err(|e| e.write_errors().into())
+    }
 }
 
 fn is_route_attribute(a: &Attribute) -> bool {
@@ -114,10 +113,10 @@ fn is_route_attribute(a: &Attribute) -> bool {
         || a.path.is_ident("route")
 }
 
-fn to_name_and_args(attr: Attribute) -> Option<(String, TokenStream)> {
-    match attr.interpret_meta() {
-        Some(Meta::List(MetaList { ident, nested, .. })) => {
-            Some((ident.to_string(), quote! { #nested }.into()))
+fn to_name_and_args(attr: &Attribute) -> Option<(String, Vec<NestedMeta>)> {
+    match attr.parse_meta() {
+        Ok(Meta::List(MetaList { ident, nested, .. })) => {
+            Some((ident.to_string(), nested.into_iter().collect()))
         }
         _ => None,
     }
@@ -128,13 +127,14 @@ pub(crate) fn parse_attrs(
 ) -> Result<Route, TokenStream> {
     match attrs.into_iter().find(is_route_attribute) {
         Some(attr) => {
-            let (name, args) = to_name_and_args(attr).ok_or_else(|| TokenStream::from(quote! {
-                compile_error!("Malformed route attribute");
-            }))?;
+            let span = attr.span();
+            let (name, args) = to_name_and_args(&attr)
+                .ok_or_else(|| TokenStream::from(quote_spanned! {span=>
+                    compile_error!("Malformed route attribute");
+                }))?;
 
-            let args = syn::parse_macro_input::parse::<AttributeArgs>(args)
-                .map_err(|e| e.to_compile_error())?;
             parse_attr(&name, &args)
+                .map_err(|e| e.with_span(&attr).write_errors().into())
         }
         None => Err(quote! {
                 compile_error!("Could not find any Rocket route attribute on function with #[okapi] attribute.");
