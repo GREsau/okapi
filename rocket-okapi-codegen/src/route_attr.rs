@@ -122,10 +122,10 @@ fn to_name_and_args(attr: &Attribute) -> Option<(String, Vec<NestedMeta>)> {
     }
 }
 
-pub(crate) fn parse_attrs(
-    attrs: impl IntoIterator<Item = Attribute>,
+pub(crate) fn parse_attrs<'a>(
+    attrs: impl IntoIterator<Item = &'a Attribute>,
 ) -> Result<Route, TokenStream> {
-    match attrs.into_iter().find(is_route_attribute) {
+    match attrs.into_iter().find(|a| is_route_attribute(a)) {
         Some(attr) => {
             let span = attr.span();
             let (name, args) = to_name_and_args(&attr)
@@ -137,7 +137,7 @@ pub(crate) fn parse_attrs(
                 .map_err(|e| e.with_span(&attr).write_errors().into())
         }
         None => Err(quote! {
-                compile_error!("Could not find any Rocket route attribute on function with #[okapi] attribute.");
+                compile_error!("Could not find any Rocket route attribute on function with #[openapi] attribute.");
             }.into()),
     }
 }

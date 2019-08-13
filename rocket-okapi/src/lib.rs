@@ -6,6 +6,7 @@ pub mod handler;
 pub mod util;
 
 pub use error::*;
+pub use rocket_okapi_codegen::*;
 
 pub struct OperationInfo {
     pub path: String,

@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 schemars = "0.1.6"
 okapi = { version = "0.1.0", path = "../okapi" }
+rocket_okapi_codegen = { version = "0.1.0", path = "../rocket-okapi-codegen" }
 rocket = { version = "0.4.2", default-features = false }
 serde = { version = "1.0" }
 serde_json = "1.0"
