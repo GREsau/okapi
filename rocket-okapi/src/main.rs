@@ -40,8 +40,8 @@ fn to_number_post(value: Json<String>) -> Result<Json<f64>, NotFound<Json<&'stat
     }
 }
 
-#[openapi(skip)]
 #[get("/hidden")]
+#[openapi(skip)]
 fn hidden() -> Json<&'static str> {
     Json("Hidden from swagger!")
 }
@@ -51,10 +51,12 @@ fn main() {
         .mount("/", {
             let settings = OpenApiSettings::new();
             let mut gen = OpenApiGenerator::new(settings.clone());
-            _okapi_add_operation_for_index(&mut gen, "index".to_owned())
+            _okapi_add_operation_for_index_(&mut gen, "index".to_owned())
                 .expect("Could not generate OpenAPI operation for `index`.");
-            _okapi_add_operation_for_loud(&mut gen, "loud".to_owned())
-                .expect("Could not generate OpenAPI operation for `index`.");
+            _okapi_add_operation_for_loud_(&mut gen, "loud".to_owned())
+                .expect("Could not generate OpenAPI operation for `loud`.");
+            _okapi_add_operation_for_hidden_(&mut gen, "hidden".to_owned())
+                .expect("Could not generate OpenAPI operation for `hidden`.");
             let spec = gen.into_openapi();
 
             let mut routes = routes![index, loud, to_number, to_number_post, hidden];

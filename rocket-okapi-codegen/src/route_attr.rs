@@ -137,7 +137,7 @@ pub(crate) fn parse_attrs<'a>(
                 .map_err(|e| e.with_span(&attr).write_errors().into())
         }
         None => Err(quote! {
-                compile_error!("Could not find any Rocket route attribute on function with #[openapi] attribute.");
+                compile_error!("Could not find Rocket route attribute. Ensure the #[openapi] attribute is placed *before* the Rocket route attribute.");
             }.into()),
     }
 }

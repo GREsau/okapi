@@ -1,7 +1,7 @@
 use okapi::openapi3::*;
 use okapi::Map;
 
-pub fn simple_responses(
+pub fn schema_response(
     status: u16,
     media_type: impl ToString,
     schema: RefOr<SchemaObject>,

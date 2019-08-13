@@ -1,5 +1,5 @@
 mod error;
-mod responses_impls;
+mod responder_impls;
 
 pub mod gen;
 pub mod handler;
@@ -14,6 +14,6 @@ pub struct OperationInfo {
     pub operation: okapi::openapi3::Operation,
 }
 
-pub trait OpenApiResponses {
+pub trait OpenApiResponder<'r>: rocket::response::Responder<'r> {
     fn responses(gen: &mut gen::OpenApiGenerator) -> Result;
 }

@@ -67,13 +67,6 @@ impl OpenApiGenerator {
         self.get_ref_or_object(schema)
     }
 
-    pub fn get_ref_or_object(&self, schema: Schema) -> schemars::Result<RefOr<SchemaObject>> {
-        Ok(match schema {
-            Schema::Ref(r) => RefOr::Ref(r),
-            schema => self.schema_generator.get_schema_object(&schema)?.into(),
-        })
-    }
-
     pub fn schema_generator(&self) -> &SchemaGenerator {
         &self.schema_generator
     }
@@ -91,6 +84,13 @@ impl OpenApiGenerator {
             },
             ..Default::default()
         }
+    }
+
+    fn get_ref_or_object(&self, schema: Schema) -> schemars::Result<RefOr<SchemaObject>> {
+        Ok(match schema {
+            Schema::Ref(r) => RefOr::Ref(r),
+            schema => self.schema_generator.get_schema_object(&schema)?.into(),
+        })
     }
 }
 

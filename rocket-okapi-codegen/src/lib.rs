@@ -53,13 +53,25 @@ fn okapi_impl(args: TokenStream, input: TokenStream) -> TokenStream {
     };
 
     if okapi_attr.skip {
-        return TokenStream::new();
+        return create_empty_route_operation_fn(input);
     }
 
     match route_attr::parse_attrs(&input.attrs) {
         Ok(route) => create_route_operation_fn(input, route),
         Err(e) => e,
     }
+}
+
+fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
+    let fn_name = get_add_operation_fn_name(&route_fn.ident);
+    TokenStream::from(quote! {
+        fn #fn_name(
+            _gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
+            _op_id: String,
+        ) -> ::rocket_okapi::Result<()> {
+            Ok(())
+        }
+    })
 }
 
 fn create_route_operation_fn(route_fn: ItemFn, route: Route) -> TokenStream {
@@ -70,10 +82,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: Route) -> TokenStream {
         ReturnType::Default => unit_type(),
     };
 
-    let fn_name = Ident::new(
-        &format!("_okapi_add_operation_for_{}_", route_fn.ident),
-        Span::call_site(),
-    );
+    let fn_name = get_add_operation_fn_name(&route_fn.ident);
     let path = route.origin.path().replace("<", "{").replace(">", "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
 
@@ -82,7 +91,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: Route) -> TokenStream {
             gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             op_id: String,
         ) -> ::rocket_okapi::Result<()> {
-            let responses = <#return_type as ::rocket_okapi::OpenApiResponses>::responses(gen)?;
+            let responses = <#return_type as ::rocket_okapi::OpenApiResponder>::responses(gen)?;
             gen.add_operation(::rocket_okapi::OperationInfo {
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,
@@ -95,6 +104,13 @@ fn create_route_operation_fn(route_fn: ItemFn, route: Route) -> TokenStream {
             Ok(())
         }
     })
+}
+
+fn get_add_operation_fn_name(route_fn_name: &Ident) -> Ident {
+    Ident::new(
+        &format!("_okapi_add_operation_for_{}_", route_fn_name),
+        route_fn_name.span(),
+    )
 }
 
 fn unit_type() -> Type {
