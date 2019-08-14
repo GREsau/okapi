@@ -8,16 +8,12 @@ pub fn add_response(responses: &mut Responses, status: u16) -> &mut RefOr<Respon
         .or_insert_with(|| Response::default().into())
 }
 
-pub fn add_schema_response(
+pub fn add_content_response(
     responses: &mut Responses,
     status: u16,
     content_type: impl ToString,
-    schema: RefOr<SchemaObject>,
+    media: MediaType,
 ) -> Result<()> {
-    let media = MediaType {
-        schema: Some(schema),
-        ..Default::default()
-    };
     let response = match add_response(responses, status) {
         RefOr::Ref(_) => {
             return Err(OpenApiError::new(
@@ -33,6 +29,19 @@ pub fn add_schema_response(
         .and_modify(|mt| *mt = accept_either_media_type(mt.clone(), media.clone()))
         .or_insert(media);
     Ok(())
+}
+
+pub fn add_schema_response(
+    responses: &mut Responses,
+    status: u16,
+    content_type: impl ToString,
+    schema: RefOr<SchemaObject>,
+) -> Result<()> {
+    let media = MediaType {
+        schema: Some(schema),
+        ..Default::default()
+    };
+    add_content_response(responses, status, content_type, media)
 }
 
 fn accept_either_media_type(mt1: MediaType, mt2: MediaType) -> MediaType {

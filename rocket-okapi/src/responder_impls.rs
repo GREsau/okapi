@@ -22,6 +22,40 @@ impl OpenApiResponder<'_> for JsonValue {
     }
 }
 
+impl OpenApiResponder<'_> for String {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = Default::default();
+        let schema = gen.json_schema::<String>()?;
+        add_schema_response(&mut responses, 200, "text/plain", schema)?;
+        Ok(responses)
+    }
+}
+
+impl<'r> OpenApiResponder<'r> for &'r str {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <String>::responses(gen)
+    }
+}
+
+impl OpenApiResponder<'_> for Vec<u8> {
+    fn responses(_: &mut OpenApiGenerator) -> Result {
+        let mut responses = Default::default();
+        add_content_response(
+            &mut responses,
+            200,
+            "application/octet-stream",
+            Default::default(),
+        )?;
+        Ok(responses)
+    }
+}
+
+impl<'r> OpenApiResponder<'r> for &'r [u8] {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
+    }
+}
+
 impl OpenApiResponder<'_> for () {
     fn responses(_: &mut OpenApiGenerator) -> Result {
         let mut responses = Default::default();
