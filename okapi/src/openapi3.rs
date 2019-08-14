@@ -1,4 +1,5 @@
 use crate::Map;
+use schemars::schema::Schema;
 pub use schemars::schema::{Ref, SchemaObject};
 #[cfg(feature = "make_schema")]
 use schemars::MakeSchema;
@@ -19,6 +20,15 @@ pub enum RefOr<T> {
 impl<T> From<T> for RefOr<T> {
     fn from(o: T) -> Self {
         RefOr::<T>::Object(o)
+    }
+}
+
+impl Into<Schema> for RefOr<SchemaObject> {
+    fn into(self) -> Schema {
+        match self {
+            RefOr::Ref(r) => Schema::Ref(r),
+            RefOr::Object(o) => Schema::Object(o),
+        }
     }
 }
 

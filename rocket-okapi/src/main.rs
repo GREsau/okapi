@@ -11,14 +11,14 @@ use rocket::response::status::NotFound;
 use rocket_contrib::json::Json;
 use rocket_okapi::gen::{OpenApiGenerator, OpenApiSettings};
 use rocket_okapi::handler::ContentHandler;
-use serde::{Serialize};
+use serde::Serialize;
 
 #[derive(Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 struct User {
     user_id: u64,
     username: String,
-    #[serde(default)] 
+    #[serde(default)]
     email: Option<String>,
 }
 
@@ -34,7 +34,7 @@ fn get_user() -> Json<User> {
     Json(User {
         username: "bob".to_owned(),
         user_id: 12345,
-        email: None
+        email: None,
     })
 }
 
@@ -70,6 +70,9 @@ fn hidden() -> Json<&'static str> {
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes_with_openapi![index, loud, to_number, to_number_post, hidden, get_user])
+        .mount(
+            "/",
+            routes_with_openapi![index, loud, to_number, to_number_post, hidden, get_user],
+        )
         .launch();
 }
