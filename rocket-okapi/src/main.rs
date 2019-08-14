@@ -4,16 +4,38 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_okapi;
+#[macro_use]
+extern crate schemars;
 
 use rocket::response::status::NotFound;
 use rocket_contrib::json::Json;
 use rocket_okapi::gen::{OpenApiGenerator, OpenApiSettings};
 use rocket_okapi::handler::ContentHandler;
+use serde::{Serialize};
+
+#[derive(Serialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+struct User {
+    user_id: u64,
+    username: String,
+    #[serde(default)] 
+    email: Option<String>,
+}
 
 #[openapi]
 #[get("/")]
 fn index() -> Json<&'static str> {
     Json("Hello, world!")
+}
+
+#[openapi]
+#[get("/user")]
+fn get_user() -> Json<User> {
+    Json(User {
+        username: "bob".to_owned(),
+        user_id: 12345,
+        email: None
+    })
 }
 
 #[openapi]
@@ -48,6 +70,6 @@ fn hidden() -> Json<&'static str> {
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes_with_openapi![index, loud, to_number, to_number_post, hidden])
+        .mount("/", routes_with_openapi![index, loud, to_number, to_number_post, hidden, get_user])
         .launch();
 }

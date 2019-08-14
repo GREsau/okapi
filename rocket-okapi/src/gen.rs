@@ -5,6 +5,7 @@ use rocket::http::Method;
 use schemars::gen::{SchemaGenerator, SchemaSettings};
 use schemars::{schema::Schema, JsonSchema};
 use std::collections::{hash_map::Entry as HashEntry, HashMap};
+use std::iter::FromIterator;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct OpenApiSettings {
@@ -64,7 +65,7 @@ impl OpenApiGenerator {
 
     pub fn json_schema<T: ?Sized + JsonSchema>(&mut self) -> schemars::Result<RefOr<SchemaObject>> {
         let schema = self.schema_generator.subschema_for::<T>()?;
-        self.get_ref_or_object(schema)
+        Ok(get_ref_or_object(schema))
     }
 
     pub fn schema_generator(&self) -> &SchemaGenerator {
@@ -82,14 +83,23 @@ impl OpenApiGenerator {
                 }
                 paths
             },
+            components: Some(Components {
+                schemas: Map::from_iter(self.schema_generator.into_definitions().into_iter().map(|(k, v)| (k, get_ref_or_object(v)))),
+                ..Default::default()
+            }),
             ..Default::default()
         }
     }
+}
 
-    fn get_ref_or_object(&self, schema: Schema) -> schemars::Result<RefOr<SchemaObject>> {
-        Ok(match schema {
-            Schema::Ref(r) => RefOr::Ref(r),
-            schema => self.schema_generator.get_schema_object(&schema)?.into(),
+fn get_ref_or_object(schema: Schema) -> RefOr<SchemaObject> {
+    match schema {
+        Schema::Ref(r) => RefOr::Ref(r),
+        Schema::Object(s) => RefOr::Object(s),
+        Schema::Bool(true) => RefOr::Object(Default::default()),
+        Schema::Bool(false) => RefOr::Object(SchemaObject {
+            not: Some(Schema::Object(Default::default()).into()),
+            ..Default::default()
         })
     }
 }
