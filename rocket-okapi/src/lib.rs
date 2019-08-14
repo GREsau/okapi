@@ -1,3 +1,5 @@
+#![feature(specialization)]
+
 mod error;
 mod responder_impls;
 

@@ -1,8 +1,10 @@
-use crate::{gen::OpenApiGenerator, OpenApiResponder};
-use crate::{util::*, Result};
+use crate::{gen::OpenApiGenerator, util::*, OpenApiError, OpenApiResponder, Result};
+use rocket::response::status::NotFound;
+use rocket::response::Responder;
 use rocket_contrib::json::{Json, JsonValue}; // TODO json feature flag
 use schemars::{schema::SchemaObject, JsonSchema};
 use serde::Serialize;
+use std::result::Result as StdResult;
 
 impl<T: JsonSchema + Serialize> OpenApiResponder<'_> for Json<T> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
@@ -59,7 +61,7 @@ impl<'r> OpenApiResponder<'r> for &'r [u8] {
 impl OpenApiResponder<'_> for () {
     fn responses(_: &mut OpenApiGenerator) -> Result {
         let mut responses = Default::default();
-        add_response(&mut responses, 200);
+        ensure_status_code_exists(&mut responses, 200);
         Ok(responses)
     }
 }
@@ -67,7 +69,46 @@ impl OpenApiResponder<'_> for () {
 impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r> for Option<T> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = T::responses(gen)?;
-        add_response(&mut responses, 404);
+        ensure_status_code_exists(&mut responses, 404);
         Ok(responses)
+    }
+}
+
+impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r> for NotFound<T> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = T::responses(gen)?;
+        set_status_code(&mut responses, 404)?;
+        Ok(responses)
+    }
+}
+
+impl<'r, T: OpenApiResponder<'r>, E> OpenApiResponder<'r> for StdResult<T, E>
+where
+    StdResult<T, E>: Responder<'r>,
+{
+    default fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = T::responses(gen)?;
+        ensure_status_code_exists(&mut responses, 500);
+        Ok(responses)
+    }
+}
+
+impl<'r, T: OpenApiResponder<'r>, E: Responder<'r>> OpenApiResponder<'r> for StdResult<T, E>
+where
+    StdResult<T, E>: Responder<'r>,
+{
+    default fn responses(_: &mut OpenApiGenerator) -> Result {
+        Err(OpenApiError::new("Unable to generate OpenAPI spec for Result<T, E> response, as E implements Responder but not OpenApiResponder.".to_owned()))
+    }
+}
+
+impl<'r, T: OpenApiResponder<'r>, E: OpenApiResponder<'r>> OpenApiResponder<'r> for StdResult<T, E>
+where
+    StdResult<T, E>: Responder<'r>,
+{
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let ok_responses = T::responses(gen)?;
+        let err_responses = E::responses(gen)?;
+        produce_any_responses(ok_responses, err_responses)
     }
 }
