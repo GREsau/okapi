@@ -1,10 +1,21 @@
-use crate::Route;
 use darling::{Error, FromMeta};
 use proc_macro::TokenStream;
 use rocket_http::{ext::IntoOwned, uri::Origin, MediaType, Method};
 use std::str::FromStr;
 use syn::spanned::Spanned;
 use syn::{Attribute, Meta, MetaList, NestedMeta};
+
+#[derive(Debug)]
+pub struct Route {
+    pub method: Method,
+    pub origin: Origin<'static>,
+    pub media_type: Option<MediaType>,
+    pub data_param: Option<String>,
+    //pub path_params: Vec<String>,
+    //pub path_multi_param: Option<String>,
+    //pub query_params: Vec<String>,
+    //pub query_multi_param: Option<String>,
+}
 
 #[derive(Debug)]
 struct OriginMeta(Origin<'static>);
