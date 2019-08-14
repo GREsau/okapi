@@ -22,7 +22,7 @@ fn loud() -> Json<Option<&'static str>> {
     Json(Some("I AM SHOUTING!!!!!"))
 }
 
-// #[openapi]
+#[openapi(skip)]
 #[get("/tonumber/<value>")]
 fn to_number(value: String) -> Result<Json<f64>, NotFound<Json<&'static str>>> {
     match value.parse() {
@@ -31,7 +31,7 @@ fn to_number(value: String) -> Result<Json<f64>, NotFound<Json<&'static str>>> {
     }
 }
 
-// #[openapi]
+#[openapi(skip)]
 #[post("/tonumber", data = "<value>")]
 fn to_number_post(value: Json<String>) -> Result<Json<f64>, NotFound<Json<&'static str>>> {
     match value.parse() {
@@ -48,21 +48,6 @@ fn hidden() -> Json<&'static str> {
 
 fn main() {
     rocket::ignite()
-        .mount("/", {
-            let settings = OpenApiSettings::new();
-            let mut gen = OpenApiGenerator::new(settings.clone());
-            _okapi_add_operation_for_index_(&mut gen, "index".to_owned())
-                .expect("Could not generate OpenAPI operation for `index`.");
-            _okapi_add_operation_for_loud_(&mut gen, "loud".to_owned())
-                .expect("Could not generate OpenAPI operation for `loud`.");
-            _okapi_add_operation_for_hidden_(&mut gen, "hidden".to_owned())
-                .expect("Could not generate OpenAPI operation for `hidden`.");
-            let spec = gen.into_openapi();
-
-            let mut routes = routes![index, loud, to_number, to_number_post, hidden];
-            routes.push(ContentHandler::json(&spec).into_route(&settings.json_path));
-            routes
-        })
+        .mount("/", routes_with_openapi![index, loud, to_number, to_number_post, hidden])
         .launch();
-    // rocket::ignite().mount("/", routes_with_openapi![settings => index, loud, to_number, to_number_post, hidden]).launch();
 }
