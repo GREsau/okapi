@@ -29,3 +29,11 @@ impl OpenApiResponder<'_> for () {
         Ok(responses)
     }
 }
+
+impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r> for Option<T> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = T::responses(gen)?;
+        add_response(&mut responses, 404);
+        Ok(responses)
+    }
+}

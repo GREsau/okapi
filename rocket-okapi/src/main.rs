@@ -30,12 +30,12 @@ fn index() -> Json<&'static str> {
 
 #[openapi]
 #[get("/user")]
-fn get_user() -> Json<User> {
-    Json(User {
+fn get_user() -> Option<Json<User>> {
+    Some(Json(User {
         username: "bob".to_owned(),
         user_id: 12345,
         email: None,
-    })
+    }))
 }
 
 #[openapi]
