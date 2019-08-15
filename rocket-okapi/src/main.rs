@@ -9,8 +9,6 @@ extern crate schemars;
 
 use rocket::response::status::NotFound;
 use rocket_contrib::json::Json;
-use rocket_okapi::gen::{OpenApiGenerator, OpenApiSettings};
-use rocket_okapi::handler::ContentHandler;
 use rocket_okapi::OpenApiError;
 use serde::Serialize;
 
@@ -88,6 +86,10 @@ fn main() {
                 get_user,
                 five_hundred
             ],
+        )
+        .mount(
+            "/",
+            ::rocket_okapi::handler::ContentHandler::swagger_ui_routes(),
         )
         .launch();
 }
