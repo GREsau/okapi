@@ -26,7 +26,7 @@ pub fn routes_with_openapi(input: TokenStream) -> TokenStream {
 
 fn get_add_operation_fn_name(route_fn_name: &Ident) -> Ident {
     Ident::new(
-        &format!("_okapi_add_operation_for_{}_", route_fn_name),
+        &format!("okapi_add_operation_for_{}_", route_fn_name),
         route_fn_name.span(),
     )
 }
