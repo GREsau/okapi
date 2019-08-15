@@ -14,13 +14,13 @@ fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
     let add_operations = create_add_operations(paths.clone())?;
     Ok(quote! {
         {
-            let settings = OpenApiSettings::new();
-            let mut gen = OpenApiGenerator::new(settings.clone());
+            let settings = ::rocket_okapi::gen::OpenApiSettings::new();
+            let mut gen = ::rocket_okapi::gen::OpenApiGenerator::new(settings.clone());
             #add_operations
             let spec = gen.into_openapi();
 
             let mut routes = ::rocket::routes![#paths];
-            routes.push(ContentHandler::json(&spec).into_route(&settings.json_path));
+            routes.push(::rocket_okapi::handler::ContentHandler::json(&spec).into_route(&settings.json_path));
             routes
         }
     })
