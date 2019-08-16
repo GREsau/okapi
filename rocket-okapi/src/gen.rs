@@ -1,34 +1,12 @@
+use crate::settings::OpenApiSettings;
 use crate::OperationInfo;
 use okapi::openapi3::*;
 use okapi::Map;
 use rocket::http::Method;
-use schemars::gen::{SchemaGenerator, SchemaSettings};
+use schemars::gen::SchemaGenerator;
 use schemars::{schema::Schema, JsonSchema};
 use std::collections::{hash_map::Entry as HashEntry, HashMap};
 use std::iter::FromIterator;
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct OpenApiSettings {
-    pub schema_settings: SchemaSettings,
-    pub json_path: String,
-}
-
-impl Default for OpenApiSettings {
-    fn default() -> Self {
-        OpenApiSettings {
-            schema_settings: SchemaSettings::openapi3(),
-            json_path: "/swagger/swagger.json".to_owned(),
-        }
-    }
-}
-
-impl OpenApiSettings {
-    pub fn new() -> Self {
-        OpenApiSettings {
-            ..Default::default()
-        }
-    }
-}
 
 #[derive(Debug, Clone)]
 pub struct OpenApiGenerator {
@@ -84,7 +62,12 @@ impl OpenApiGenerator {
                 paths
             },
             components: Some(Components {
-                schemas: Map::from_iter(self.schema_generator.into_definitions().into_iter().map(|(k, v)| (k, get_ref_or_object(v)))),
+                schemas: Map::from_iter(
+                    self.schema_generator
+                        .into_definitions()
+                        .into_iter()
+                        .map(|(k, v)| (k, get_ref_or_object(v))),
+                ),
                 ..Default::default()
             }),
             ..Default::default()
@@ -100,7 +83,7 @@ fn get_ref_or_object(schema: Schema) -> RefOr<SchemaObject> {
         Schema::Bool(false) => RefOr::Object(SchemaObject {
             not: Some(Schema::Object(Default::default()).into()),
             ..Default::default()
-        })
+        }),
     }
 }
 

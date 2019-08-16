@@ -5,6 +5,7 @@ mod responder_impls;
 
 pub mod gen;
 pub mod handler;
+pub mod settings;
 pub mod util;
 
 pub use error::*;
