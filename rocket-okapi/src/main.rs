@@ -87,6 +87,6 @@ fn main() {
                 five_hundred
             ],
         )
-        .mount("/", ::rocket_okapi::handler::swagger_ui_routes())
+        .mount("/", ::rocket_okapi::handlers::swagger_ui_routes())
         .launch();
 }

@@ -10,7 +10,7 @@ macro_rules! static_file {
     ($name: literal, $type: ident) => {
         ContentHandler(Content::<&'static [u8]>(
             ContentType::$type,
-            include_bytes!(concat!("../swagger-ui/", $name)),
+            include_bytes!(concat!("../../swagger-ui/", $name)),
         ))
         .into_route(concat!("/swagger/", $name))
     };

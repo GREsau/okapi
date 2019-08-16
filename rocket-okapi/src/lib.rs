@@ -4,7 +4,7 @@ mod error;
 mod responder_impls;
 
 pub mod gen;
-pub mod handler;
+pub mod handlers;
 pub mod settings;
 pub mod util;
 
