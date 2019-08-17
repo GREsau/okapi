@@ -9,6 +9,7 @@ extern crate schemars;
 
 use rocket::response::status::NotFound;
 use rocket_contrib::json::Json;
+use rocket_okapi::swagger_ui::*;
 use rocket_okapi::OpenApiError;
 use serde::Serialize;
 
@@ -87,6 +88,12 @@ fn main() {
                 five_hundred
             ],
         )
-        .mount("/", ::rocket_okapi::handlers::swagger_ui_routes())
+        .mount(
+            "/swagger-ui/",
+            make_swagger_ui(&SwaggerUIConfig {
+                url: Some("/openapi/openapi.json".to_owned()),
+                urls: None,
+            }),
+        )
         .launch();
 }

@@ -6,6 +6,7 @@ mod responder_impls;
 pub mod gen;
 pub mod handlers;
 pub mod settings;
+pub mod swagger_ui;
 pub mod util;
 
 pub use error::*;
