@@ -504,6 +504,6 @@ pub struct Encoding {
     pub extensions: Object,
 }
 
-fn is_false(b: &bool) -> bool {
-    !b
+fn is_false(b: impl std::borrow::Borrow<bool>) -> bool {
+    !b.borrow()
 }
