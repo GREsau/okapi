@@ -50,10 +50,24 @@ fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
 
 fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> TokenStream {
     let fn_decl = *route_fn.decl;
-    let _arg_types = get_arg_types(fn_decl.inputs.into_iter());
+    let arg_types = get_arg_types(fn_decl.inputs.into_iter());
     let return_type = match fn_decl.output {
         ReturnType::Type(_, ty) => *ty,
         ReturnType::Default => unit_type(),
+    };
+    let request_body = match route.data_param {
+        Some(arg) => {
+            let ty = match arg_types.get(&arg) {
+                Some(ty) => ty,
+                None => return quote! {
+                    compile_error!(concat!("Could not find argument ", #arg, " matching data param."))
+                }.into()
+            };
+            quote! {
+                Some(<#ty as ::rocket_okapi::request::OpenApiFromData>::request_body(gen)?.into())
+            }
+        }
+        None => quote! { None },
     };
 
     let fn_name = get_add_operation_fn_name(&route_fn.ident);
@@ -66,12 +80,14 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
             op_id: String,
         ) -> ::rocket_okapi::Result<()> {
             let responses = <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?;
+            let request_body = #request_body;
             gen.add_operation(::rocket_okapi::OperationInfo {
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,
                 operation: ::okapi::openapi3::Operation {
                     operation_id: Some(op_id),
                     responses,
+                    request_body,
                     ..Default::default()
                 },
             });

@@ -1,4 +1,5 @@
 mod responder_impls;
+
 use super::gen::OpenApiGenerator;
 use super::Result;
 use okapi::openapi3::Responses;

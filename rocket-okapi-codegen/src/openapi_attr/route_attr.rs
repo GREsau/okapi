@@ -86,7 +86,7 @@ fn parse_route_attr(args: &[NestedMeta]) -> Result<Route, Error> {
         method: method.0,
         origin: named.path.0,
         media_type: named.format.map(|x| x.0),
-        data_param: named.data,
+        data_param: named.data.map(trim_angle_brackers),
     })
 }
 
@@ -100,8 +100,12 @@ fn parse_method_route_attr(method: Method, args: &[NestedMeta]) -> Result<Route,
         method,
         origin: origin.0,
         media_type: named.format.map(|x| x.0),
-        data_param: named.data,
+        data_param: named.data.map(trim_angle_brackers),
     })
+}
+
+fn trim_angle_brackers(s: String) -> String {
+    s.trim_start_matches('<').trim_end_matches('>').to_owned()
 }
 
 fn parse_attr(name: &str, args: &[NestedMeta]) -> Result<Route, Error> {

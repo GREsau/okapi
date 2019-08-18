@@ -1,9 +1,11 @@
+mod from_data_impls;
+
 use super::gen::OpenApiGenerator;
 use super::Result;
 use okapi::openapi3::*;
 
 pub trait OpenApiFromData<'r>: rocket::data::FromData<'r> {
-    fn request_body(gen: &mut OpenApiGenerator, name: String) -> Result<RequestBody>;
+    fn request_body(gen: &mut OpenApiGenerator) -> Result<RequestBody>;
 }
 
 pub trait OpenApiFromParam<'r>: rocket::request::FromParam<'r> {

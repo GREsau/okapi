@@ -7,13 +7,12 @@ extern crate rocket_okapi;
 #[macro_use]
 extern crate schemars;
 
-use rocket::response::status::NotFound;
 use rocket_contrib::json::Json;
 use rocket_okapi::swagger_ui::*;
 use rocket_okapi::OpenApiError;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, JsonSchema)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 struct User {
     user_id: u64,
@@ -24,8 +23,8 @@ struct User {
 
 #[openapi]
 #[get("/")]
-fn index() -> Json<&'static str> {
-    Json("Hello, world!")
+fn index() -> &'static str {
+    "Hello, world!"
 }
 
 #[openapi]
@@ -39,27 +38,9 @@ fn get_user() -> Option<Json<User>> {
 }
 
 #[openapi]
-#[get("/loud")]
-fn loud() -> Json<Option<&'static str>> {
-    Json(Some("I AM SHOUTING!!!!!"))
-}
-
-#[openapi]
-#[get("/tonumber/<value>")]
-fn to_number(value: String) -> Result<Json<f64>, NotFound<Json<&'static str>>> {
-    match value.parse() {
-        Ok(f) => Ok(Json(f)),
-        Err(_) => Err(NotFound(Json("That's not a number!"))),
-    }
-}
-
-#[openapi]
-#[post("/tonumber", data = "<value>")]
-fn to_number_post(value: Json<String>) -> Result<Json<f64>, NotFound<Json<&'static str>>> {
-    match value.parse() {
-        Ok(f) => Ok(Json(f)),
-        Err(_) => Err(NotFound(Json("That's not a number!"))),
-    }
+#[post("/user", data = "<user>")]
+fn create_user(user: Json<User>) -> Json<User> {
+    user
 }
 
 #[openapi]
@@ -78,15 +59,7 @@ fn main() {
     rocket::ignite()
         .mount(
             "/",
-            routes_with_openapi![
-                index,
-                loud,
-                to_number,
-                to_number_post,
-                hidden,
-                get_user,
-                five_hundred
-            ],
+            routes_with_openapi![index, get_user, create_user, hidden, five_hundred],
         )
         .mount(
             "/swagger-ui/",
