@@ -1,4 +1,6 @@
-use crate::{gen::OpenApiGenerator, util::*, OpenApiError, OpenApiResponder, Result};
+use super::OpenApiResponder;
+use crate::{gen::OpenApiGenerator, util::*, OpenApiError};
+use okapi::openapi3::Responses;
 use rocket::response::status::NotFound;
 use rocket::response::Responder;
 use rocket_contrib::json::{Json, JsonValue}; // TODO json feature flag
@@ -6,9 +8,11 @@ use schemars::{schema::SchemaObject, JsonSchema};
 use serde::Serialize;
 use std::result::Result as StdResult;
 
+type Result = crate::Result<Responses>;
+
 impl<T: JsonSchema + Serialize> OpenApiResponder<'_> for Json<T> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = Default::default();
+        let mut responses = Responses::default();
         let schema = gen.json_schema::<T>()?;
         add_schema_response(&mut responses, 200, "application/json", schema)?;
         Ok(responses)
@@ -17,7 +21,7 @@ impl<T: JsonSchema + Serialize> OpenApiResponder<'_> for Json<T> {
 
 impl OpenApiResponder<'_> for JsonValue {
     fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Default::default();
+        let mut responses = Responses::default();
         let schema = SchemaObject::default();
         add_schema_response(&mut responses, 200, "application/json", schema.into())?;
         Ok(responses)
@@ -26,7 +30,7 @@ impl OpenApiResponder<'_> for JsonValue {
 
 impl OpenApiResponder<'_> for String {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = Default::default();
+        let mut responses = Responses::default();
         let schema = gen.json_schema::<String>()?;
         add_schema_response(&mut responses, 200, "text/plain", schema)?;
         Ok(responses)
@@ -41,7 +45,7 @@ impl<'r> OpenApiResponder<'r> for &'r str {
 
 impl OpenApiResponder<'_> for Vec<u8> {
     fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Default::default();
+        let mut responses = Responses::default();
         add_content_response(
             &mut responses,
             200,
@@ -60,7 +64,7 @@ impl<'r> OpenApiResponder<'r> for &'r [u8] {
 
 impl OpenApiResponder<'_> for () {
     fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Default::default();
+        let mut responses = Responses::default();
         ensure_status_code_exists(&mut responses, 200);
         Ok(responses)
     }

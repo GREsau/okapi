@@ -65,7 +65,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
             gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             op_id: String,
         ) -> ::rocket_okapi::Result<()> {
-            let responses = <#return_type as ::rocket_okapi::OpenApiResponder>::responses(gen)?;
+            let responses = <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?;
             gen.add_operation(::rocket_okapi::OperationInfo {
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,

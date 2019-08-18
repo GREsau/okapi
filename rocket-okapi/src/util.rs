@@ -57,7 +57,7 @@ pub fn add_schema_response(
     add_content_response(responses, status, content_type, media)
 }
 
-pub fn produce_any_responses(r1: Responses, r2: Responses) -> Result {
+pub fn produce_any_responses(r1: Responses, r2: Responses) -> Result<Responses> {
     let mut result = Responses {
         default: r1.default.or(r2.default),
         responses: r1.responses,

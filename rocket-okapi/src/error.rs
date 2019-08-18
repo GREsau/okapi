@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fmt;
 
-pub type Result<T = okapi::openapi3::Responses> = std::result::Result<T, OpenApiError>;
+pub type Result<T> = std::result::Result<T, OpenApiError>;
 
 #[derive(Debug, Clone)]
 pub struct OpenApiError {
