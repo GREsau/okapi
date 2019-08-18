@@ -9,7 +9,6 @@ extern crate schemars;
 
 use rocket_contrib::json::Json;
 use rocket_okapi::swagger_ui::*;
-use rocket_okapi::OpenApiError;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, JsonSchema)]
@@ -22,17 +21,21 @@ struct User {
 }
 
 #[openapi]
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
+#[get("/user")]
+fn get_all_users() -> Json<Vec<User>> {
+    Json(vec![User {
+        user_id: 42,
+        username: "bob".to_owned(),
+        email: None,
+    }])
 }
 
 #[openapi]
-#[get("/user")]
-fn get_user() -> Option<Json<User>> {
+#[get("/user/<id>")]
+fn get_user(id: u64) -> Option<Json<User>> {
     Some(Json(User {
+        user_id: id,
         username: "bob".to_owned(),
-        user_id: 12345,
         email: None,
     }))
 }
@@ -41,12 +44,6 @@ fn get_user() -> Option<Json<User>> {
 #[post("/user", data = "<user>")]
 fn create_user(user: Json<User>) -> Json<User> {
     user
-}
-
-#[openapi]
-#[get("/500")]
-fn five_hundred() -> Result<&'static str, OpenApiError> {
-    Err(OpenApiError::new("OH NO!".to_owned()))
 }
 
 #[get("/hidden")]
@@ -59,7 +56,7 @@ fn main() {
     rocket::ignite()
         .mount(
             "/",
-            routes_with_openapi![index, get_user, create_user, hidden, five_hundred],
+            routes_with_openapi![get_all_users, get_user, create_user, hidden],
         )
         .mount(
             "/swagger-ui/",

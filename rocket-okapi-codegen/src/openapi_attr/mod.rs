@@ -55,9 +55,9 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         ReturnType::Type(_, ty) => *ty,
         ReturnType::Default => unit_type(),
     };
-    let request_body = match route.data_param {
+    let request_body = match &route.data_param {
         Some(arg) => {
-            let ty = match arg_types.get(&arg) {
+            let ty = match arg_types.get(arg) {
                 Some(ty) => ty,
                 None => return quote! {
                     compile_error!(concat!("Could not find argument ", #arg, " matching data param."))
@@ -70,6 +70,20 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         None => quote! { None },
     };
 
+    let mut params = Vec::new();
+    for arg in route.path_params() {
+        let ty = match arg_types.get(arg) {
+            Some(ty) => ty,
+            None => return quote! {
+                compile_error!(concat!("Could not find argument ", #arg, " matching path param."))
+            }
+            .into(),
+        };
+        params.push(quote! {
+            <#ty as ::rocket_okapi::request::OpenApiFromParam>::path_parameter(gen, #arg.to_owned())?.into()
+        })
+    }
+
     let fn_name = get_add_operation_fn_name(&route_fn.ident);
     let path = route.origin.path().replace("<", "{").replace(">", "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
@@ -81,6 +95,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         ) -> ::rocket_okapi::Result<()> {
             let responses = <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?;
             let request_body = #request_body;
+            let parameters = vec![#(#params),*];
             gen.add_operation(::rocket_okapi::OperationInfo {
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,
@@ -88,6 +103,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
                     operation_id: Some(op_id),
                     responses,
                     request_body,
+                    parameters,
                     ..Default::default()
                 },
             });

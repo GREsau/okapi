@@ -11,10 +11,28 @@ pub struct Route {
     pub origin: Origin<'static>,
     pub media_type: Option<MediaType>,
     pub data_param: Option<String>,
-    //pub path_params: Vec<String>,
-    //pub path_multi_param: Option<String>,
-    //pub query_params: Vec<String>,
-    //pub query_multi_param: Option<String>,
+}
+
+impl Route {
+    pub fn path_params(&self) -> impl Iterator<Item = &str> {
+        self.origin.segments().filter_map(|s| {
+            if s.starts_with('<') && s.ends_with('>') && !s.ends_with("..>") {
+                Some(&s[1..s.len() - 1])
+            } else {
+                None
+            }
+        })
+    }
+
+    pub fn _path_multi_param(&self) -> Option<&str> {
+        self.origin.segments().find_map(|s| {
+            if s.starts_with('<') && s.ends_with("..>") {
+                Some(&s[1..s.len() - 3])
+            } else {
+                None
+            }
+        })
+    }
 }
 
 #[derive(Debug)]
@@ -104,8 +122,12 @@ fn parse_method_route_attr(method: Method, args: &[NestedMeta]) -> Result<Route,
     })
 }
 
-fn trim_angle_brackers(s: String) -> String {
-    s.trim_start_matches('<').trim_end_matches('>').to_owned()
+fn trim_angle_brackers(mut s: String) -> String {
+    if s.starts_with('<') && s.ends_with('>') {
+        s.pop();
+        s.remove(0);
+    }
+    s
 }
 
 fn parse_attr(name: &str, args: &[NestedMeta]) -> Result<Route, Error> {
