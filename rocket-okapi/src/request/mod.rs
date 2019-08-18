@@ -1,4 +1,5 @@
 mod from_data_impls;
+mod from_param_impls;
 
 use super::gen::OpenApiGenerator;
 use super::Result;

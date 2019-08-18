@@ -245,6 +245,7 @@ pub struct Response {
 #[serde(rename_all = "camelCase")]
 pub struct Parameter {
     pub name: String,
+    // TODO this should probaby be an enum, not String
     #[serde(rename = "in")]
     pub location: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -261,6 +262,7 @@ pub struct Parameter {
     pub extensions: Object,
 }
 
+// maybe this should just been inlined into Parameter as fields?
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "make_schema", derive(MakeSchema))]
 #[serde(untagged, rename_all = "camelCase")]

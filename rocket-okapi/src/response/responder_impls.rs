@@ -5,6 +5,7 @@ use rocket::response::Responder;
 use rocket_contrib::json::{Json, JsonValue}; // TODO json feature flag
 use schemars::{schema::SchemaObject, JsonSchema};
 use serde::Serialize;
+use std::fmt::Debug;
 use std::result::Result as StdResult;
 
 type Result = crate::Result<Responses>;
@@ -96,10 +97,7 @@ status_responder!(Created, 201);
 status_responder!(BadRequest, 400);
 status_responder!(NotFound, 404);
 
-impl<'r, T: OpenApiResponder<'r>, E> OpenApiResponder<'r> for StdResult<T, E>
-where
-    StdResult<T, E>: Responder<'r>,
-{
+impl<'r, T: OpenApiResponder<'r>, E: Debug> OpenApiResponder<'r> for StdResult<T, E> {
     default fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = T::responses(gen)?;
         ensure_status_code_exists(&mut responses, 500);
@@ -107,18 +105,16 @@ where
     }
 }
 
-impl<'r, T: OpenApiResponder<'r>, E: Responder<'r>> OpenApiResponder<'r> for StdResult<T, E>
-where
-    StdResult<T, E>: Responder<'r>,
+impl<'r, T: OpenApiResponder<'r>, E: Responder<'r> + Debug> OpenApiResponder<'r>
+    for StdResult<T, E>
 {
     default fn responses(_: &mut OpenApiGenerator) -> Result {
         Err(OpenApiError::new("Unable to generate OpenAPI spec for Result<T, E> response, as E implements Responder but not OpenApiResponder.".to_owned()))
     }
 }
 
-impl<'r, T: OpenApiResponder<'r>, E: OpenApiResponder<'r>> OpenApiResponder<'r> for StdResult<T, E>
-where
-    StdResult<T, E>: Responder<'r>,
+impl<'r, T: OpenApiResponder<'r>, E: OpenApiResponder<'r> + Debug> OpenApiResponder<'r>
+    for StdResult<T, E>
 {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         let ok_responses = T::responses(gen)?;
