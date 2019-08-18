@@ -1,7 +1,6 @@
 use super::OpenApiResponder;
 use crate::{gen::OpenApiGenerator, util::*, OpenApiError};
 use okapi::openapi3::Responses;
-use rocket::response::status::NotFound;
 use rocket::response::Responder;
 use rocket_contrib::json::{Json, JsonValue}; // TODO json feature flag
 use schemars::{schema::SchemaObject, JsonSchema};
@@ -78,13 +77,24 @@ impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r> for Option<T> {
     }
 }
 
-impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r> for NotFound<T> {
-    fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = T::responses(gen)?;
-        set_status_code(&mut responses, 404)?;
-        Ok(responses)
-    }
+macro_rules! status_responder {
+    ($responder: ident, $status: literal) => {
+        impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r>
+            for rocket::response::status::$responder<T>
+        {
+            fn responses(gen: &mut OpenApiGenerator) -> Result {
+                let mut responses = T::responses(gen)?;
+                set_status_code(&mut responses, $status)?;
+                Ok(responses)
+            }
+        }
+    };
 }
+
+status_responder!(Accepted, 202);
+status_responder!(Created, 201);
+status_responder!(BadRequest, 400);
+status_responder!(NotFound, 404);
 
 impl<'r, T: OpenApiResponder<'r>, E> OpenApiResponder<'r> for StdResult<T, E>
 where
