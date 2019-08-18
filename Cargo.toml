@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "okapi",
+    "rocket-okapi",
+    "rocket-okapi-codegen",
+    "examples/json-web-api"
+]

@@ -1,20 +1,18 @@
 [package]
-name = "rocket_okapi"
+name = "json_web_api"
 version = "0.1.0"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 schemars = "0.1.6"
-okapi = { version = "0.1.0", path = "../okapi" }
-rocket_okapi_codegen = { version = "0.1.0", path = "../rocket-okapi-codegen" }
+okapi = { version = "0.1.0", path = "../../okapi" }
+rocket_okapi = { version = "0.1.0", path = "../../rocket-okapi" }
 rocket = { version = "0.4.2", default-features = false }
 serde = { version = "1.0" }
-serde_json = "1.0"
 
 [dependencies.rocket_contrib]
 version = "0.4.2"
 default-features = false
 features = ["json"]
+
