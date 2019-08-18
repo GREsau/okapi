@@ -3,6 +3,7 @@ name = "json_web_api"
 version = "0.1.0"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
+default-run = "main"
 
 [dependencies]
 schemars = "0.1.6"
@@ -10,6 +11,7 @@ okapi = { version = "0.1.0", path = "../../okapi" }
 rocket_okapi = { version = "0.1.0", path = "../../rocket-okapi" }
 rocket = { version = "0.4.2", default-features = false }
 serde = { version = "1.0" }
+rocket_lamb = "0.3.1"
 
 [dependencies.rocket_contrib]
 version = "0.4.2"

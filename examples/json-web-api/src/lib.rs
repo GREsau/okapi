@@ -52,7 +52,7 @@ fn hidden() -> Json<&'static str> {
     Json("Hidden from swagger!")
 }
 
-fn main() {
+pub fn make_rocket() -> rocket::Rocket {
     rocket::ignite()
         .mount(
             "/",
@@ -65,5 +65,4 @@ fn main() {
                 urls: None,
             }),
         )
-        .launch();
 }
