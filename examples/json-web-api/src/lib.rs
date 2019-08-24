@@ -46,8 +46,8 @@ fn create_user(user: Json<User>) -> Json<User> {
     user
 }
 
-#[get("/hidden")]
 #[openapi(skip)]
+#[get("/hidden")]
 fn hidden() -> Json<&'static str> {
     Json("Hidden from swagger!")
 }
