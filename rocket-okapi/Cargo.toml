@@ -1,10 +1,12 @@
 [package]
 name = "rocket_okapi"
+description = "OpenAPI (AKA Swagger) document generation for Rocket applications"
+repository = "https://github.com/GREsau/okapi"
 version = "0.1.0"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+keywords = ["rust", "openapi", "swagger", "rocket"]
 
 [dependencies]
 schemars = "0.1.6"
