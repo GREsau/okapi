@@ -20,7 +20,7 @@ fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
             let spec = gen.into_openapi();
 
             let mut routes = ::rocket::routes![#paths];
-            routes.push(::rocket_okapi::handlers::ContentHandler::json(&spec).into_route(&settings.json_path));
+            routes.push(::rocket_okapi::handlers::OpenApiHandler::new(spec).into_route(&settings.json_path));
             routes
         }
     })

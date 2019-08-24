@@ -11,7 +11,7 @@ okapi = { version = "0.1.0", path = "../../okapi" }
 rocket_okapi = { version = "0.1.0", path = "../../rocket-okapi" }
 rocket = { version = "0.4.2", default-features = false }
 serde = { version = "1.0" }
-rocket_lamb = "0.3.1"
+rocket_lamb = "0.4.0"
 
 [dependencies.rocket_contrib]
 version = "0.4.2"

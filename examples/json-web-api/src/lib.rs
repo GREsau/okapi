@@ -61,7 +61,7 @@ pub fn make_rocket() -> rocket::Rocket {
         .mount(
             "/swagger-ui/",
             make_swagger_ui(&SwaggerUIConfig {
-                url: Some("/openapi/openapi.json".to_owned()),
+                url: Some("../openapi.json".to_owned()),
                 urls: None,
             }),
         )

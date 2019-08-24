@@ -10,7 +10,7 @@ impl Default for OpenApiSettings {
     fn default() -> Self {
         OpenApiSettings {
             schema_settings: SchemaSettings::openapi3(),
-            json_path: "/openapi/openapi.json".to_owned(),
+            json_path: "/openapi.json".to_owned(),
         }
     }
 }
