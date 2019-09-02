@@ -22,7 +22,7 @@ impl RedirectHandler {
 
 impl Handler for RedirectHandler {
     fn handle<'r>(&self, req: &'r Request, _: Data) -> Outcome<'r> {
-        let path = req.uri().path().trim_end_matches('/');
+        let path = req.route().unwrap().base().trim_end_matches('/');
         Outcome::from(req, Redirect::to(format!("{}/{}", path, self.dest)))
     }
 }
