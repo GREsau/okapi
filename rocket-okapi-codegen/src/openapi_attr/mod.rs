@@ -11,7 +11,7 @@ use syn::{AttributeArgs, FnArg, Ident, ItemFn, ReturnType, Type, TypeTuple};
 
 #[derive(Debug, Default, FromMeta)]
 #[darling(default)]
-struct OkapiAttribute {
+struct OpenApiAttribute {
     pub skip: bool,
 }
 
@@ -19,7 +19,7 @@ pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
     let attr_args = parse_macro_input!(args as AttributeArgs);
     let input = parse_macro_input!(input as ItemFn);
 
-    let okapi_attr = match OkapiAttribute::from_list(&attr_args) {
+    let okapi_attr = match OpenApiAttribute::from_list(&attr_args) {
         Ok(v) => v,
         Err(e) => {
             return e.write_errors().into();
@@ -39,7 +39,7 @@ pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
 fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
     let fn_name = get_add_operation_fn_name(&route_fn.ident);
     TokenStream::from(quote! {
-        fn #fn_name(
+        pub fn #fn_name(
             _gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             _op_id: String,
         ) -> ::rocket_okapi::Result<()> {
@@ -89,7 +89,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
 
     TokenStream::from(quote! {
-        fn #fn_name(
+        pub fn #fn_name(
             gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             op_id: String,
         ) -> ::rocket_okapi::Result<()> {
