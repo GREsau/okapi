@@ -6,7 +6,7 @@ edition = "2018"
 default-run = "main"
 
 [dependencies]
-schemars = "0.1.6"
+schemars = "0.1.10"
 okapi = { version = "0.1.0", path = "../../okapi" }
 rocket_okapi = { version = "0.1.0", path = "../../rocket-okapi" }
 rocket = { version = "0.4.2", default-features = false }

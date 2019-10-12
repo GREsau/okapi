@@ -152,9 +152,9 @@ fn is_route_attribute(a: &Attribute) -> bool {
 
 fn to_name_and_args(attr: &Attribute) -> Option<(String, Vec<NestedMeta>)> {
     match attr.parse_meta() {
-        Ok(Meta::List(MetaList { ident, nested, .. })) => {
-            Some((ident.to_string(), nested.into_iter().collect()))
-        }
+        Ok(Meta::List(MetaList { path, nested, .. })) => path
+            .get_ident()
+            .map(|name| (name.to_string(), nested.into_iter().collect())),
         _ => None,
     }
 }

@@ -37,7 +37,7 @@ pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
 }
 
 fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
-    let fn_name = get_add_operation_fn_name(&route_fn.ident);
+    let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
     TokenStream::from(quote! {
         pub fn #fn_name(
             _gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
@@ -49,9 +49,8 @@ fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
 }
 
 fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> TokenStream {
-    let fn_decl = *route_fn.decl;
-    let arg_types = get_arg_types(fn_decl.inputs.into_iter());
-    let return_type = match fn_decl.output {
+    let arg_types = get_arg_types(route_fn.sig.inputs.into_iter());
+    let return_type = match route_fn.sig.output {
         ReturnType::Type(_, ty) => *ty,
         ReturnType::Default => unit_type(),
     };
@@ -84,7 +83,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         })
     }
 
-    let fn_name = get_add_operation_fn_name(&route_fn.ident);
+    let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
     let path = route.origin.path().replace("<", "{").replace(">", "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
 
@@ -129,9 +128,9 @@ fn to_pascal_case_string(method: Method) -> String {
 fn get_arg_types(args: impl Iterator<Item = FnArg>) -> Map<String, Type> {
     let mut result = Map::new();
     for arg in args {
-        if let syn::FnArg::Captured(cap_arg) = arg {
-            let name = cap_arg.pat.into_token_stream().to_string();
-            let ty = cap_arg.ty;
+        if let syn::FnArg::Typed(arg) = arg {
+            let name = arg.pat.into_token_stream().to_string();
+            let ty = *arg.ty;
             result.insert(name, ty);
         }
     }
