@@ -4,7 +4,8 @@ use okapi::openapi3::*;
 use okapi::Map;
 use rocket::http::Method;
 use schemars::gen::SchemaGenerator;
-use schemars::{schema::Schema, JsonSchema};
+use schemars::schema::SchemaObject;
+use schemars::JsonSchema;
 use std::collections::{hash_map::Entry as HashEntry, HashMap};
 use std::iter::FromIterator;
 
@@ -41,9 +42,9 @@ impl OpenApiGenerator {
         };
     }
 
-    pub fn json_schema<T: ?Sized + JsonSchema>(&mut self) -> schemars::Result<RefOr<SchemaObject>> {
+    pub fn json_schema<T: ?Sized + JsonSchema>(&mut self) -> schemars::Result<SchemaObject> {
         let schema = self.schema_generator.subschema_for::<T>()?;
-        Ok(get_ref_or_object(schema))
+        Ok(schema.into())
     }
 
     pub fn schema_generator(&self) -> &SchemaGenerator {
@@ -66,24 +67,12 @@ impl OpenApiGenerator {
                     self.schema_generator
                         .into_definitions()
                         .into_iter()
-                        .map(|(k, v)| (k, get_ref_or_object(v))),
+                        .map(|(k, v)| (k, v.into())),
                 ),
                 ..Default::default()
             }),
             ..Default::default()
         }
-    }
-}
-
-fn get_ref_or_object(schema: Schema) -> RefOr<SchemaObject> {
-    match schema {
-        Schema::Ref(r) => RefOr::Ref(r),
-        Schema::Object(s) => RefOr::Object(s),
-        Schema::Bool(true) => RefOr::Object(Default::default()),
-        Schema::Bool(false) => RefOr::Object(SchemaObject {
-            not: Some(Schema::Object(Default::default()).into()),
-            ..Default::default()
-        }),
     }
 }
 

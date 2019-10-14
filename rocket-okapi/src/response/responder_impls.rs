@@ -3,7 +3,7 @@ use crate::{gen::OpenApiGenerator, util::*, OpenApiError};
 use okapi::openapi3::Responses;
 use rocket::response::Responder;
 use rocket_contrib::json::{Json, JsonValue}; // TODO json feature flag
-use schemars::{schema::SchemaObject, JsonSchema};
+use schemars::JsonSchema;
 use serde::Serialize;
 use std::fmt::Debug;
 use std::result::Result as StdResult;
@@ -20,9 +20,9 @@ impl<T: JsonSchema + Serialize> OpenApiResponder<'_> for Json<T> {
 }
 
 impl OpenApiResponder<'_> for JsonValue {
-    fn responses(_: &mut OpenApiGenerator) -> Result {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
-        let schema = SchemaObject::default();
+        let schema = gen.schema_generator().schema_for_any();
         add_schema_response(&mut responses, 200, "application/json", schema.into())?;
         Ok(responses)
     }

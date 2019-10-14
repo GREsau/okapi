@@ -1,6 +1,5 @@
 use crate::Map;
-use schemars::schema::Schema;
-pub use schemars::schema::{Ref, SchemaObject};
+pub use schemars::schema::SchemaObject;
 #[cfg(feature = "derive_json_schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -17,18 +16,16 @@ pub enum RefOr<T> {
     Object(T),
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+pub struct Ref {
+    #[serde(rename = "$ref")]
+    pub reference: String,
+}
+
 impl<T> From<T> for RefOr<T> {
     fn from(o: T) -> Self {
         RefOr::<T>::Object(o)
-    }
-}
-
-impl Into<Schema> for RefOr<SchemaObject> {
-    fn into(self) -> Schema {
-        match self {
-            RefOr::Ref(r) => Schema::Ref(r),
-            RefOr::Object(o) => Schema::Object(o),
-        }
     }
 }
 
@@ -204,7 +201,7 @@ pub struct Responses {
 #[serde(default, rename_all = "camelCase")]
 pub struct Components {
     #[serde(default, skip_serializing_if = "Map::is_empty")]
-    pub schemas: Map<String, RefOr<SchemaObject>>,
+    pub schemas: Map<String, SchemaObject>,
     #[serde(default, skip_serializing_if = "Map::is_empty")]
     pub responses: Map<String, RefOr<Response>>,
     #[serde(default, skip_serializing_if = "Map::is_empty")]
@@ -274,7 +271,7 @@ pub enum ParameterValue {
         explode: Option<bool>,
         #[serde(default, skip_serializing_if = "is_false")]
         allow_reserved: bool,
-        schema: RefOr<SchemaObject>,
+        schema: SchemaObject,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         example: Option<Value>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -453,7 +450,7 @@ pub struct Callback {
 #[serde(default, rename_all = "camelCase")]
 pub struct MediaType {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub schema: Option<RefOr<SchemaObject>>,
+    pub schema: Option<SchemaObject>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub example: Option<Value>,
     #[serde(skip_serializing_if = "Option::is_none")]

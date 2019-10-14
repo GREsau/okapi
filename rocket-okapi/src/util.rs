@@ -48,7 +48,7 @@ pub fn add_schema_response(
     responses: &mut Responses,
     status: u16,
     content_type: impl ToString,
-    schema: RefOr<SchemaObject>,
+    schema: SchemaObject,
 ) -> Result<()> {
     let media = MediaType {
         schema: Some(schema),
@@ -128,19 +128,15 @@ fn accept_either_media_type(mt1: MediaType, mt2: MediaType) -> MediaType {
 }
 
 fn accept_either_schema(
-    s1: Option<RefOr<SchemaObject>>,
-    s2: Option<RefOr<SchemaObject>>,
-) -> Option<RefOr<SchemaObject>> {
+    s1: Option<SchemaObject>,
+    s2: Option<SchemaObject>,
+) -> Option<SchemaObject> {
     let (s1, s2) = match (s1, s2) {
         (Some(s1), Some(s2)) => (s1, s2),
-        (Some(s), None) | (None, Some(s)) => (s, SchemaObject::default().into()),
+        (Some(s), None) | (None, Some(s)) => (s, SchemaObject::default()),
         (None, None) => return None,
     };
-    Some(
-        SchemaObject {
-            any_of: Some(vec![s1.into(), s2.into()]),
-            ..Default::default()
-        }
-        .into(),
-    )
+    let mut schema = SchemaObject::default();
+    schema.subschemas().any_of = Some(vec![s1.into(), s2.into()]);
+    Some(schema)
 }

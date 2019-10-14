@@ -12,6 +12,7 @@ pub mod util;
 
 pub use error::*;
 pub use rocket_okapi_codegen::*;
+pub use schemars::JsonSchema;
 
 pub struct OperationInfo {
     pub path: String,

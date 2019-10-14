@@ -4,11 +4,10 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_okapi;
-#[macro_use]
-extern crate schemars;
 
 use rocket_contrib::json::Json;
 use rocket_okapi::swagger_ui::*;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, JsonSchema)]
