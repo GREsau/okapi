@@ -3,7 +3,6 @@ name = "json_web_api"
 version = "0.1.0"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
-default-run = "main"
 
 [dependencies]
 schemars = "0.1.10"
