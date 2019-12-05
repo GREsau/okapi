@@ -13,7 +13,7 @@ type Result = crate::Result<Responses>;
 impl<T: JsonSchema + Serialize> OpenApiResponder<'_> for Json<T> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
-        let schema = gen.json_schema::<T>()?;
+        let schema = gen.json_schema::<T>();
         add_schema_response(&mut responses, 200, "application/json", schema)?;
         Ok(responses)
     }
@@ -31,7 +31,7 @@ impl OpenApiResponder<'_> for JsonValue {
 impl OpenApiResponder<'_> for String {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
-        let schema = gen.json_schema::<String>()?;
+        let schema = gen.json_schema::<String>();
         add_schema_response(&mut responses, 200, "text/plain", schema)?;
         Ok(responses)
     }

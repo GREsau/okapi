@@ -42,9 +42,8 @@ impl OpenApiGenerator {
         };
     }
 
-    pub fn json_schema<T: ?Sized + JsonSchema>(&mut self) -> schemars::Result<SchemaObject> {
-        let schema = self.schema_generator.subschema_for::<T>()?;
-        Ok(schema.into())
+    pub fn json_schema<T: ?Sized + JsonSchema>(&mut self) -> SchemaObject {
+        self.schema_generator.subschema_for::<T>().into()
     }
 
     pub fn schema_generator(&self) -> &SchemaGenerator {

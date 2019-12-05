@@ -21,9 +21,3 @@ impl fmt::Display for OpenApiError {
 }
 
 impl Error for OpenApiError {}
-
-impl From<schemars::JsonSchemaError> for OpenApiError {
-    fn from(err: schemars::JsonSchemaError) -> Self {
-        Self::new(err.to_string())
-    }
-}

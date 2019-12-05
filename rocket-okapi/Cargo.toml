@@ -9,7 +9,7 @@ license = "MIT"
 keywords = ["rust", "openapi", "swagger", "rocket"]
 
 [dependencies]
-schemars = "0.2.0"
+schemars = "0.5"
 okapi = { version = "0.1.2", path = "../okapi" }
 rocket_okapi_codegen = { version = "0.1.2", path = "../rocket-okapi-codegen" }
 rocket = { version = "0.4.2", default-features = false }

@@ -9,9 +9,9 @@ license = "MIT"
 keywords = ["rust", "openapi", "swagger"]
 
 [features]
-derive_json_schema = []
+derive_json_schema = ["schemars/derive_json_schema"]
 
 [dependencies]
-schemars = "0.2.0"
+schemars = "0.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

@@ -10,7 +10,7 @@ type Result = crate::Result<RequestBody>;
 
 impl<'a, T: JsonSchema + Deserialize<'a>> OpenApiFromData<'a> for Json<T> {
     fn request_body(gen: &mut OpenApiGenerator) -> Result {
-        let schema = gen.json_schema::<T>()?;
+        let schema = gen.json_schema::<T>();
         Ok(RequestBody {
             content: {
                 let mut map = Map::new();

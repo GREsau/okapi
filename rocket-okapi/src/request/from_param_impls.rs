@@ -9,7 +9,7 @@ macro_rules! impl_from_param {
     ($ty: path) => {
         impl<'r> OpenApiFromParam<'r> for $ty {
             fn path_parameter(gen: &mut OpenApiGenerator, name: String) -> Result {
-                let schema = gen.json_schema::<$ty>()?;
+                let schema = gen.json_schema::<$ty>();
                 Ok(Parameter {
                     name,
                     location: "path".to_owned(),
