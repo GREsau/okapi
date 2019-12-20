@@ -122,3 +122,16 @@ impl<'r, T: OpenApiResponder<'r>, E: OpenApiResponder<'r> + Debug> OpenApiRespon
         produce_any_responses(ok_responses, err_responses)
     }
 }
+
+#[cfg(feature = "either")]
+impl<'r, L: OpenApiResponder<'r>, R: OpenApiResponder<'r>> OpenApiResponder<'r>
+    for either::Either<L, R> 
+    where either::Either<L, R> : Responder<'r>
+{
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let left_responses = L::responses(gen)?;
+        let right_responses = R::responses(gen)?;
+        produce_any_responses(left_responses, right_responses)
+    }
+}
+

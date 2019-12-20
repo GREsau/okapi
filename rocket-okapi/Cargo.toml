@@ -8,6 +8,9 @@ edition = "2018"
 license = "MIT"
 keywords = ["rust", "openapi", "swagger", "rocket"]
 
+[features]
+default = ["either"]
+
 [dependencies]
 schemars = "0.2.0"
 okapi = { version = "0.1.2", path = "../okapi" }
@@ -15,6 +18,7 @@ rocket_okapi_codegen = { version = "0.1.2", path = "../rocket-okapi-codegen" }
 rocket = { version = "0.4.2", default-features = false }
 serde = { version = "1.0" }
 serde_json = "1.0"
+either = { version = "1.5", optional = true }
 
 [dependencies.rocket_contrib]
 version = "0.4.2"
