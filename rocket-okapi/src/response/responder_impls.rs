@@ -97,6 +97,28 @@ status_responder!(Created, 201);
 status_responder!(BadRequest, 400);
 status_responder!(NotFound, 404);
 
+macro_rules! response_content_wrapper {
+    ($responder: ident, $mime: literal) => {
+        impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r>
+            for rocket::response::content::$responder<T>
+        {
+            fn responses(gen: &mut OpenApiGenerator) -> Result {
+                let mut responses = T::responses(gen)?;
+                set_content_type(&mut responses, $mime)?;
+                Ok(responses)
+            }
+        }
+    };
+}
+
+response_content_wrapper!(Css, "text/css");
+response_content_wrapper!(Html, "text/html");
+response_content_wrapper!(JavaScript, "application/javascript");
+response_content_wrapper!(Json, "application/json");
+response_content_wrapper!(MsgPack, "application/msgpack");
+response_content_wrapper!(Plain, "text/plain");
+response_content_wrapper!(Xml, "text/xml");
+
 impl<'r, T: OpenApiResponder<'r>, E: Debug> OpenApiResponder<'r> for StdResult<T, E> {
     default fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = T::responses(gen)?;
