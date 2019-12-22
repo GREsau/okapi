@@ -111,6 +111,11 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         })
     }
 
+    let mut responses = Vec::new();
+    responses.push(quote! {
+      <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?
+    });
+
     let data_param_arg = route.data_param.clone().unwrap_or_else(|| String::new());
     for arg_type in arg_types {
       let ty = arg_type.1;
@@ -122,6 +127,9 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         params.push(quote! {
           <#ty as ::rocket_okapi::request::OpenApiFromRequest>::request_parameter(gen, #arg.to_owned())?.into()
         });
+        responses.push(quote! {
+          <#ty as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?
+        })
       }
     }
 
@@ -143,7 +151,13 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
             gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             op_id: String,
         ) -> ::rocket_okapi::Result<()> {
-            let responses = <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?;
+            let mut resps = vec![#(#responses), *];
+            let mut first_response = resps.pop().unwrap();
+            for resp in resps {
+              for entry in resp.responses {
+                first_response.responses.entry(entry.0).or_insert(entry.1);
+              }
+            }
             let request_body = #request_body;
             let mut parameters: Vec<::okapi::openapi3::RefOr<::okapi::openapi3::Parameter>> = vec![#(#params),*];
             // add nested lists
@@ -159,7 +173,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
                 method: ::rocket::http::Method::#method,
                 operation: ::okapi::openapi3::Operation {
                     operation_id: Some(op_id),
-                    responses,
+                    responses: first_response,
                     request_body,
                     parameters,
                     summary: #title,
