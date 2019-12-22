@@ -111,6 +111,20 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         })
     }
 
+    let data_param_arg = route.data_param.clone().unwrap_or_else(|| String::new());
+    for arg_type in arg_types {
+      let ty = arg_type.1;
+      let arg = arg_type.0;
+
+      if route.path_params().find(|item| arg == item.to_string()).is_none()
+        && data_param_arg != arg && !format!("{:?}", ty).contains("ident: \"State\"")
+      {
+        params.push(quote! {
+          <#ty as ::rocket_okapi::request::OpenApiFromRequest>::request_parameter(gen, #arg.to_owned())?.into()
+        });
+      }
+    }
+
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
     let path = route.origin.path().replace("<", "{").replace(">", "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
