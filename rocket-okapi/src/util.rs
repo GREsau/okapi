@@ -44,6 +44,24 @@ pub fn add_media_type(
         .or_insert(media);
 }
 
+pub fn set_content_type(
+    responses: &mut Responses,
+    content_type: impl ToString
+) -> Result<()> {
+    for ref mut resp_refor in responses.responses.values_mut() {
+        let response = ensure_not_ref(*resp_refor)?;
+        let content = &mut response.content;
+        let mt = if content.values().len() == 1 {
+            content.values().next().unwrap().clone()
+        } else { 
+            content.values().fold(Default::default(), |mt, mt2| accept_either_media_type(mt, mt2.clone()))
+        };
+        content.clear();
+        content.insert(content_type.to_string(), mt);
+    }
+    Ok(())
+}
+
 pub fn add_schema_response(
     responses: &mut Responses,
     status: u16,
@@ -133,7 +151,7 @@ fn accept_either_schema(
 ) -> Option<SchemaObject> {
     let (s1, s2) = match (s1, s2) {
         (Some(s1), Some(s2)) => (s1, s2),
-        (Some(s), None) | (None, Some(s)) => (s, SchemaObject::default()),
+        (Some(s), None) | (None, Some(s)) => return Some(s),
         (None, None) => return None,
     };
     let mut schema = SchemaObject::default();
