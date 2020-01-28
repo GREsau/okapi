@@ -15,7 +15,7 @@ use syn::Ident;
 /// of the arguments of the route implement one of the traits in `rocket_okapi::request`, and that
 /// the return type implements `OpenApiResponder`.
 /// ### Example
-/// ```
+/// ```rust,ignore
 /// use rocket_okapi::openapi;
 /// use rocket::get;
 ///

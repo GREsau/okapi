@@ -36,6 +36,16 @@ pub struct UrlObject {
     pub url: String,
 }
 
+impl UrlObject {
+    /// Create a new `UrlObject` from the provided name and url.
+    pub fn new(name: &str, url: &str) -> Self {
+        Self {
+            name: name.to_string(),
+            url: url.to_string(),
+        }
+    }
+}
+
 /// Transform the provided `SwaggerUIConfig` into a list of `Route`s that serve the swagger web ui.
 pub fn make_swagger_ui(config: &SwaggerUIConfig) -> impl Into<Vec<Route>> {
     let config_handler = ContentHandler::json(config);
