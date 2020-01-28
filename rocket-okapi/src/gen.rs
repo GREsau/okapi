@@ -9,6 +9,7 @@ use schemars::JsonSchema;
 use std::collections::{hash_map::Entry as HashEntry, HashMap};
 use std::iter::FromIterator;
 
+/// A struct that visits all `rocket::Route`s, and aggregates information about them.
 #[derive(Debug, Clone)]
 pub struct OpenApiGenerator {
     settings: OpenApiSettings,
@@ -17,6 +18,7 @@ pub struct OpenApiGenerator {
 }
 
 impl OpenApiGenerator {
+    /// Create a new `OpenApiGenerator` from the settings provided.
     pub fn new(settings: OpenApiSettings) -> Self {
         OpenApiGenerator {
             schema_generator: settings.schema_settings.clone().into_generator(),
@@ -25,6 +27,7 @@ impl OpenApiGenerator {
         }
     }
 
+    /// Add a new `HTTP Method` to the collection of endpoints in the `OpenApiGenerator`.
     pub fn add_operation(&mut self, mut op: OperationInfo) {
         if let Some(op_id) = op.operation.operation_id {
             // TODO do this outside add_operation
@@ -42,14 +45,17 @@ impl OpenApiGenerator {
         };
     }
 
+    /// Generate the final `JsonSchema` from all added operations.
     pub fn json_schema<T: ?Sized + JsonSchema>(&mut self) -> SchemaObject {
         self.schema_generator.subschema_for::<T>().into()
     }
 
+    /// Obtain the internal `SchemaGenerator` object.
     pub fn schema_generator(&self) -> &SchemaGenerator {
         &self.schema_generator
     }
 
+    /// Generate an `OpenApi` specification for all added operations.
     pub fn into_openapi(self) -> OpenApi {
         OpenApi {
             openapi: "3.0.0".to_owned(),

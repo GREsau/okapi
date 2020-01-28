@@ -4,16 +4,19 @@ use rocket::http::{ContentType, Method};
 use rocket::response::Content;
 use rocket::{Data, Request, Route};
 
+/// A handler type that is used to serve the `openapi.json` files.
 #[derive(Clone)]
 pub struct OpenApiHandler {
     spec: OpenApi,
 }
 
 impl OpenApiHandler {
+    /// Create a new handler from an API spec.
     pub fn new(spec: OpenApi) -> Self {
         OpenApiHandler { spec }
     }
 
+    /// Create a new route from this `OpenApiHandler`.
     pub fn into_route(self, path: impl AsRef<str>) -> Route {
         Route::new(Method::Get, path, self)
     }
