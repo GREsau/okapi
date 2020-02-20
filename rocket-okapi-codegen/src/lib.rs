@@ -35,8 +35,7 @@ pub fn openapi(args: TokenStream, mut input: TokenStream) -> TokenStream {
 
 /// A replacement macro for `rocket::routes`. The key differences are that this macro will add an
 /// additional element to the resulting `Vec<rocket::Route>`, which serves a static file called
-/// `openapi.json`. This file can then be used to display the routes in the swagger ui. Note that
-/// this macro requires [schemars](https://docs.rs/schemars) to be in scope.
+/// `openapi.json`. This file can then be used to display the routes in the swagger ui.
 #[proc_macro]
 pub fn routes_with_openapi(input: TokenStream) -> TokenStream {
     routes_with_openapi::parse(input)
