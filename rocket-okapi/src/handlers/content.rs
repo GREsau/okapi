@@ -11,7 +11,7 @@ pub struct ContentHandler<R: Responder<'static> + Clone + Send + Sync + 'static>
 }
 
 impl ContentHandler<String> {
-    /// Create a `ContentHandle<String>` which serves its content as `JSON`.
+    /// Create a `ContentHandler<String>` which serves its content as JSON.
     pub fn json(content: &impl serde::Serialize) -> Self {
         let json =
             serde_json::to_string_pretty(content).expect("Could not serialize content as JSON.");
