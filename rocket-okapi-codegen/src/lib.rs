@@ -9,7 +9,8 @@ mod openapi_attr;
 mod routes_with_openapi;
 
 use proc_macro::TokenStream;
-use syn::Ident;
+use syn::{token::Paren, Ident, GenericArgument, Type, TypeNever, TypeParen};
+use syn::visit_mut::{self, VisitMut};
 
 #[proc_macro_attribute]
 pub fn openapi(args: TokenStream, mut input: TokenStream) -> TokenStream {
@@ -32,8 +33,36 @@ fn preserve_span_information(input: TokenStream) -> TokenStream {
     // it back out causes span information to be preserved.
     // See https://github.com/GREsau/okapi/issues/12
     // and https://github.com/rust-lang/rust/issues/43081
-    let parsed_input: syn::Item  = syn::parse(input).unwrap();
+    let mut parsed_input: syn::Item  = syn::parse(input).unwrap();
+
+    // Nested generics cause span bugs - we can work around this by wrapping all
+    // generic type parameters in parentheses.
+    // https://github.com/rust-lang/rust/pull/48258
+    GenericTypeVisitor.visit_item_mut(&mut parsed_input);
+
     quote!(#parsed_input).into()
+}
+
+struct GenericTypeVisitor;
+
+impl VisitMut for GenericTypeVisitor {
+    fn visit_generic_argument_mut(&mut self, node: &mut GenericArgument) {
+        visit_mut::visit_generic_argument_mut(self, node);
+
+        if let GenericArgument::Type(ref mut ty) = node {
+            let ty_owned = std::mem::replace(ty, dummy_type());
+            *ty = Type::Paren(TypeParen {
+                paren_token: Paren::default(),
+                elem: Box::new(ty_owned),
+            })
+        }
+    }
+}
+
+fn dummy_type() -> Type {
+    Type::Never(TypeNever {
+        bang_token: Default::default(),
+    })
 }
 
 fn get_add_operation_fn_name(route_fn_name: &Ident) -> Ident {
