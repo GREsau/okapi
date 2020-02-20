@@ -1,6 +1,6 @@
 use schemars::gen::SchemaSettings;
 
-/// Settings which are used to customise the behaviour of the `Generator`.
+/// Settings which are used to customise the behaviour of the `OpenApiGenerator`.
 #[derive(Debug, PartialEq, Clone)]
 pub struct OpenApiSettings {
     /// Allows configuring to which standard the api documentation must confirm.
