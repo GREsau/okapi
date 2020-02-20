@@ -45,7 +45,7 @@ impl OpenApiGenerator {
         };
     }
 
-    /// Generate the final `JsonSchema` from all added operations.
+    /// Returns a JSON Schema object for the type `T`.
     pub fn json_schema<T: ?Sized + JsonSchema>(&mut self) -> SchemaObject {
         self.schema_generator.subschema_for::<T>().into()
     }
