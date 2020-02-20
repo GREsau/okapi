@@ -4,7 +4,7 @@ use rocket::response::{Content, Responder};
 use rocket::{Data, Request, Route};
 
 /// A content handler is a wrapper type around `rocket::response::Content`, which can be turned into
-/// a `rocket::Route` that serve the content with correct content_type.
+/// a `rocket::Route` that serves the content with correct content-type.
 #[derive(Clone)]
 pub struct ContentHandler<R: Responder<'static> + Clone + Send + Sync + 'static> {
     content: Content<R>,
