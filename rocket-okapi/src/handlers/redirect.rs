@@ -3,7 +3,7 @@ use rocket::http::Method;
 use rocket::response::Redirect;
 use rocket::{Data, Request, Route};
 
-/// A handler that instead of serving content always redirects to some specified direction.
+/// A handler that instead of serving content always redirects to some specified destination URL.
 #[derive(Clone)]
 pub struct RedirectHandler {
     dest: &'static str,
