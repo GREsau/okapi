@@ -1,9 +1,9 @@
 use schemars::gen::SchemaSettings;
 
-/// Settings which are used to customise the behaviour of the `Generator`.
+/// Settings which are used to customise the behaviour of the `OpenApiGenerator`.
 #[derive(Debug, PartialEq, Clone)]
 pub struct OpenApiSettings {
-    /// Allows configuring to which standard the api documentation must confirm.
+    /// Settings to customise how JSON Schemas are generated.
     pub schema_settings: SchemaSettings,
     /// The path to the json file that contains the API specification. Then default is
     /// `openapi.json`.
