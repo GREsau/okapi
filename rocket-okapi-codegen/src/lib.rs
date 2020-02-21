@@ -9,8 +9,8 @@ mod openapi_attr;
 mod routes_with_openapi;
 
 use proc_macro::TokenStream;
-use syn::{token::Paren, Ident, GenericArgument, Type, TypeNever, TypeParen};
-use syn::visit_mut::{self, VisitMut};
+use syn::fold::{self, Fold};
+use syn::{token::Paren, GenericArgument, Ident, Type, TypeParen};
 
 /// A proc macro to be used in tandem with one of `Rocket`'s endpoint macros. It requires that all
 /// of the arguments of the route implement one of the traits in `rocket_okapi::request`, and that
@@ -50,36 +50,31 @@ fn preserve_span_information(input: TokenStream) -> TokenStream {
     // it back out causes span information to be preserved.
     // See https://github.com/GREsau/okapi/issues/12
     // and https://github.com/rust-lang/rust/issues/43081
-    let mut parsed_input: syn::Item  = syn::parse(input).unwrap();
+    let parsed_input: syn::Item = syn::parse(input).unwrap();
 
     // Nested generics cause span bugs - we can work around this by wrapping all
     // generic type parameters in parentheses.
     // https://github.com/rust-lang/rust/pull/48258
-    GenericTypeVisitor.visit_item_mut(&mut parsed_input);
+    let parsed_input = GenericTypeVisitor.fold_item(parsed_input);
 
     quote!(#parsed_input).into()
 }
 
 struct GenericTypeVisitor;
 
-impl VisitMut for GenericTypeVisitor {
-    fn visit_generic_argument_mut(&mut self, node: &mut GenericArgument) {
-        visit_mut::visit_generic_argument_mut(self, node);
+impl Fold for GenericTypeVisitor {
+    fn fold_generic_argument(&mut self, mut node: GenericArgument) -> GenericArgument {
+        node = fold::fold_generic_argument(self, node);
 
-        if let GenericArgument::Type(ref mut ty) = node {
-            let ty_owned = std::mem::replace(ty, dummy_type());
-            *ty = Type::Paren(TypeParen {
+        if let GenericArgument::Type(ty) = node {
+            node = GenericArgument::Type(Type::Paren(TypeParen {
                 paren_token: Paren::default(),
-                elem: Box::new(ty_owned),
-            })
+                elem: Box::new(ty),
+            }));
         }
-    }
-}
 
-fn dummy_type() -> Type {
-    Type::Never(TypeNever {
-        bang_token: Default::default(),
-    })
+        node
+    }
 }
 
 fn get_add_operation_fn_name(route_fn_name: &Ident) -> Ident {
