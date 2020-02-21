@@ -4,7 +4,9 @@ use okapi::Map;
 
 // FIXME this whole file is a huge mess...
 
-pub fn set_status_code(responses: &mut Responses, status: u16) -> Result<()> {
+/// Takes a `Responses` struct, and sets the status code to the status code provided for each
+/// response in the `Responses`.
+pub(crate) fn set_status_code(responses: &mut Responses, status: u16) -> Result<()> {
     let old_responses = std::mem::replace(&mut responses.responses, Map::new());
     let new_response = ensure_not_ref(ensure_status_code_exists(responses, status))?;
     for (_, mut response) in old_responses {
@@ -14,14 +16,16 @@ pub fn set_status_code(responses: &mut Responses, status: u16) -> Result<()> {
     Ok(())
 }
 
-pub fn ensure_status_code_exists(responses: &mut Responses, status: u16) -> &mut RefOr<Response> {
+/// Checks if the provided `status` code is in the `responses.responses` field. If it isn't, inserts
+/// it.
+pub(crate) fn ensure_status_code_exists(responses: &mut Responses, status: u16) -> &mut RefOr<Response> {
     responses
         .responses
         .entry(status.to_string())
         .or_insert_with(|| Response::default().into())
 }
 
-pub fn add_content_response(
+pub(crate) fn add_content_response(
     responses: &mut Responses,
     status: u16,
     content_type: impl ToString,
@@ -32,7 +36,7 @@ pub fn add_content_response(
     Ok(())
 }
 
-pub fn add_media_type(
+pub(crate) fn add_media_type(
     content: &mut Map<String, MediaType>,
     content_type: impl ToString,
     media: MediaType,
@@ -44,7 +48,7 @@ pub fn add_media_type(
         .or_insert(media);
 }
 
-pub fn set_content_type(
+pub(crate) fn set_content_type(
     responses: &mut Responses,
     content_type: impl ToString
 ) -> Result<()> {
@@ -62,7 +66,7 @@ pub fn set_content_type(
     Ok(())
 }
 
-pub fn add_schema_response(
+pub(crate) fn add_schema_response(
     responses: &mut Responses,
     status: u16,
     content_type: impl ToString,
@@ -75,7 +79,7 @@ pub fn add_schema_response(
     add_content_response(responses, status, content_type, media)
 }
 
-pub fn produce_any_responses(r1: Responses, r2: Responses) -> Result<Responses> {
+pub(crate) fn produce_any_responses(r1: Responses, r2: Responses) -> Result<Responses> {
     let mut result = Responses {
         default: r1.default.or(r2.default),
         responses: r1.responses,

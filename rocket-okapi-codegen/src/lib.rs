@@ -12,6 +12,20 @@ use proc_macro::TokenStream;
 use syn::{token::Paren, Ident, GenericArgument, Type, TypeNever, TypeParen};
 use syn::visit_mut::{self, VisitMut};
 
+/// A proc macro to be used in tandem with one of `Rocket`'s endpoint macros. It requires that all
+/// of the arguments of the route implement one of the traits in `rocket_okapi::request`, and that
+/// the return type implements `OpenApiResponder`.
+/// ### Example
+/// ```rust,ignore
+/// use rocket_okapi::openapi;
+/// use rocket::get;
+///
+/// #[openapi]
+/// #[get("/hello/<number>")]
+/// fn hello_world(number: i32) -> String {
+///     format!("Hellow world number {}", number)
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn openapi(args: TokenStream, mut input: TokenStream) -> TokenStream {
     input = preserve_span_information(input);
@@ -22,6 +36,9 @@ pub fn openapi(args: TokenStream, mut input: TokenStream) -> TokenStream {
     input
 }
 
+/// A replacement macro for `rocket::routes`. The key differences are that this macro will add an
+/// additional element to the resulting `Vec<rocket::Route>`, which serves a static file called
+/// `openapi.json`. This file can then be used to display the routes in the swagger ui.
 #[proc_macro]
 pub fn routes_with_openapi(input: TokenStream) -> TokenStream {
     routes_with_openapi::parse(input)
