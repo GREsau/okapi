@@ -6,7 +6,7 @@ use okapi::Map;
 
 /// Takes a `Responses` struct, and sets the status code to the status code provided for each
 /// response in the `Responses`.
-pub(crate) fn set_status_code(responses: &mut Responses, status: u16) -> Result<()> {
+pub fn set_status_code(responses: &mut Responses, status: u16) -> Result<()> {
     let old_responses = std::mem::replace(&mut responses.responses, Map::new());
     let new_response = ensure_not_ref(ensure_status_code_exists(responses, status))?;
     for (_, mut response) in old_responses {
@@ -18,14 +18,15 @@ pub(crate) fn set_status_code(responses: &mut Responses, status: u16) -> Result<
 
 /// Checks if the provided `status` code is in the `responses.responses` field. If it isn't, inserts
 /// it.
-pub(crate) fn ensure_status_code_exists(responses: &mut Responses, status: u16) -> &mut RefOr<Response> {
+pub fn ensure_status_code_exists(responses: &mut Responses, status: u16) -> &mut RefOr<Response> {
     responses
         .responses
         .entry(status.to_string())
         .or_insert_with(|| Response::default().into())
 }
 
-pub(crate) fn add_content_response(
+/// Adds a `Response` to a `Responses` object with the given status code, Content-Type and `MediaType`.
+pub fn add_content_response(
     responses: &mut Responses,
     status: u16,
     content_type: impl ToString,
@@ -36,7 +37,9 @@ pub(crate) fn add_content_response(
     Ok(())
 }
 
-pub(crate) fn add_media_type(
+/// Adds the `media` to the given map. If the map already contains a `MediaType` with the given
+/// Content-Type, then it will be combined with `media`.
+pub fn add_media_type(
     content: &mut Map<String, MediaType>,
     content_type: impl ToString,
     media: MediaType,
@@ -48,17 +51,17 @@ pub(crate) fn add_media_type(
         .or_insert(media);
 }
 
-pub(crate) fn set_content_type(
-    responses: &mut Responses,
-    content_type: impl ToString
-) -> Result<()> {
+/// Replaces the Content-Type for all responses with `content_type`.
+pub fn set_content_type(responses: &mut Responses, content_type: impl ToString) -> Result<()> {
     for ref mut resp_refor in responses.responses.values_mut() {
         let response = ensure_not_ref(*resp_refor)?;
         let content = &mut response.content;
         let mt = if content.values().len() == 1 {
             content.values().next().unwrap().clone()
-        } else { 
-            content.values().fold(Default::default(), |mt, mt2| accept_either_media_type(mt, mt2.clone()))
+        } else {
+            content.values().fold(Default::default(), |mt, mt2| {
+                accept_either_media_type(mt, mt2.clone())
+            })
         };
         content.clear();
         content.insert(content_type.to_string(), mt);
@@ -66,7 +69,8 @@ pub(crate) fn set_content_type(
     Ok(())
 }
 
-pub(crate) fn add_schema_response(
+/// Adds a `Response` to a `Responses` object with the given status code, Content-Type and `SchemaObject`.
+pub fn add_schema_response(
     responses: &mut Responses,
     status: u16,
     content_type: impl ToString,
@@ -79,7 +83,8 @@ pub(crate) fn add_schema_response(
     add_content_response(responses, status, content_type, media)
 }
 
-pub(crate) fn produce_any_responses(r1: Responses, r2: Responses) -> Result<Responses> {
+/// Merges the the two given `Responses`.
+pub fn produce_any_responses(r1: Responses, r2: Responses) -> Result<Responses> {
     let mut result = Responses {
         default: r1.default.or(r2.default),
         responses: r1.responses,
