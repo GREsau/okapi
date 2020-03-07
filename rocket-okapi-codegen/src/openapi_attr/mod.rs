@@ -129,9 +129,12 @@ fn get_arg_types(args: impl Iterator<Item = FnArg>) -> Map<String, Type> {
     let mut result = Map::new();
     for arg in args {
         if let syn::FnArg::Typed(arg) = arg {
-            let name = arg.pat.into_token_stream().to_string();
-            let ty = *arg.ty;
-            result.insert(name, ty);
+            if let syn::Pat::Ident(ident) = *arg.pat {
+                // Use only identifier name as key, so lookups succeed even if argument is mutable
+                let name = ident.ident.into_token_stream().to_string();
+                let ty = *arg.ty;
+                result.insert(name, ty);
+            }
         }
     }
     result
