@@ -45,13 +45,6 @@ fn create_user(user: Json<User>) -> Json<User> {
     user
 }
 
-#[openapi]
-#[post("/user_give_email", data = "<user>")]
-fn user_give_email(mut user: Json<User>) -> Json<User> {
-    user.email = Some("contrived@test.com".to_string());
-    user
-}
-
 #[openapi(skip)]
 #[get("/hidden")]
 fn hidden() -> Json<&'static str> {
@@ -62,7 +55,7 @@ fn main() {
     rocket::ignite()
         .mount(
             "/",
-            routes_with_openapi![get_all_users, get_user, create_user, user_give_email, hidden],
+            routes_with_openapi![get_all_users, get_user, create_user, hidden],
         )
         .mount(
             "/swagger-ui/",
