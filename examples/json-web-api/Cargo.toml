@@ -5,7 +5,7 @@ authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
 
 [dependencies]
-schemars = "0.6.1"
+schemars = "0.7.0"
 okapi = { version = "0.3.0", path = "../../okapi" }
 rocket_okapi = { version = "0.3.0", path = "../../rocket-okapi" }
 rocket = { version = "0.4.3", default-features = false }
