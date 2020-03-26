@@ -6,8 +6,8 @@ edition = "2018"
 
 [dependencies]
 schemars = "0.7.0"
-okapi = { version = "0.3.0", path = "../../okapi" }
-rocket_okapi = { version = "0.3.0", path = "../../rocket-okapi" }
+okapi = { version = "0.4.0", path = "../../okapi" }
+rocket_okapi = { version = "0.4.0", path = "../../rocket-okapi" }
 rocket = { version = "0.4.3", default-features = false }
 serde = "1.0"
 

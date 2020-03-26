@@ -2,7 +2,7 @@
 name = "rocket_okapi"
 description = "OpenAPI (AKA Swagger) document generation for Rocket applications"
 repository = "https://github.com/GREsau/okapi"
-version = "0.3.6"
+version = "0.4.0"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
 license = "MIT"
@@ -10,8 +10,8 @@ keywords = ["rust", "openapi", "swagger", "rocket"]
 
 [dependencies]
 schemars = "0.7.0"
-okapi = { version = "0.3.0", path = "../okapi" }
-rocket_okapi_codegen = { version = "=0.3.6", path = "../rocket-okapi-codegen" }
+okapi = { version = "0.4.0", path = "../okapi" }
+rocket_okapi_codegen = { version = "=0.4.0", path = "../rocket-okapi-codegen" }
 rocket = { version = "0.4.3", default-features = false }
 serde = "1.0"
 serde_json = "1.0"
