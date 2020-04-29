@@ -59,6 +59,8 @@ pub trait OpenApiFromQuery<'r>: rocket::request::FromQuery<'r> {
     ) -> Result<Vec<Parameter>>;
 }
 
+/// Some documentation
 pub trait OpenApiFromRequest<'a, 'r>: rocket::request::FromRequest<'a, 'r> {
+  /// More documentation
   fn request_parameter(gen: &mut OpenApiGenerator, name: String) -> Result<Parameter>;
 }
