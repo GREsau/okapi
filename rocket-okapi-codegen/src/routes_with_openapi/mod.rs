@@ -17,7 +17,30 @@ fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
             let settings = ::rocket_okapi::settings::OpenApiSettings::new();
             let mut gen = ::rocket_okapi::gen::OpenApiGenerator::new(settings.clone());
             #add_operations
-            let spec = gen.into_openapi();
+            let mut spec = gen.into_openapi();
+            let mut info = ::okapi::openapi3::Info {
+                title: env!("CARGO_PKG_NAME").to_owned(),
+                version: env!("CARGO_PKG_VERSION").to_owned(),
+                ..Default::default()
+            };
+            if !env!("CARGO_PKG_DESCRIPTION").is_empty() {
+                info.description = Some(env!("CARGO_PKG_DESCRIPTION").to_owned());
+            }
+            if !env!("CARGO_PKG_REPOSITORY").is_empty() {
+                info.contact = Some(::okapi::openapi3::Contact{
+                    name: Some("Repository".to_owned()),
+                    url: Some(env!("CARGO_PKG_REPOSITORY").to_owned()),
+                    ..Default::default()
+                });
+            }
+            if !env!("CARGO_PKG_HOMEPAGE").is_empty() {
+                info.contact = Some(::okapi::openapi3::Contact{
+                    name: Some("Homepage".to_owned()),
+                    url: Some(env!("CARGO_PKG_REPOSITORY").to_owned()),
+                    ..Default::default()
+                });
+            }
+            spec.info = info;
 
             let mut routes = ::rocket::routes![#paths];
             routes.push(::rocket_okapi::handlers::OpenApiHandler::new(spec).into_route(&settings.json_path));
