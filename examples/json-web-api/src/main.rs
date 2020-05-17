@@ -19,6 +19,9 @@ struct User {
     email: Option<String>,
 }
 
+/// # Get all users
+///
+/// Returns all users in the system.
 #[openapi]
 #[get("/user")]
 fn get_all_users() -> Json<Vec<User>> {
@@ -29,6 +32,9 @@ fn get_all_users() -> Json<Vec<User>> {
     }])
 }
 
+/// # Get user
+///
+/// Returns a single user by ID.
 #[openapi]
 #[get("/user/<id>")]
 fn get_user(id: u64) -> Option<Json<User>> {
@@ -39,6 +45,7 @@ fn get_user(id: u64) -> Option<Json<User>> {
     }))
 }
 
+/// # Create user
 #[openapi]
 #[post("/user", data = "<user>")]
 fn create_user(user: Json<User>) -> Json<User> {

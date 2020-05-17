@@ -1,3 +1,4 @@
+mod doc_attr;
 mod route_attr;
 
 use crate::get_add_operation_fn_name;
@@ -86,6 +87,15 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
     let path = route.origin.path().replace("<", "{").replace(">", "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
+    let (title, desc) = doc_attr::get_title_and_desc_from_doc(&route_fn.attrs);
+    let title = match title {
+        Some(x) => quote!(Some(#x.to_owned())),
+        None => quote!(None),
+    };
+    let desc = match desc {
+        Some(x) => quote!(Some(#x.to_owned())),
+        None => quote!(None),
+    };
 
     TokenStream::from(quote! {
         pub fn #fn_name(
@@ -103,6 +113,8 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
                     responses,
                     request_body,
                     parameters,
+                    summary: #title,
+                    description: #desc,
                     ..Default::default()
                 },
             });
@@ -129,9 +141,12 @@ fn get_arg_types(args: impl Iterator<Item = FnArg>) -> Map<String, Type> {
     let mut result = Map::new();
     for arg in args {
         if let syn::FnArg::Typed(arg) = arg {
-            let name = arg.pat.into_token_stream().to_string();
-            let ty = *arg.ty;
-            result.insert(name, ty);
+            if let syn::Pat::Ident(ident) = *arg.pat {
+                // Use only identifier name as key, so lookups succeed even if argument is mutable
+                let name = ident.ident.into_token_stream().to_string();
+                let ty = *arg.ty;
+                result.insert(name, ty);
+            }
         }
     }
     result

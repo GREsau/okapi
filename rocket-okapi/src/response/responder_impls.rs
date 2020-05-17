@@ -95,7 +95,20 @@ macro_rules! status_responder {
 status_responder!(Accepted, 202);
 status_responder!(Created, 201);
 status_responder!(BadRequest, 400);
+status_responder!(Unauthorized, 401);
+status_responder!(Forbidden, 403);
 status_responder!(NotFound, 404);
+status_responder!(Conflict, 409);
+
+impl OpenApiResponder<'_>
+    for rocket::response::status::NoContent
+{
+    fn responses(_: &mut OpenApiGenerator) -> Result {
+        let mut responses = Responses::default();
+        set_status_code(&mut responses, 204)?;
+        Ok(responses)
+    }
+}
 
 macro_rules! response_content_wrapper {
     ($responder: ident, $mime: literal) => {
