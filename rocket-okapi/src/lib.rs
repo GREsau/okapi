@@ -2,7 +2,7 @@
 #![forbid(missing_docs)]
 
 //! This projects serves to enable automatic rendering of `openapi.json` files, and provides
-//! facilities to also serve the documentation alonside your api.
+//! facilities to also serve the documentation alongside your api.
 //!
 //! # Usage
 //! First, add the following lines to your `Cargo.toml`

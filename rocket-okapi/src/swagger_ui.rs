@@ -54,7 +54,7 @@ fn is_zero(num: &u32) -> bool {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SwaggerUIConfig {
-    /// The url to a signle `openapi.json` file that is showed when the web ui is first opened.
+    /// The url to a single `openapi.json` file that is showed when the web ui is first opened.
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub url: String,
     /// A list of named urls that contain all the `openapi.json` files that you want to display in
