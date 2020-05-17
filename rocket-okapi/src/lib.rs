@@ -45,8 +45,8 @@
 //!     use rocket_okapi::swagger_ui::UrlObject;
 //! 
 //!     SwaggerUIConfig {
-//!         url: Some("/my_resource/openapi.json".to_string()),
-//!         urls: Some(vec![UrlObject::new("My Resource", "/v1/company/openapi.json")]),
+//!         url: "/my_resource/openapi.json".to_string(),
+//!         urls: vec![UrlObject::new("My Resource", "/v1/company/openapi.json")],
 //!     }
 //! }
 //! 
