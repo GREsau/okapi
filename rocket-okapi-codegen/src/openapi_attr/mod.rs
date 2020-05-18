@@ -83,6 +83,18 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
             <#ty as ::rocket_okapi::request::OpenApiFromParam>::path_parameter(gen, #arg.to_owned())?.into()
         })
     }
+    for arg in route.query_params() {
+        let ty = match arg_types.get(arg) {
+            Some(ty) => ty,
+            None => return quote! {
+                compile_error!(concat!("Could not find argument ", #arg, " matching query param."))
+            }
+            .into(),
+        };
+        params.push(quote! {
+            <#ty as ::rocket_okapi::request::OpenApiFromParam>::query_parameter(gen, #arg.to_owned(), true)?.into()
+        })
+    }
 
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
     let path = route.origin.path().replace("<", "{").replace(">", "}");

@@ -17,8 +17,11 @@ pub trait OpenApiFromData<'r>: rocket::data::FromData<'r> {
 /// can also be documented.
 pub trait OpenApiFromParam<'r>: rocket::request::FromParam<'r> {
     /// Return a `RequestBody` containing the information required to document the `FromParam` for
-    /// implementer.
+    /// implementer. Path paremeters.
     fn path_parameter(gen: &mut OpenApiGenerator, name: String) -> Result<Parameter>;
+    /// Return a `RequestBody` containing the information required to document the `FromParam` for
+    /// implementer. Query paremeters.
+    fn query_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result<Parameter>;
 }
 
 /// This trait means that the implementer can be used as a `FromSegments` request guard, and that

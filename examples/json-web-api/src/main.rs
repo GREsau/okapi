@@ -45,6 +45,19 @@ fn get_user(id: u64) -> Option<Json<User>> {
     }))
 }
 
+/// # Get user by name
+///
+/// Returns a single user by username.
+#[openapi]
+#[get("/user_example?<user_id>&<name>&<email>")]
+fn get_user_by_name(user_id: u64, name: String, email: Option<String>) -> Option<Json<User>> {
+    Some(Json(User {
+        user_id,
+        username: name,
+        email,
+    }))
+}
+
 /// # Create user
 #[openapi]
 #[post("/user", data = "<user>")]
@@ -62,7 +75,7 @@ fn main() {
     rocket::ignite()
         .mount(
             "/",
-            routes_with_openapi![get_all_users, get_user, create_user, hidden],
+            routes_with_openapi![get_all_users, get_user, get_user_by_name, create_user, hidden],
         )
         .mount(
             "/swagger-ui/",
