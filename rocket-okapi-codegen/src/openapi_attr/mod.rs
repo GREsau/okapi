@@ -71,28 +71,41 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
     };
 
     let mut params = Vec::new();
+    // Path parameters: `/<id>/<name>`
     for arg in route.path_params() {
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
                 compile_error!(concat!("Could not find argument ", #arg, " matching path param."))
-            }
-            .into(),
+            }.into(),
         };
         params.push(quote! {
             <#ty as ::rocket_okapi::request::OpenApiFromParam>::path_parameter(gen, #arg.to_owned())?.into()
         })
     }
+    // Query parameters: `/?<id>&<name>`
     for arg in route.query_params() {
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
                 compile_error!(concat!("Could not find argument ", #arg, " matching query param."))
-            }
-            .into(),
+            }.into(),
         };
         params.push(quote! {
-            <#ty as ::rocket_okapi::request::OpenApiFromParam>::query_parameter(gen, #arg.to_owned(), true)?.into()
+            <#ty as ::rocket_okapi::request::OpenApiFromFormValue>::query_parameter(gen, #arg.to_owned(), true)?.into()
+        })
+    }
+    let mut params_nested_list = Vec::new();
+    // Multi Query parameters: `/?<param..>`
+    for arg in route.query_multi_params() {
+        let ty = match arg_types.get(arg) {
+            Some(ty) => ty,
+            None => return quote! {
+                compile_error!(concat!("Could not find argument ", #arg, " matching query multi param."))
+            }.into(),
+        };
+        params_nested_list.push(quote! {
+            <#ty as ::rocket_okapi::request::OpenApiFromQuery>::query_multi_parameter(gen, #arg.to_owned(), true)?.into()
         })
     }
 
@@ -116,7 +129,15 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         ) -> ::rocket_okapi::Result<()> {
             let responses = <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?;
             let request_body = #request_body;
-            let parameters = vec![#(#params),*];
+            let mut parameters: Vec<::okapi::openapi3::RefOr<::okapi::openapi3::Parameter>> = vec![#(#params),*];
+            // add nested lists
+            let parameters_nested_list: Vec<Vec<::okapi::openapi3::Parameter>> = vec![#(#params_nested_list),*];
+            for inner_list in parameters_nested_list{
+                for item in inner_list{
+                    // convert every item from `Parameter` to `RefOr<Parameter>``
+                    parameters.push(item.into());
+                }
+            }
             gen.add_operation(::rocket_okapi::OperationInfo {
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,

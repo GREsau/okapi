@@ -9,6 +9,7 @@ use rocket_contrib::json::Json;
 use rocket_okapi::swagger_ui::*;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use rocket::request::{FromForm, Form};
 
 #[derive(Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
@@ -71,11 +72,34 @@ fn hidden() -> Json<&'static str> {
     Json("Hidden from swagger!")
 }
 
+#[derive(Serialize, Deserialize, JsonSchema, FromForm)]
+struct Post {
+    post_id: u64,
+    title: String,
+    summary: Option<String>,
+}
+
+/// # Create post using query params
+///
+/// Returns the created post.
+#[openapi]
+#[get("/post_by_query?<post..>")]
+fn create_post_by_query(post: Form<Post>) -> Option<Json<Post>> {
+    Some(Json(post.into_inner()))
+}
+
 fn main() {
     rocket::ignite()
         .mount(
             "/",
-            routes_with_openapi![get_all_users, get_user, get_user_by_name, create_user, hidden],
+            routes_with_openapi![
+                get_all_users,
+                get_user,
+                get_user_by_name,
+                create_user,
+                hidden,
+                create_post_by_query,
+            ],
         )
         .mount(
             "/swagger-ui/",

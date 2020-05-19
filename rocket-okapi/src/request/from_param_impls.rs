@@ -28,26 +28,6 @@ macro_rules! impl_from_param {
                     extensions: Default::default(),
                 })
             }
-            fn query_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
-                let schema = gen.json_schema::<$ty>();
-                Ok(Parameter {
-                    name,
-                    location: "query".to_owned(),
-                    description: None,
-                    required,
-                    deprecated: false,
-                    allow_empty_value: false,
-                    value: ParameterValue::Schema {
-                        style: None,
-                        explode: None,
-                        allow_reserved: false,
-                        schema,
-                        example: None,
-                        examples: None,
-                    },
-                    extensions: Default::default(),
-                })
-            }
         }
     };
 }
@@ -76,16 +56,10 @@ impl<'r, T: OpenApiFromParam<'r>> OpenApiFromParam<'r> for StdResult<T, T::Error
     fn path_parameter(gen: &mut OpenApiGenerator, name: String) -> Result {
         T::path_parameter(gen, name)
     }
-    fn query_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
-        T::query_parameter(gen, name, required)
-    }
 }
 
 impl<'r, T: OpenApiFromParam<'r>> OpenApiFromParam<'r> for Option<T> {
     fn path_parameter(gen: &mut OpenApiGenerator, name: String) -> Result {
         T::path_parameter(gen, name)
-    }
-    fn query_parameter(gen: &mut OpenApiGenerator, name: String, _required: bool) -> Result {
-        T::query_parameter(gen, name, false)
     }
 }

@@ -23,7 +23,7 @@ impl Route {
             }
         })
     }
-    
+
     pub fn query_params(&self) -> impl Iterator<Item = &str> {
         let mut query_params: Vec<&str> = vec![];
         if let Some(query) = self.origin.query(){
@@ -31,6 +31,21 @@ impl Route {
             query_params = query_params.into_iter().filter_map(|s| {
                 if s.starts_with('<') && s.ends_with('>') && !s.ends_with("..>") {
                     Some(&s[1..s.len() - 1])
+                } else {
+                    None
+                }
+            }).collect();
+        }
+        query_params.into_iter()
+    }
+
+    pub fn query_multi_params(&self) -> impl Iterator<Item = &str> {
+        let mut query_params: Vec<&str> = vec![];
+        if let Some(query) = self.origin.query(){
+            query_params = query.split('&').collect();
+            query_params = query_params.into_iter().filter_map(|s| {
+                if s.starts_with('<') && s.ends_with("..>"){
+                    Some(&s[1..s.len() - 3])
                 } else {
                     None
                 }
