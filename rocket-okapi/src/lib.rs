@@ -47,6 +47,7 @@
 //!     SwaggerUIConfig {
 //!         url: "/my_resource/openapi.json".to_string(),
 //!         urls: vec![UrlObject::new("My Resource", "/v1/company/openapi.json")],
+//!         ..Default::default()
 //!     }
 //! }
 //!
