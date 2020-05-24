@@ -104,8 +104,8 @@ fn main() {
         .mount(
             "/swagger-ui/",
             make_swagger_ui(&SwaggerUIConfig {
-                url: Some("../openapi.json".to_owned()),
-                urls: None,
+                url: "../openapi.json".to_owned(),
+                ..Default::default()
             }),
         )
         .launch();

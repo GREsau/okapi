@@ -2,7 +2,7 @@
 #![forbid(missing_docs)]
 
 //! This projects serves to enable automatic rendering of `openapi.json` files, and provides
-//! facilities to also serve the documentation alonside your api.
+//! facilities to also serve the documentation alongside your api.
 //!
 //! # Usage
 //! First, add the following lines to your `Cargo.toml`
@@ -45,8 +45,8 @@
 //!     use rocket_okapi::swagger_ui::UrlObject;
 //! 
 //!     SwaggerUIConfig {
-//!         url: Some("/my_resource/openapi.json".to_string()),
-//!         urls: Some(vec![UrlObject::new("My Resource", "/v1/company/openapi.json")]),
+//!         url: "/my_resource/openapi.json".to_string(),
+//!         urls: vec![UrlObject::new("My Resource", "/v1/company/openapi.json")],
 //!     }
 //! }
 //! 
