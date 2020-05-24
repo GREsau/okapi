@@ -52,7 +52,6 @@ where
     T: JsonSchema,
 {
     let schema = gen.json_schema_no_ref::<T>();
-    println!("Schema: {:#?}", schema);
     // Get a list of properties from the structure.
     let mut properties: schemars::Map<String, Schema> = schemars::Map::new();
     if let Some(object) = schema.object {
