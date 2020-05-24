@@ -77,7 +77,8 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
             Some(ty) => ty,
             None => return quote! {
                 compile_error!(concat!("Could not find argument ", #arg, " matching path param."));
-            }.into(),
+            }
+            .into(),
         };
         params.push(quote! {
             <#ty as ::rocket_okapi::request::OpenApiFromParam>::path_parameter(gen, #arg.to_owned())?.into()
@@ -89,7 +90,8 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
             Some(ty) => ty,
             None => return quote! {
                 compile_error!(concat!("Could not find argument ", #arg, " matching query param."));
-            }.into(),
+            }
+            .into(),
         };
         params.push(quote! {
             <#ty as ::rocket_okapi::request::OpenApiFromFormValue>::query_parameter(gen, #arg.to_owned(), true)?.into()

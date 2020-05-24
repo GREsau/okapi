@@ -100,9 +100,7 @@ status_responder!(Forbidden, 403);
 status_responder!(NotFound, 404);
 status_responder!(Conflict, 409);
 
-impl OpenApiResponder<'_>
-    for rocket::response::status::NoContent
-{
+impl OpenApiResponder<'_> for rocket::response::status::NoContent {
     fn responses(_: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
         set_status_code(&mut responses, 204)?;
