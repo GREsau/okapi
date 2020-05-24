@@ -1,7 +1,7 @@
 mod from_data_impls;
 mod from_param_impls;
-mod from_query_param_impls;
 mod from_query_multi_param_impls;
+mod from_query_param_impls;
 
 use super::gen::OpenApiGenerator;
 use super::Result;
@@ -40,7 +40,11 @@ pub trait OpenApiFromSegments<'r>: rocket::request::FromSegments<'r> {
 pub trait OpenApiFromFormValue<'r>: rocket::request::FromFormValue<'r> {
     /// Return a `RequestBody` containing the information required to document the `FromFormValue`
     /// for implementer.
-    fn query_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result<Parameter>;
+    fn query_parameter(
+        gen: &mut OpenApiGenerator,
+        name: String,
+        required: bool,
+    ) -> Result<Parameter>;
 }
 
 /// This trait means that the implementer can be used as a `FromQuery` request guard, and that this
@@ -48,5 +52,9 @@ pub trait OpenApiFromFormValue<'r>: rocket::request::FromFormValue<'r> {
 pub trait OpenApiFromQuery<'r>: rocket::request::FromQuery<'r> {
     /// Return a `RequestBody` containing the information required to document the `FromQuery` for
     /// implementer.
-    fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result<Vec<Parameter>>;
+    fn query_multi_parameter(
+        gen: &mut OpenApiGenerator,
+        name: String,
+        required: bool,
+    ) -> Result<Vec<Parameter>>;
 }

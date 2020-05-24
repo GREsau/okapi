@@ -55,18 +55,9 @@ impl OpenApiGenerator {
         &self.schema_generator
     }
 
-    /// Return the component definition of an object using its reference.
-    /// Example reference: "#/components/schemas/Data" Where `Data` is the name of the struct
-    pub fn json_definition(&mut self, reference: String) -> Option<schemars::schema::Schema>{
-        let definition = self.schema_generator.definitions();
-        // get the list item name from the reference
-        let schema_name: String = reference.rsplitn(2, '/').collect::<Vec<&str>>()[0].to_owned();
-        for (key, component) in definition{
-            if key == &schema_name{
-                return Some(component.clone());
-            }
-        }
-        None
+    /// Return the component definition/schema of an object without any references.
+    pub fn json_schema_no_ref<T: ?Sized + JsonSchema>(&mut self) -> SchemaObject {
+        <T>::json_schema(&mut self.schema_generator).into()
     }
 
     /// Generate an `OpenApi` specification for all added operations.

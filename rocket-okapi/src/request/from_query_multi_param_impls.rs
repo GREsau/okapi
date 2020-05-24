@@ -1,10 +1,9 @@
 use super::OpenApiFromQuery;
 use crate::gen::OpenApiGenerator;
 use okapi::openapi3::*;
-use std::result::Result as StdResult;
+use schemars::schema::{Schema, SchemaObject};
 use schemars::JsonSchema;
-use schemars::schema::{Schema, ObjectValidation, SchemaObject};
-use std::collections::BTreeMap;
+use std::result::Result as StdResult;
 
 type Result = crate::Result<Vec<Parameter>>;
 
@@ -44,82 +43,58 @@ type Result = crate::Result<Vec<Parameter>>;
 ///     }
 /// }
 /// ```
-pub fn get_nested_query_parameters<'r, T>(gen: &mut OpenApiGenerator, name: String, required: bool)
--> Vec<Parameter> where
-    T: JsonSchema{
-    let schema = gen.json_schema::<T>();
-    let mut referenced_schema: Option<Schema> = None;
-    if let Some(reference) = &schema.reference{
-        referenced_schema = gen.json_definition(reference.clone());
+pub fn get_nested_query_parameters<'r, T>(
+    gen: &mut OpenApiGenerator,
+    _name: String,
+    required: bool,
+) -> Vec<Parameter>
+where
+    T: JsonSchema,
+{
+    let schema = gen.json_schema_no_ref::<T>();
+    println!("Schema: {:#?}", schema);
+    // Get a list of properties from the structure.
+    let mut properties: schemars::Map<String, Schema> = schemars::Map::new();
+    if let Some(object) = schema.object {
+        properties = object.properties;
     }
-    if let Some(schema) = referenced_schema{
-        // Get a list of properties from the structure.
-        let mut properties: BTreeMap<String, Schema> = BTreeMap::new();
-        match schema {
-            Schema::Object(schema) => {
-                if let Some(object) = schema.object{
-                    let object: &'r mut ObjectValidation = Box::leak(object);
-                    properties = object.properties.clone();
-                }
-            }
-            _ => {},
-        }
-
-        // Create all the `Parameter` for every property
-        let mut parameter_list: Vec<Parameter> = Vec::new();
-        for (key, property) in properties{
-            let prop_schema = match property {
-                Schema::Object(x) => x,
-                _ => SchemaObject::default(),
-            };
-            let mut parameter_required = required;
-            // Check if parameter is optional (only is not already optional)
-            if parameter_required {
-                for (key,value) in &prop_schema.extensions{
-                    if key == "nullable" {
-                        if let Some(nullable) = value.as_bool(){
-                            parameter_required = !nullable;
-                        }
+    // Create all the `Parameter` for every property
+    let mut parameter_list: Vec<Parameter> = Vec::new();
+    for (key, property) in properties {
+        let prop_schema = match property {
+            Schema::Object(x) => x,
+            _ => SchemaObject::default(),
+        };
+        let mut parameter_required = required;
+        // Check if parameter is optional (only is not already optional)
+        if parameter_required {
+            for (key, value) in &prop_schema.extensions {
+                if key == "nullable" {
+                    if let Some(nullable) = value.as_bool() {
+                        parameter_required = !nullable;
                     }
                 }
             }
-            parameter_list.push(Parameter {
-                name: key,
-                location: "query".to_owned(),
-                description: None,
-                required: parameter_required,
-                deprecated: false,
-                allow_empty_value: false,
-                value: ParameterValue::Schema {
-                    style: None,
-                    explode: None,
-                    allow_reserved: false,
-                    schema: prop_schema,
-                    example: None,
-                    examples: None,
-                },
-                extensions: Default::default(),
-            });
         }
-        return parameter_list;
+        parameter_list.push(Parameter {
+            name: key,
+            location: "query".to_owned(),
+            description: None,
+            required: parameter_required,
+            deprecated: false,
+            allow_empty_value: false,
+            value: ParameterValue::Schema {
+                style: None,
+                explode: None,
+                allow_reserved: false,
+                schema: prop_schema,
+                example: None,
+                examples: None,
+            },
+            extensions: Default::default(),
+        });
     }
-    vec![Parameter {
-        name,
-        location: "query".to_owned(),
-        description: None,
-        required,
-        deprecated: false,
-        allow_empty_value: false,
-        value: ParameterValue::Schema {
-            style: None,
-            explode: None,
-            allow_reserved: false,
-            schema,
-            example: None,
-            examples: None,
-        },
-        extensions: Default::default(),
-    }]
+    return parameter_list;
 }
 
 impl<'r, T: OpenApiFromQuery<'r>> OpenApiFromQuery<'r> for StdResult<T, T::Error> {
@@ -136,8 +111,10 @@ impl<'r, T: OpenApiFromQuery<'r>> OpenApiFromQuery<'r> for Option<T> {
 
 // All fields are required.
 // Does not allow extra fields.
-impl<'r, T> OpenApiFromQuery<'r> for rocket::request::Form<T> where
-    T: rocket::request::FromForm<'r> + JsonSchema{
+impl<'r, T> OpenApiFromQuery<'r> for rocket::request::Form<T>
+where
+    T: rocket::request::FromForm<'r> + JsonSchema,
+{
     fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
         Ok(get_nested_query_parameters::<T>(gen, name, required))
     }
@@ -145,8 +122,10 @@ impl<'r, T> OpenApiFromQuery<'r> for rocket::request::Form<T> where
 
 // All fields are required.
 // Does allow extra fields. (automatically discards extra fields without error)
-impl<'r, T> OpenApiFromQuery<'r> for rocket::request::LenientForm<T> where
-    T: rocket::request::FromForm<'r> + JsonSchema{
+impl<'r, T> OpenApiFromQuery<'r> for rocket::request::LenientForm<T>
+where
+    T: rocket::request::FromForm<'r> + JsonSchema,
+{
     fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
         Ok(get_nested_query_parameters::<T>(gen, name, required))
     }
