@@ -76,7 +76,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
-                compile_error!(concat!("Could not find argument ", #arg, " matching path param."))
+                compile_error!(concat!("Could not find argument ", #arg, " matching path param."));
             }.into(),
         };
         params.push(quote! {
@@ -88,7 +88,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
-                compile_error!(concat!("Could not find argument ", #arg, " matching query param."))
+                compile_error!(concat!("Could not find argument ", #arg, " matching query param."));
             }.into(),
         };
         params.push(quote! {
@@ -101,7 +101,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
-                compile_error!(concat!("Could not find argument ", #arg, " matching query multi param."))
+                compile_error!(concat!("Could not find argument ", #arg, " matching query multi param."));
             }.into(),
         };
         params_nested_list.push(quote! {
