@@ -60,7 +60,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
             let ty = match arg_types.get(arg) {
                 Some(ty) => ty,
                 None => return quote! {
-                    compile_error!(concat!("Could not find argument ", #arg, " matching data param."))
+                    compile_error!(concat!("Could not find argument ", #arg, " matching data param."));
                 }.into()
             };
             quote! {
@@ -75,7 +75,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
-                compile_error!(concat!("Could not find argument ", #arg, " matching path param."))
+                compile_error!(concat!("Could not find argument ", #arg, " matching path param."));
             }
             .into(),
         };
