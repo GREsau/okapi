@@ -75,10 +75,14 @@ where
                 }
             }
         }
+        let description = prop_schema
+            .metadata
+            .as_ref()
+            .and_then(|m| m.description.clone());
         parameter_list.push(Parameter {
             name: key,
             location: "query".to_owned(),
-            description: None,
+            description,
             required: parameter_required,
             deprecated: false,
             allow_empty_value: false,

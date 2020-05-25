@@ -74,8 +74,11 @@ fn hidden() -> Json<&'static str> {
 
 #[derive(Serialize, Deserialize, JsonSchema, FromForm)]
 struct Post {
+    /// The unique identifier for the post.
     post_id: u64,
+    /// The title of the post.
     title: String,
+    /// A short summary of the post.
     summary: Option<String>,
 }
 
