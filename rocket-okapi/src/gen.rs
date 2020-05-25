@@ -55,6 +55,11 @@ impl OpenApiGenerator {
         &self.schema_generator
     }
 
+    /// Return the component definition/schema of an object without any references.
+    pub fn json_schema_no_ref<T: ?Sized + JsonSchema>(&mut self) -> SchemaObject {
+        <T>::json_schema(&mut self.schema_generator).into()
+    }
+
     /// Generate an `OpenApi` specification for all added operations.
     pub fn into_openapi(self) -> OpenApi {
         OpenApi {
