@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 schemars = "0.7.0"
 okapi = { version = "0.4.0", path = "../../okapi" }
-rocket_okapi = { version = "0.4.1", path = "../../rocket-okapi" }
+rocket_okapi = { version = "0.5.1", path = "../../rocket-okapi" }
 rocket = { git = "https://github.com/SergioBenitez/Rocket.git", branch = "async", default-features = false }
 serde = "1.0"
 

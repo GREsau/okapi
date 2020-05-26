@@ -80,8 +80,9 @@ impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r> for Option<T> {
 
 macro_rules! status_responder {
     ($responder: ident, $status: literal) => {
-        impl<'r, T: OpenApiResponder<'r> + Send> OpenApiResponder<'r>
-            for rocket::response::status::$responder<T>
+        impl<'r, T> OpenApiResponder<'r> for rocket::response::status::$responder<T>
+        where
+            T: OpenApiResponder<'r> + Send
         {
             fn responses(gen: &mut OpenApiGenerator) -> Result {
                 let mut responses = T::responses(gen)?;
@@ -92,27 +93,20 @@ macro_rules! status_responder {
     };
 }
 
-impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r> for rocket::response::status::Accepted<T> {
-    fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = T::responses(gen)?;
-        set_status_code(&mut responses, 202)?;
-        Ok(responses)
-    }
-}
-
-// status_responder!(Accepted, 202);
+status_responder!(Accepted, 202);
 status_responder!(Created, 201);
 status_responder!(BadRequest, 400);
 // status_responder!(Unauthorized, 401);
 // status_responder!(Forbidden, 403);
-// status_responder!(NotFound, 404);
-// status_responder!(Conflict, 409);
+status_responder!(NotFound, 404);
 
-// impl OpenApiResponder<'_> for rocket::response::status::NoContent
+// impl<'r, T> OpenApiResponder<'r> for rocket::response::status::Custom<T>
+// where
+//     T: OpenApiResponder<'r> + Send
 // {
 //     fn responses(_: &mut OpenApiGenerator) -> Result {
 //         let mut responses = Responses::default();
-//         set_status_code(&mut responses, 204)?;
+//         set_status_code(&mut responses, xxx)?;
 //         Ok(responses)
 //     }
 // }

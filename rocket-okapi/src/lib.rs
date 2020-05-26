@@ -8,9 +8,9 @@
 //! First, add the following lines to your `Cargo.toml`
 //! ```toml
 //! [dependencies]
-//! rocket_okapi = "0.3"
-//! schemars = "0.6"
-//! okapi = { version = "0.3", features = ["derive_json_schema"] }
+//! rocket_okapi = "0.5"
+//! schemars = "0.7"
+//! okapi = { version = "0.5", features = ["derive_json_schema"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
 //! response types of the endpoint must implement `JsonSchema`. Secondly, the function must be
@@ -45,8 +45,8 @@
 //!     use rocket_okapi::swagger_ui::UrlObject;
 //!
 //!     SwaggerUIConfig {
-//!         url: "/my_resource/openapi.json".to_string(),
-//!         urls: vec![UrlObject::new("My Resource", "/v1/company/openapi.json")],
+//!         urls: vec![UrlObject::new("My Resource", "/v1/my_resource/openapi.json")],
+//!         ..Default::default()
 //!     }
 //! }
 //!
