@@ -1,4 +1,4 @@
-use rocket::handler::{Handler, Outcome};
+use rocket::handler::{Handler, HandlerFuture, Outcome};
 use rocket::http::{ContentType, Method};
 use rocket::response::{Content, Responder};
 use rocket::{Data, Request, Route};
@@ -6,7 +6,7 @@ use rocket::{Data, Request, Route};
 /// A content handler is a wrapper type around `rocket::response::Content`, which can be turned into
 /// a `rocket::Route` that serves the content with correct content-type.
 #[derive(Clone)]
-pub struct ContentHandler<R: Responder<'static> + Clone + Send + Sync + 'static> {
+pub struct ContentHandler<R: AsRef<[u8]> + Clone + Send + Sync> {
     content: Content<R>,
 }
 
@@ -31,20 +31,29 @@ impl ContentHandler<&'static [u8]> {
     }
 }
 
-impl<R: Responder<'static> + Clone + Send + Sync + 'static> ContentHandler<R> {
+impl<R: AsRef<[u8]> + Clone + Send + Sync + 'static> ContentHandler<R> {
     /// Create a `rocket::Route` from the current `ContentHandler`.
     pub fn into_route(self, path: impl AsRef<str>) -> Route {
         Route::new(Method::Get, path, self)
     }
 }
 
-impl<R: Responder<'static> + Clone + Send + Sync + 'static> Handler for ContentHandler<R> {
-    fn handle<'r>(&self, req: &'r Request, data: Data) -> Outcome<'r> {
+impl<R> Handler for ContentHandler<R>
+where
+    R: AsRef<[u8]> + Clone + Send + Sync + 'static,
+{
+    fn handle<'r>(&self, req: &'r Request<'_>, data: Data) -> HandlerFuture<'r> {
         // match e.g. "/index.html" but not "/index.html/"
         if req.uri().path().ends_with('/') {
-            Outcome::Forward(data)
+            Box::pin(async { Outcome::forward(data) })
         } else {
-            Outcome::from(req, self.content.clone())
+            let content: Content<Vec<u8>> = Content(self.content.0.clone(), self.content.1.as_ref().into());
+            Box::pin(async move { 
+                match content.respond_to(req).await {
+                    Ok(response) => Outcome::Success(response),
+                    Err(status) => Outcome::Failure(status),
+                }
+            })
         }
     }
 }

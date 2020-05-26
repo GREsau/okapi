@@ -12,11 +12,12 @@ keywords = ["rust", "openapi", "swagger", "rocket"]
 schemars = "0.7.0"
 okapi = { version = "0.4.0", path = "../okapi" }
 rocket_okapi_codegen = { version = "=0.4.1", path = "../rocket-okapi-codegen" }
-rocket = { version = "0.4.3", default-features = false }
+rocket = { git = "https://github.com/SergioBenitez/Rocket.git", branch = "async", default-features = false }
 serde = "1.0"
 serde_json = "1.0"
 
 [dependencies.rocket_contrib]
-version = "0.4.3"
+git = "https://github.com/SergioBenitez/Rocket.git"
+branch = "async"
 default-features = false
 features = ["json"]

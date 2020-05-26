@@ -22,17 +22,17 @@
 //! ### Example
 //! ```rust, no_run
 //! #![feature(decl_macro, proc_macro_hygiene)]
-//! 
+//!
 //! use rocket::get;
 //! use rocket_contrib::json::Json;
 //! use rocket_okapi::{openapi, routes_with_openapi, JsonSchema};
 //! use rocket_okapi::swagger_ui::{make_swagger_ui, SwaggerUIConfig};
-//! 
+//!
 //! #[derive(serde::Serialize, JsonSchema)]
 //! struct Response {
 //!     reply: String,
 //! }
-//! 
+//!
 //! #[openapi]
 //! #[get("/")]
 //! fn my_controller() -> Json<Response> {
@@ -43,13 +43,13 @@
 //!
 //! fn get_docs() -> SwaggerUIConfig {
 //!     use rocket_okapi::swagger_ui::UrlObject;
-//! 
+//!
 //!     SwaggerUIConfig {
 //!         url: "/my_resource/openapi.json".to_string(),
 //!         urls: vec![UrlObject::new("My Resource", "/v1/company/openapi.json")],
 //!     }
 //! }
-//! 
+//!
 //! fn main() {
 //!     rocket::ignite()
 //!         .mount("/my_resource", routes_with_openapi![my_controller])
@@ -60,7 +60,7 @@
 
 mod error;
 
-/// Contains the `Generator` struct, which you can use to manually control the way a struct is 
+/// Contains the `Generator` struct, which you can use to manually control the way a struct is
 /// represented in the documentation.
 pub mod gen;
 /// Contains several `Rocket` `Handler`s, which are used for serving the json files and the swagger

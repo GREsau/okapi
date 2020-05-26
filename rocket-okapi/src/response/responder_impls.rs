@@ -10,7 +10,7 @@ use std::result::Result as StdResult;
 
 type Result = crate::Result<Responses>;
 
-impl<T: JsonSchema + Serialize> OpenApiResponder<'_> for Json<T> {
+impl<'r, T: JsonSchema + Serialize + Send + 'r> OpenApiResponder<'r> for Json<T> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
         let schema = gen.json_schema::<T>();
@@ -80,7 +80,7 @@ impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r> for Option<T> {
 
 macro_rules! status_responder {
     ($responder: ident, $status: literal) => {
-        impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r>
+        impl<'r, T: OpenApiResponder<'r> + Send> OpenApiResponder<'r>
             for rocket::response::status::$responder<T>
         {
             fn responses(gen: &mut OpenApiGenerator) -> Result {
@@ -92,23 +92,30 @@ macro_rules! status_responder {
     };
 }
 
-status_responder!(Accepted, 202);
-status_responder!(Created, 201);
-status_responder!(BadRequest, 400);
-status_responder!(Unauthorized, 401);
-status_responder!(Forbidden, 403);
-status_responder!(NotFound, 404);
-status_responder!(Conflict, 409);
-
-impl OpenApiResponder<'_>
-    for rocket::response::status::NoContent
-{
-    fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        set_status_code(&mut responses, 204)?;
+impl<'r, T: OpenApiResponder<'r>> OpenApiResponder<'r> for rocket::response::status::Accepted<T> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = T::responses(gen)?;
+        set_status_code(&mut responses, 202)?;
         Ok(responses)
     }
 }
+
+// status_responder!(Accepted, 202);
+status_responder!(Created, 201);
+status_responder!(BadRequest, 400);
+// status_responder!(Unauthorized, 401);
+// status_responder!(Forbidden, 403);
+// status_responder!(NotFound, 404);
+// status_responder!(Conflict, 409);
+
+// impl OpenApiResponder<'_> for rocket::response::status::NoContent
+// {
+//     fn responses(_: &mut OpenApiGenerator) -> Result {
+//         let mut responses = Responses::default();
+//         set_status_code(&mut responses, 204)?;
+//         Ok(responses)
+//     }
+// }
 
 macro_rules! response_content_wrapper {
     ($responder: ident, $mime: literal) => {
@@ -132,24 +139,32 @@ response_content_wrapper!(MsgPack, "application/msgpack");
 response_content_wrapper!(Plain, "text/plain");
 response_content_wrapper!(Xml, "text/xml");
 
-impl<'r, T: OpenApiResponder<'r>, E: Debug> OpenApiResponder<'r> for StdResult<T, E> {
-    default fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = T::responses(gen)?;
-        ensure_status_code_exists(&mut responses, 500);
-        Ok(responses)
-    }
-}
+// impl<'r, T, E> OpenApiResponder<'r> for StdResult<T, E>
+// where
+//     T: OpenApiResponder<'r> + Send,
+//     E: Debug + Send
+// {
+//     default fn responses(gen: &mut OpenApiGenerator) -> Result {
+//         let mut responses = T::responses(gen)?;
+//         ensure_status_code_exists(&mut responses, 500);
+//         Ok(responses)
+//     }
+// }
 
-impl<'r, T: OpenApiResponder<'r>, E: Responder<'r> + Debug> OpenApiResponder<'r>
-    for StdResult<T, E>
+impl<'r, T, E> OpenApiResponder<'r> for StdResult<T, E>
+where
+    T: OpenApiResponder<'r> + Send,
+    E: Responder<'r> + Debug + Send + 'r,
 {
     default fn responses(_: &mut OpenApiGenerator) -> Result {
         Err(OpenApiError::new("Unable to generate OpenAPI spec for Result<T, E> response, as E implements Responder but not OpenApiResponder.".to_owned()))
     }
 }
 
-impl<'r, T: OpenApiResponder<'r>, E: OpenApiResponder<'r> + Debug> OpenApiResponder<'r>
-    for StdResult<T, E>
+impl<'r, T, E> OpenApiResponder<'r> for StdResult<T, E>
+where
+    T: OpenApiResponder<'r>,
+    E: OpenApiResponder<'r> + Debug,
 {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         let ok_responses = T::responses(gen)?;

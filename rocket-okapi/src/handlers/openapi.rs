@@ -1,5 +1,5 @@
 use okapi::openapi3::{OpenApi, Server};
-use rocket::handler::{Handler, Outcome};
+use rocket::handler::{Handler, HandlerFuture, Outcome};
 use rocket::http::{ContentType, Method};
 use rocket::response::Content;
 use rocket::{Data, Request, Route};
@@ -23,7 +23,7 @@ impl OpenApiHandler {
 }
 
 impl Handler for OpenApiHandler {
-    fn handle<'r>(&self, req: &'r Request, _: Data) -> Outcome<'r> {
+    fn handle<'r>(&self, req: &'r Request, _: Data) -> HandlerFuture<'r> {
         let mut spec = self.spec.clone();
         let base_path = req
             .route()

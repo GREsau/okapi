@@ -71,5 +71,6 @@ fn main() {
                 ..Default::default()
             }),
         )
-        .launch();
+        .launch()
+        .unwrap();
 }
