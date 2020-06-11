@@ -33,19 +33,6 @@ fn get_all_users() -> Json<Vec<User>> {
     }])
 }
 
-// Temporally added for debugging 
-// TODO: Remove
-#[openapi]
-#[get("/user", rank = 2)]
-fn get_all_users2() -> Json<Vec<User>> {
-    Json(vec![User {
-        user_id: 42,
-        username: "bob".to_owned(),
-        email: None,
-    }])
-}
-
-
 /// # Get user
 ///
 /// Returns a single user by ID.
@@ -110,7 +97,6 @@ fn main() {
             "/",
             routes_with_openapi![
                 get_all_users,
-                get_all_users2,
                 get_user,
                 get_user_by_name,
                 create_user,

@@ -33,14 +33,14 @@ impl OpenApiGenerator {
             // TODO do this outside add_operation
             op.operation.operation_id = Some(op_id.trim_start_matches(':').replace("::", "_"));
         }
-        match self.operations.entry(op.path.clone()) {
+        match self.operations.entry(op.path) {
             MapEntry::Occupied(mut e) => {
                 let map = e.get_mut();
                 if map.insert(op.method, op.operation).is_some() {
                     // This will trow a warning if 2 routes have the same path and method
                     // This is allowed by Rocket when a ranking is given for example: `#[get("/user", rank = 2)]`
                     // See: https://rocket.rs/v0.4/guide/requests/#forwarding
-                    println!("Warning: Operation replaced for {}:{}", op.method, op.path);
+                    println!("Warning: Operation replaced for {}:{}", op.method, e.key());
                 }
             }
             MapEntry::Vacant(e) => {
