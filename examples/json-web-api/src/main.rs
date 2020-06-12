@@ -17,7 +17,12 @@ struct User {
     user_id: u64,
     username: String,
     #[serde(default)]
+    #[schemars(example = "example_email")]
     email: Option<String>,
+}
+
+fn example_email() -> &'static str {
+    "test@example.com"
 }
 
 /// # Get all users

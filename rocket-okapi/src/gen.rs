@@ -68,6 +68,15 @@ impl OpenApiGenerator {
 
     /// Generate an `OpenApi` specification for all added operations.
     pub fn into_openapi(self) -> OpenApi {
+        let mut schema_generator = self.schema_generator;
+        let mut schemas = schema_generator.take_definitions();
+
+        for visitor in schema_generator.visitors_mut() {
+            for schema in schemas.values_mut() {
+                visitor.visit_schema(schema)
+            }
+        }
+
         OpenApi {
             openapi: "3.0.0".to_owned(),
             paths: {
@@ -81,12 +90,7 @@ impl OpenApiGenerator {
                 paths
             },
             components: Some(Components {
-                schemas: Map::from_iter(
-                    self.schema_generator
-                        .into_definitions()
-                        .into_iter()
-                        .map(|(k, v)| (k, v.into())),
-                ),
+                schemas: Map::from_iter(schemas.into_iter().map(|(k, v)| (k, v.into()))),
                 ..Default::default()
             }),
             ..Default::default()
