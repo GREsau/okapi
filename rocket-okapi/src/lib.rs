@@ -67,6 +67,9 @@ pub mod gen;
 /// Contains several `Rocket` `Handler`s, which are used for serving the json files and the swagger
 /// interface.
 pub mod handlers;
+/// Contains an alternative UI for displaying the generated openapi spec, called
+/// (Rapi Doc)[https://mrin9.github.io/RapiDoc/]
+pub mod rapi_doc;
 /// This module contains several traits that correspond to the `Rocket` traits pertaining to request
 /// guards and responses
 pub mod request;

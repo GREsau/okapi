@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script type="module" src="https://unpkg.com/rapidoc/dist/rapidoc-min.js"></script>
+  <script>
+    const setUrl = () => {
+      const selector = document.getElementById("selector");
+      const resource = selector.options[selector.selectedIndex].value;
+      const rapi = document.getElementById("rapi");
+      rapi.loadSpec(resource);
+    };
+  </script>
+</head>
+<body>
+  <div id="docs">
+    <rapi-doc 
+      id="rapi"
+      spec-url="SPEC_URL"
+      sort-tags="SORT_TAGS"
+      sort-endpoints-by="SORT_ENDPOINTS_BY"
+      heading-text="HEADING_TEXT"
+      goto-path="GOTO_PATH"
+      theme="THEME"
+      bg-color="BG_COLOR"
+      text-color="TEXT_COLOR"
+      header-color="HEADER_COLOR"
+      primary-color="PRIMARY_COLOR"
+      regular-font="REGULAR_FONT"
+      mono-font="MONO_FONT"
+      font-size="FONT_SIZE"
+      nav-bg-color="NAV_BG_COLOR"
+      nav-bg-image="NAV_BG_IMAGE"
+      nav-bg-image-repeat="NAV_BG_IMAGE_REPEAT"
+      nav-text-color="NAV_TEXT_COLOR"
+      nav-hover-bg-color="NAV_HOVER_BG_COLOR"
+      nav-hover-text-color="NAV_HOVER_TEXT_COLOR"
+      nav-accent-color="NAV_ACCENT_COLOR"
+      nav-item-spacing="NAV_ITEM_SPACING"
+      layout="LAYOUT"
+      render-style="RENDER_STYLE"
+      schema-style="SCHEMA_STYLE"
+      schema-expand-level="SCHEMA_EXPAND_LEVEL"
+      schema-description-expanded="SCHEMA_DESCRIPTION_EXPANDED"
+      default-schema-tab="DEFAULT_SCHEMA_TAB"
+      response-area-height="RESPONSE_AREA_HEIGHT"
+      show-info="SHOW_INFO"
+      info-description-headings-in-navbar="INFO_DESCRIPTIONS_IN_NAVBAR"
+      show-components="SHOW_COMPONENTS"
+      show-header="SHOW_HEADER"
+      allow-authentication="ALLOW_AUTHENTICATION"
+      allow-spec-url-load="ALLOW_SPEC_URL_LOAD"
+      allow-spec-file-load="ALLOW_SPEC_FILE_LOAD"
+      allow-search="ALLOW_SEARCH"
+      allow-try="ALLOW_TRY"
+      allow-server-selection="ALLOW_SERVER_SELECTION"
+      api-key-name="API_KEY_NAME"
+      api-key-value="API_KEY_VALUE"
+      api-key-location="API_KEY_LOCATION"
+      server-url="SERVER_URL"
+      default-api-server="DEFAULT_API_SERVER"
+    >
+      <select id="selector" onchange="setUrl()">
+        ROUTES
+      </select>
+      <LOGO/>
+      <FOOTER/>
+      <NAV_LOGO/>
+    </rapi-doc>
+  </div>
+</body> 
+</html>

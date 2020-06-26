@@ -31,6 +31,16 @@ impl ContentHandler<&'static [u8]> {
     }
 }
 
+impl ContentHandler<Vec<u8>> {
+    /// Create a `ContentHandler<Vec<u8>>`, which serves its content with the specified
+    /// `content_type`.
+    pub fn bytes_owned(content_type: ContentType, content: Vec<u8>) -> Self {
+        ContentHandler {
+            content: Content(content_type, content),
+        }
+    }
+}
+
 impl<R: Responder<'static> + Clone + Send + Sync + 'static> ContentHandler<R> {
     /// Create a `rocket::Route` from the current `ContentHandler`.
     pub fn into_route(self, path: impl AsRef<str>) -> Route {
