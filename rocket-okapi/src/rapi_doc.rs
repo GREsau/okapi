@@ -1,5 +1,3 @@
-// #![allow(missing_docs)]
-
 use crate::swagger_ui::UrlObject;
 use crate::handlers::{ContentHandler, RedirectHandler};
 
