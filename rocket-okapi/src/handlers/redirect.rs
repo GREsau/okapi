@@ -1,4 +1,4 @@
-use rocket::handler::{Handler, HandlerFuture, Outcome};
+use rocket::handler::{Handler, Outcome};
 use rocket::http::Method;
 use rocket::response::Redirect;
 use rocket::{Data, Request, Route};
@@ -23,8 +23,9 @@ impl RedirectHandler {
     }
 }
 
+#[rocket::async_trait]
 impl Handler for RedirectHandler {
-    fn handle<'r>(&self, req: &'r Request, _: Data) -> HandlerFuture<'r> {
+    async fn handle<'r, 's: 'r>(&'s self, req: &'r Request<'_>, _: Data) -> Outcome<'r> {
         let path = req.route().unwrap().base().trim_end_matches('/');
         Outcome::from(req, Redirect::to(format!("{}/{}", path, self.dest)))
     }

@@ -91,8 +91,9 @@ fn create_post_by_query(post: Form<Post>) -> Option<Json<Post>> {
     Some(Json(post.into_inner()))
 }
 
-fn main() {
-    rocket::ignite()
+#[rocket::main]
+async fn main() {
+    let result = rocket::ignite()
         .mount(
             "/",
             routes_with_openapi![
@@ -112,5 +113,6 @@ fn main() {
             }),
         )
         .launch()
-        .unwrap();
+        .await;
+    assert!(result.is_ok());
 }
