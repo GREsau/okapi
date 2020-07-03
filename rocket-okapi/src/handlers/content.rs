@@ -1,4 +1,4 @@
-use rocket::handler::{Handler, HandlerFuture, Outcome};
+use rocket::handler::{Handler, Outcome};
 use rocket::http::{ContentType, Method};
 use rocket::response::{Content, Responder};
 use rocket::{Data, Request, Route};
@@ -38,22 +38,21 @@ impl<R: AsRef<[u8]> + Clone + Send + Sync + 'static> ContentHandler<R> {
     }
 }
 
+#[rocket::async_trait]
 impl<R> Handler for ContentHandler<R>
 where
     R: AsRef<[u8]> + Clone + Send + Sync + 'static,
 {
-    fn handle<'r>(&self, req: &'r Request<'_>, data: Data) -> HandlerFuture<'r> {
+    async fn handle<'r, 's: 'r>(&'s self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
         // match e.g. "/index.html" but not "/index.html/"
         if req.uri().path().ends_with('/') {
-            Box::pin(async { Outcome::forward(data) })
+            Outcome::forward(data)
         } else {
             let content: Content<Vec<u8>> = Content(self.content.0.clone(), self.content.1.as_ref().into());
-            Box::pin(async move { 
-                match content.respond_to(req).await {
-                    Ok(response) => Outcome::Success(response),
-                    Err(status) => Outcome::Failure(status),
-                }
-            })
+            match content.respond_to(req) {
+                Ok(response) => Outcome::Success(response),
+                Err(status) => Outcome::Failure(status),
+            }
         }
     }
 }
