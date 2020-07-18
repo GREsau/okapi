@@ -500,9 +500,9 @@ pub fn make_rapi_doc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
         .general
         .spec_urls
         .iter()
-        .map(|su| format!("<option value=\"{}\">{}</option>", su.url, su.name))
+        .map(|su| format!("[\"{}\", \"{}\"]", su.url, su.name))
         .collect::<Vec<_>>()
-        .join("\n         ");
+        .join(", ");
     let logo = config.slots.logo.as_ref().map(|l| format!(r#"<img slot="logo" src="{}" width="110px" height="30px"/>"#, l)).unwrap_or_default();
     let nav_logo = config.slots.nav_logo.as_ref().map(|l| format!(r#"<img slot="nav-logo" src="{}" width="110px" height="30px"/>"#, l)).unwrap_or_default();
     let footer = config.slots.footer.as_ref().map(|f| format!(r#"<p slot="footer">{}</p>"#, f)).unwrap_or_default();
@@ -561,6 +561,11 @@ pub fn make_rapi_doc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
             ContentType::HTML,
             rapi_content.as_bytes().to_vec(),
         )
-        .into_route(concat!("/", "/"))
+        .into_route("/<resource>"),
+        ContentHandler::bytes_owned(
+            ContentType::HTML,
+            rapi_content.as_bytes().to_vec(),
+        )
+        .into_route("/"),
     ]
 }

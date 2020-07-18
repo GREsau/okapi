@@ -2,13 +2,80 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <title>Rapi Docs</title>
   <script type="module" src="https://unpkg.com/rapidoc/dist/rapidoc-min.js"></script>
   <script>
-    const setUrl = () => {
-      const selector = document.getElementById("selector");
-      const resource = selector.options[selector.selectedIndex].value;
-      const rapi = document.getElementById("rapi");
+    /**
+    * Slug a string to create something we can use in the url
+    */
+    const slug = (s) => s
+      .replace(/ /g, '-')
+      .toLowerCase();
+
+    const routes = [ROUTES];  // right routes are inserted from Rust
+
+    /**
+    * Finds the base url on which the documentation is served.
+    */
+    const findBaseUrl = () => {
+      const url = window.location.pathname;
+      const segments = url.split('/');
+      const lastSegment = segments[segments.length - 1]
+      if (routes.some(([url, spec]) => slug(spec) === lastSegment)) {
+        // if the last piece of the segments is one of the api definitions, it should not be
+        // included in the base url.
+        segments.pop();
+      }
+      return segments.join('/');
+    };
+
+    const baseUrl = findBaseUrl();
+
+    /**
+    * Obtains the currently selected spec, as defined by the url
+    */
+    const getCurSpec = () => {
+      const url = window.location.pathname;
+      return url.substring(baseUrl.length + 1);
+    };
+
+    const updateSpec = (resource) => {
+      const rapi = document.getElementById('rapi');
       rapi.loadSpec(resource);
+    };
+
+    /**
+    * Called when the selected value in the select changes. Updates the displayed
+    * documentation, and then updates the url for deep linking purposes.
+    */
+    const setUrl = () => {
+      // first query the needed info from the select
+      const select = document.getElementById('select');
+      const resource = select.options[select.selectedIndex].value;
+      const resourceName = select.options[select.selectedIndex].text;
+
+      updateSpec(resource);
+
+      // update the history for deeplinking
+      window.history.pushState({}, '', `${baseUrl}/${slug(resourceName)}`);
+    };
+
+    window.onload = () => {
+      const select = document.getElementById('select');
+      // add all possible options to the select on page load
+      for (const [url, name] of routes) {
+        const option = document.createElement('option');
+        option.text = name;
+        option.value = url;
+        select.add(option);
+      }
+      // if there is a currently selected spec, find out which one it is and display that definition
+      const spec = getCurSpec();
+      if (spec) {
+        const idx = routes.findIndex(([url, name]) => spec === slug(name));
+        select.value = routes[idx][0];
+        updateSpec(routes[idx][0]);
+      }
     };
   </script>
 </head>
@@ -60,13 +127,11 @@
       server-url="SERVER_URL"
       default-api-server="DEFAULT_API_SERVER"
     >
-      <select id="selector" onchange="setUrl()">
-        ROUTES
-      </select>
+      <select id="select" onchange="setUrl()"></select>
       <LOGO/>
       <FOOTER/>
       <NAV_LOGO/>
     </rapi-doc>
   </div>
-</body> 
+</body>
 </html>
