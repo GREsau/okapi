@@ -69,6 +69,7 @@ pub mod gen;
 pub mod handlers;
 /// Contains an alternative UI for displaying the generated openapi spec, called
 /// (Rapi Doc)[https://mrin9.github.io/RapiDoc/]
+#[cfg(feature = "rapi")]
 pub mod rapi_doc;
 /// This module contains several traits that correspond to the `Rocket` traits pertaining to request
 /// guards and responses
