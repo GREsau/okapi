@@ -561,6 +561,6 @@ pub fn make_rapi_doc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
             ContentType::HTML,
             rapi_content.as_bytes().to_vec(),
         )
-        .into_route(concat!("/", "rapi-doc.html"))
+        .into_route(concat!("/", "/"))
     ]
 }
