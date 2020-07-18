@@ -556,7 +556,7 @@ pub fn make_rapi_doc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
         .replace("<NAV_LOGO/>", &nav_logo);
 
     vec![
-        RedirectHandler::to("rapi-doc.html").into_route("/"),
+        // RedirectHandler::to("rapi-doc.html").into_route("/"),
         ContentHandler::bytes_owned(
             ContentType::HTML,
             rapi_content.as_bytes().to_vec(),
