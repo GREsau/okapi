@@ -39,9 +39,11 @@
       return url.substring(baseUrl.length + 1);
     };
 
-    const updateSpec = (resource) => {
+    const updateSpec = async (resourceUrl) => {
       const rapi = document.getElementById('rapi');
-      rapi.loadSpec(resource);
+      console.log(resourceUrl);
+      const resp = await rapi.loadSpec(resourceUrl)
+      console.log(resp);
     };
 
     /**
@@ -54,13 +56,15 @@
       const resource = select.options[select.selectedIndex].value;
       const resourceName = select.options[select.selectedIndex].text;
 
+      console.log(resource);
       updateSpec(resource);
 
       // update the history for deeplinking
       window.history.pushState({}, '', `${baseUrl}/${slug(resourceName)}`);
     };
 
-    window.onload = () => {
+    // 
+    window.onload = (event) => {
       const select = document.getElementById('select');
       // add all possible options to the select on page load
       for (const [url, name] of routes) {
@@ -76,6 +80,8 @@
         select.value = routes[idx][0];
         updateSpec(routes[idx][0]);
       }
+      event.stopPropagation();
+      event.preventDefault();
     };
   </script>
 </head>
