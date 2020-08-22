@@ -8,12 +8,12 @@ edition = "2018"
 schemars = "0.7.0"
 okapi = { version = "0.4.0", path = "../../okapi" }
 rocket_okapi = { version = "0.5.1", path = "../../rocket-okapi" }
-rocket = { git = "https://github.com/SergioBenitez/Rocket.git", branch = "async", default-features = false }
+rocket = { git = "https://github.com/SergioBenitez/Rocket.git", branch = "master", default-features = false }
 serde = "1.0"
 
 [dependencies.rocket_contrib]
 git = "https://github.com/SergioBenitez/Rocket.git"
-branch = "async"
+branch = "master"
 default-features = false
 features = ["json"]
 

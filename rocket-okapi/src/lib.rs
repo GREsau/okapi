@@ -1,4 +1,3 @@
-#![feature(specialization)]
 #![forbid(missing_docs)]
 
 //! This projects serves to enable automatic rendering of `openapi.json` files, and provides
@@ -21,8 +20,6 @@
 //! able to load the example in the browser!
 //! ### Example
 //! ```rust, no_run
-//! #![feature(decl_macro, proc_macro_hygiene)]
-//!
 //! use rocket::get;
 //! use rocket_contrib::json::Json;
 //! use rocket_okapi::{openapi, routes_with_openapi, JsonSchema};
