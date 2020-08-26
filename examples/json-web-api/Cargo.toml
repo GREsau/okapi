@@ -5,9 +5,9 @@ authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
 
 [dependencies]
-schemars = "0.7.0"
-okapi = { version = "0.4.0", path = "../../okapi" }
-rocket_okapi = { version = "0.4.1", path = "../../rocket-okapi" }
+schemars = { version = "0.8.0-alpha-4", features = ["preserve_order"] }
+okapi = { version = "0.5.0-alpha-1", path = "../../okapi" }
+rocket_okapi = { version = "0.6.0-alpha-1", path = "../../rocket-okapi" }
 rocket = { version = "0.4.3", default-features = false }
 serde = "1.0"
 
@@ -15,4 +15,3 @@ serde = "1.0"
 version = "0.4.3"
 default-features = false
 features = ["json"]
-

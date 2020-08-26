@@ -9,8 +9,7 @@ mod openapi_attr;
 mod routes_with_openapi;
 
 use proc_macro::TokenStream;
-use syn::fold::{self, Fold};
-use syn::{token::Paren, GenericArgument, Ident, Type, TypeParen};
+use syn::Ident;
 
 /// A proc macro to be used in tandem with one of `Rocket`'s endpoint macros. It requires that all
 /// of the arguments of the route implement one of the traits in `rocket_okapi::request`, and that
@@ -28,8 +27,6 @@ use syn::{token::Paren, GenericArgument, Ident, Type, TypeParen};
 /// ```
 #[proc_macro_attribute]
 pub fn openapi(args: TokenStream, mut input: TokenStream) -> TokenStream {
-    input = preserve_span_information(input);
-
     // We don't need to modify/replace the input TokenStream,
     // we just need to append to it.
     input.extend(openapi_attr::parse(args, input.clone()));
@@ -42,39 +39,6 @@ pub fn openapi(args: TokenStream, mut input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn routes_with_openapi(input: TokenStream) -> TokenStream {
     routes_with_openapi::parse(input)
-}
-
-fn preserve_span_information(input: TokenStream) -> TokenStream {
-    // Outputting the input unmodified would cause its span information to be
-    // lost when being consumed by other macros. But parsing it in then quoting
-    // it back out causes span information to be preserved.
-    // See https://github.com/GREsau/okapi/issues/12
-    // and https://github.com/rust-lang/rust/issues/43081
-    let parsed_input: syn::Item = syn::parse(input).unwrap();
-
-    // Nested generics cause span bugs - we can work around this by wrapping all
-    // generic type parameters in parentheses.
-    // https://github.com/rust-lang/rust/pull/48258
-    let parsed_input = GenericTypeVisitor.fold_item(parsed_input);
-
-    quote!(#parsed_input).into()
-}
-
-struct GenericTypeVisitor;
-
-impl Fold for GenericTypeVisitor {
-    fn fold_generic_argument(&mut self, mut node: GenericArgument) -> GenericArgument {
-        node = fold::fold_generic_argument(self, node);
-
-        if let GenericArgument::Type(ty) = node {
-            node = GenericArgument::Type(Type::Paren(TypeParen {
-                paren_token: Paren::default(),
-                elem: Box::new(ty),
-            }));
-        }
-
-        node
-    }
 }
 
 fn get_add_operation_fn_name(route_fn_name: &Ident) -> Ident {

@@ -20,9 +20,9 @@ impl<T: JsonSchema + Serialize> OpenApiResponder<'_> for Json<T> {
 }
 
 impl OpenApiResponder<'_> for JsonValue {
-    fn responses(gen: &mut OpenApiGenerator) -> Result {
+    fn responses(_gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
-        let schema = gen.schema_generator().schema_for_any();
+        let schema = schemars::schema::Schema::Bool(true);
         add_schema_response(&mut responses, 200, "application/json", schema.into())?;
         Ok(responses)
     }
@@ -100,9 +100,7 @@ status_responder!(Forbidden, 403);
 status_responder!(NotFound, 404);
 status_responder!(Conflict, 409);
 
-impl OpenApiResponder<'_>
-    for rocket::response::status::NoContent
-{
+impl OpenApiResponder<'_> for rocket::response::status::NoContent {
     fn responses(_: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
         set_status_code(&mut responses, 204)?;

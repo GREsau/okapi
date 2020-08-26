@@ -61,15 +61,14 @@ pub struct SwaggerUIConfig {
     /// your web ui. If this field is populated, the `url` field is not used.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub urls: Vec<UrlObject>,
-    
     // display options:
     /// If set to true, enables deep linking for tags and operations. See the
     /// [Deep Linking documentation](https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/deep-linking.md)
     /// for more information.
-    /// Default: `false`. 
+    /// Default: `false`.
     pub deep_linking: bool,
     /// Controls the display of operationId in operations list.
-    /// Default: `false`. 
+    /// Default: `false`.
     pub display_operation_id: bool,
     /// The default expansion depth for models (set to -1 completely hide the models).
     /// Default: `1`.
