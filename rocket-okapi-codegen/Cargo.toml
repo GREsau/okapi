@@ -2,7 +2,7 @@
 name = "rocket_okapi_codegen"
 description = "Macros supporting rocket_okapi"
 repository = "https://github.com/GREsau/okapi"
-version = "0.5.1"
+version = "0.6.0-alpha-1"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
 license = "MIT"
@@ -12,7 +12,7 @@ keywords = ["rust", "openapi", "swagger", "rocket"]
 proc-macro = true
 
 [dependencies]
-rocket_http = { git = "https://github.com/SergioBenitez/Rocket.git", branch = "async" }
+rocket_http = { git = "https://github.com/SergioBenitez/Rocket.git" }
 darling = "0.10"
 syn = "1.0"
 proc-macro2 = "1.0"
