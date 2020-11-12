@@ -2,6 +2,7 @@ use super::OpenApiFromFormValue;
 use crate::gen::OpenApiGenerator;
 use okapi::openapi3::*;
 use std::result::Result as StdResult;
+use rocket::http::RawStr;
 
 type Result = crate::Result<Parameter>;
 
@@ -62,5 +63,28 @@ impl<'r, T: OpenApiFromFormValue<'r>> OpenApiFromFormValue<'r> for StdResult<T, 
 impl<'r, T: OpenApiFromFormValue<'r>> OpenApiFromFormValue<'r> for Option<T> {
     fn query_parameter(gen: &mut OpenApiGenerator, name: String, _required: bool) -> Result {
         T::query_parameter(gen, name, false)
+    }
+}
+
+impl<'r> OpenApiFromFormValue<'r> for &'r RawStr {
+    fn query_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
+        let schema = gen.json_schema::<&str>();
+        Ok(Parameter {
+            name,
+            location: "query".to_owned(),
+            description: None,
+            required,
+            deprecated: false,
+            allow_empty_value: false,
+            value: ParameterValue::Schema {
+                style: None,
+                explode: None,
+                allow_reserved: false,
+                schema,
+                example: None,
+                examples: None,
+            },
+            extensions: Default::default(),
+        })
     }
 }
