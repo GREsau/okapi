@@ -1,7 +1,7 @@
 use schemars::gen::SchemaSettings;
 
 /// Settings which are used to customise the behaviour of the `OpenApiGenerator`.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Clone)]
 pub struct OpenApiSettings {
     /// Settings to customise how JSON Schemas are generated.
     pub schema_settings: SchemaSettings,
