@@ -8,7 +8,7 @@
 //! ```toml
 //! [dependencies]
 //! rocket_okapi = "0.5"
-//! schemars = "0.7"
+//! schemars = "0.8"
 //! okapi = { version = "0.5", features = ["derive_json_schema"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
