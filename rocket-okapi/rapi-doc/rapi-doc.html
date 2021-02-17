@@ -42,6 +42,7 @@
     const updateSpec = async (resourceUrl) => {
       const rapi = document.getElementById('rapi');
       console.log(resourceUrl);
+      console.log(rapi);
       const resp = await rapi.loadSpec(resourceUrl)
       console.log(resp);
     };
@@ -56,15 +57,16 @@
       const resource = select.options[select.selectedIndex].value;
       const resourceName = select.options[select.selectedIndex].text;
 
-      console.log(resource);
       updateSpec(resource);
 
       // update the history for deeplinking
       window.history.pushState({}, '', `${baseUrl}/${slug(resourceName)}`);
     };
 
-    // 
-    window.onload = (event) => {
+    document.addEventListener('DOMContentLoaded', async event => {
+      event.stopPropagation();
+      event.preventDefault();
+
       const select = document.getElementById('select');
       // add all possible options to the select on page load
       for (const [url, name] of routes) {
@@ -76,13 +78,14 @@
       // if there is a currently selected spec, find out which one it is and display that definition
       const spec = getCurSpec();
       if (spec) {
+        // fixme: horrible hack to wait for rapi to finish loading its spec, so it doesn't overwrite
+        // our newly loaded spec
+        await new Promise(resolve => setTimeout(resolve, 100));
         const idx = routes.findIndex(([url, name]) => spec === slug(name));
         select.value = routes[idx][0];
         updateSpec(routes[idx][0]);
       }
-      event.stopPropagation();
-      event.preventDefault();
-    };
+    });
   </script>
 </head>
 <body>
