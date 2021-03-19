@@ -365,6 +365,7 @@ pub struct SecurityScheme {
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
 #[serde(tag = "type", rename_all = "camelCase")]
+#[allow(clippy::large_enum_variant)]
 pub enum SecuritySchemeData {
     ApiKey {
         name: String,

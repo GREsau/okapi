@@ -11,7 +11,7 @@ pub fn parse(routes: TokenStream) -> TokenStream {
 
 fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
     let paths = <Punctuated<Path, Comma>>::parse_terminated.parse(routes)?;
-    let add_operations = create_add_operations(paths.clone())?;
+    let add_operations = create_add_operations(paths.clone());
     Ok(quote! {
         {
             let settings = ::rocket_okapi::settings::OpenApiSettings::new();
@@ -49,7 +49,7 @@ fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
     })
 }
 
-fn create_add_operations(paths: Punctuated<Path, Comma>) -> Result<TokenStream2> {
+fn create_add_operations(paths: Punctuated<Path, Comma>) -> TokenStream2 {
     let function_calls = paths.into_iter().map(|path| {
         let fn_name = fn_name_for_add_operation(path.clone());
         let operation_id = operation_id(&path);
@@ -58,9 +58,9 @@ fn create_add_operations(paths: Punctuated<Path, Comma>) -> Result<TokenStream2>
                 .expect(&format!("Could not generate OpenAPI operation for `{}`.", stringify!(#path)));
         }
     });
-    Ok(quote! {
+    quote! {
         #(#function_calls)*
-    })
+    }
 }
 
 fn fn_name_for_add_operation(mut fn_path: Path) -> Path {

@@ -48,7 +48,7 @@ impl_from_param!(u64);
 impl_from_param!(u128);
 impl_from_param!(bool);
 impl_from_param!(String);
-impl_from_param!(std::borrow::Cow<'r, str>);
+// impl_from_param!(std::borrow::Cow<'r, str>);
 
 // OpenAPI specification does not support optional path params, so we leave `required` as true,
 // even for Options and Results.

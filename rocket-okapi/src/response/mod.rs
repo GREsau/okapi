@@ -13,8 +13,10 @@ pub trait OpenApiResponder<'a, 'r: 'a>: rocket::response::Responder<'a, 'r> {
     fn responses(gen: &mut OpenApiGenerator) -> Result<Responses>;
 }
 
-impl <'a, 'r: 'a, T: OpenApiResponderInner> OpenApiResponder<'a, 'r> for T
-where T: rocket::response::Responder<'a, 'r> {
+impl<'a, 'r: 'a, T: OpenApiResponderInner> OpenApiResponder<'a, 'r> for T
+where
+    T: rocket::response::Responder<'a, 'r>,
+{
     #[inline(always)]
     fn responses(gen: &mut OpenApiGenerator) -> Result<Responses> {
         T::responses(gen)

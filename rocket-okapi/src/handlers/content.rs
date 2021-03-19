@@ -34,7 +34,7 @@ impl ContentHandler<&'static [u8]> {
 impl<R: AsRef<[u8]> + Clone + Send + Sync + 'static> ContentHandler<R> {
     /// Create a `rocket::Route` from the current `ContentHandler`.
     pub fn into_route(self, path: impl AsRef<str>) -> Route {
-        Route::new(Method::Get, path, self)
+        Route::new(Method::Get, path.as_ref(), self)
     }
 }
 
@@ -48,7 +48,8 @@ where
         if req.uri().path().ends_with('/') {
             Outcome::forward(data)
         } else {
-            let content: Content<Vec<u8>> = Content(self.content.0.clone(), self.content.1.as_ref().into());
+            let content: Content<Vec<u8>> =
+                Content(self.content.0.clone(), self.content.1.as_ref().into());
             match content.respond_to(req) {
                 Ok(response) => Outcome::Success(response),
                 Err(status) => Outcome::Failure(status),

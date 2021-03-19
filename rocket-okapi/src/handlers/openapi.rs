@@ -18,7 +18,7 @@ impl OpenApiHandler {
 
     /// Create a new route from this `OpenApiHandler`.
     pub fn into_route(self, path: impl AsRef<str>) -> Route {
-        Route::new(Method::Get, path, self)
+        Route::new(Method::Get, path.as_ref(), self)
     }
 }
 
@@ -29,6 +29,7 @@ impl Handler for OpenApiHandler {
         let base_path = req
             .route()
             .expect("Routing should already have occurred.")
+            .uri
             .base();
 
         if spec.servers.is_empty() && base_path != "/" {

@@ -3,7 +3,7 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_okapi;
 
-use rocket::request::{Form, FromForm};
+// use rocket::form::{Form, FromForm};
 use rocket_contrib::json::Json;
 use rocket_okapi::swagger_ui::*;
 use schemars::JsonSchema;
@@ -14,7 +14,6 @@ use serde::{Deserialize, Serialize};
 struct User {
     user_id: u64,
     username: String,
-    #[serde(default)]
     #[schemars(example = "example_email")]
     email: Option<String>,
 }
@@ -85,6 +84,7 @@ struct Post {
     summary: Option<String>,
 }
 
+/*
 /// # Create post using query params
 ///
 /// Returns the created post.
@@ -93,6 +93,7 @@ struct Post {
 fn create_post_by_query(post: Form<Post>) -> Option<Json<Post>> {
     Some(Json(post.into_inner()))
 }
+ */
 
 #[rocket::main]
 async fn main() {
@@ -105,7 +106,7 @@ async fn main() {
                 get_user_by_name,
                 create_user,
                 hidden,
-                create_post_by_query,
+                // create_post_by_query,
             ],
         )
         .mount(

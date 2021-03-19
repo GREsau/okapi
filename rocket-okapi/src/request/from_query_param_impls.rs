@@ -1,7 +1,7 @@
 use super::OpenApiFromFormValue;
 use crate::gen::OpenApiGenerator;
 use okapi::openapi3::*;
-use std::result::Result as StdResult;
+use rocket::form::Result as FormResult;
 
 type Result = crate::Result<Parameter>;
 
@@ -53,7 +53,7 @@ impl_from_query_param!(String);
 
 // OpenAPI specification does not support optional path params, so we leave `required` as true,
 // even for Options and Results.
-impl<'r, T: OpenApiFromFormValue<'r>> OpenApiFromFormValue<'r> for StdResult<T, T::Error> {
+impl<'r, T: OpenApiFromFormValue<'r>> OpenApiFromFormValue<'r> for FormResult<'r, T> {
     fn query_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
         T::query_parameter(gen, name, required)
     }

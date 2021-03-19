@@ -112,7 +112,12 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
     }
 
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
-    let path = route.origin.path().replace("<", "{").replace(">", "}");
+    let path = route
+        .origin
+        .path()
+        .as_str()
+        .replace("<", "{")
+        .replace(">", "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
     let (title, desc) = doc_attr::get_title_and_desc_from_doc(&route_fn.attrs);
     let title = match title {

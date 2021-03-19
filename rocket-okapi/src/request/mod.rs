@@ -13,7 +13,7 @@ pub use from_query_multi_param_impls::get_nested_query_parameters;
 
 /// This trait means that the implementer can be used as a `FromData` request guard, and that this
 /// can also be documented.
-pub trait OpenApiFromData<'r>: rocket::data::FromTransformedData<'r> {
+pub trait OpenApiFromData<'r>: rocket::data::FromData<'r> {
     /// Return a `RequestBody` containing the information required to document the `FromData` for
     /// implementer.
     fn request_body(gen: &mut OpenApiGenerator) -> Result<RequestBody>;
@@ -37,7 +37,7 @@ pub trait OpenApiFromSegments<'r>: rocket::request::FromSegments<'r> {
 
 /// This trait means that the implementer can be used as a `FromFormValue` request guard, and that
 /// this can also be documented.
-pub trait OpenApiFromFormValue<'r>: rocket::request::FromFormValue<'r> {
+pub trait OpenApiFromFormValue<'r>: rocket::form::FromForm<'r> {
     /// Return a `RequestBody` containing the information required to document the `FromFormValue`
     /// for implementer.
     fn query_parameter(
@@ -49,7 +49,7 @@ pub trait OpenApiFromFormValue<'r>: rocket::request::FromFormValue<'r> {
 
 /// This trait means that the implementer can be used as a `FromQuery` request guard, and that this
 /// can also be documented.
-pub trait OpenApiFromQuery<'r>: rocket::request::FromQuery<'r> {
+pub trait OpenApiFromQuery<'r>: rocket::data::FromData<'r> {
     /// Return a `RequestBody` containing the information required to document the `FromQuery` for
     /// implementer.
     fn query_multi_parameter(

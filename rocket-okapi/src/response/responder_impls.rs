@@ -9,7 +9,7 @@ use std::result::Result as StdResult;
 
 type Result = crate::Result<Responses>;
 
-impl <T: Serialize + JsonSchema + Send> OpenApiResponderInner for Json<T> {
+impl<T: Serialize + JsonSchema + Send> OpenApiResponderInner for Json<T> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
         let schema = gen.json_schema::<T>();
@@ -81,7 +81,7 @@ macro_rules! status_responder {
     ($responder: ident, $status: literal) => {
         impl<T> OpenApiResponderInner for rocket::response::status::$responder<T>
         where
-            T: OpenApiResponderInner + Send
+            T: OpenApiResponderInner + Send,
         {
             fn responses(gen: &mut OpenApiGenerator) -> Result {
                 let mut responses = T::responses(gen)?;

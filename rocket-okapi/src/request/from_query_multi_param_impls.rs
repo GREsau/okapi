@@ -43,7 +43,7 @@ type Result = crate::Result<Vec<Parameter>>;
 ///     }
 /// }
 /// ```
-pub fn get_nested_query_parameters<'r, T>(
+pub fn get_nested_query_parameters<T>(
     gen: &mut OpenApiGenerator,
     _name: String,
     required: bool,
@@ -97,10 +97,10 @@ where
             extensions: Default::default(),
         });
     }
-    return parameter_list;
+    parameter_list
 }
 
-impl<'r, T: OpenApiFromQuery<'r>> OpenApiFromQuery<'r> for StdResult<T, T::Error> {
+impl<'r, T: 'r + OpenApiFromQuery<'r>> OpenApiFromQuery<'r> for StdResult<T, T::Error> {
     fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, _required: bool) -> Result {
         T::query_multi_parameter(gen, name, false)
     }
@@ -114,20 +114,9 @@ impl<'r, T: OpenApiFromQuery<'r>> OpenApiFromQuery<'r> for Option<T> {
 
 // All fields are required.
 // Does not allow extra fields.
-impl<'r, T> OpenApiFromQuery<'r> for rocket::request::Form<T>
+impl<'r, T> OpenApiFromQuery<'r> for rocket::form::Form<T>
 where
-    T: rocket::request::FromForm<'r> + JsonSchema,
-{
-    fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
-        Ok(get_nested_query_parameters::<T>(gen, name, required))
-    }
-}
-
-// All fields are required.
-// Does allow extra fields. (automatically discards extra fields without error)
-impl<'r, T> OpenApiFromQuery<'r> for rocket::request::LenientForm<T>
-where
-    T: rocket::request::FromForm<'r> + JsonSchema,
+    T: rocket::form::FromForm<'r> + JsonSchema,
 {
     fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
         Ok(get_nested_query_parameters::<T>(gen, name, required))
