@@ -94,7 +94,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
             .into(),
         };
         params.push(quote! {
-            <#ty as ::rocket_okapi::request::OpenApiFromFormValue>::query_parameter(gen, #arg.to_owned(), true)?.into()
+            <#ty as ::rocket_okapi::request::OpenApiFromFormField>::query_parameter(gen, #arg.to_owned(), true)?.into()
         })
     }
     let mut params_nested_list = Vec::new();
@@ -107,8 +107,8 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
             }.into(),
         };
         params_nested_list.push(quote! {
-            <#ty as ::rocket_okapi::request::OpenApiFromQuery>::query_multi_parameter(gen, #arg.to_owned(), true)?.into()
-        })
+             <#ty as ::rocket_okapi::request::OpenApiFromForm>::query_multi_parameter(gen, #arg.to_owned(), true)?.into()
+         })
     }
 
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);

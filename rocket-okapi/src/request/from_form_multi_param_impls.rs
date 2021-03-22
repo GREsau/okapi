@@ -1,49 +1,29 @@
-use super::OpenApiFromQuery;
 use crate::gen::OpenApiGenerator;
 use okapi::openapi3::*;
 use schemars::schema::{Schema, SchemaObject};
 use schemars::JsonSchema;
-use std::result::Result as StdResult;
-
-type Result = crate::Result<Vec<Parameter>>;
 
 /// Given an object that implements the `JsonSchema` generate all the `Parameter`
 /// that are used to create documentation.
 /// Use when manualy implementing a
-/// [Query Guard](https://docs.rs/rocket/latest/rocket/request/trait.FromQuery.html).
+/// [Form Guard](https://api.rocket.rs/master/rocket/form/trait.FromForm.html).
 /// Example:
 /// ```
-/// use rocket::request::{Query, FromQuery};
+/// use rocket::form::FromForm;
 /// use serde::{Serialize, Deserialize};
 /// use schemars::JsonSchema;
 /// use rocket_okapi::{
 ///     gen::OpenApiGenerator,
-///     request::OpenApiFromQuery,
-///     request::get_nested_query_parameters
+///     request::OpenApiFromForm,
+///     request::get_nested_form_parameters
 /// };
 ///
-/// #[derive(Serialize, Deserialize, Clone, Debug, Default, JsonSchema)]
+/// #[derive(Serialize, Deserialize, Clone, Debug, Default, JsonSchema, FromForm)]
 /// pub struct ApiPagination{
 ///     page: Option<u32>,
 ///     per_page: Option<u32>,
 /// }
-///
-/// impl<'q> FromQuery<'q> for ApiPagination {
-///     type Error = String;// Some kind of error
-///
-///     fn from_query(_query: Query<'q>) -> Result<Self, Self::Error> {
-///         Ok(ApiPagination::default())
-///     }
-/// }
-///
-/// impl<'r> OpenApiFromQuery<'r> for ApiPagination {
-///     fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, required: bool)
-///     -> rocket_okapi::Result<Vec<okapi::openapi3::Parameter>> {
-///         Ok(get_nested_query_parameters::<ApiPagination>(gen, name, required))
-///     }
-/// }
-/// ```
-pub fn get_nested_query_parameters<T>(
+pub fn get_nested_form_parameters<T>(
     gen: &mut OpenApiGenerator,
     _name: String,
     required: bool,
@@ -81,7 +61,7 @@ where
             .and_then(|m| m.description.clone());
         parameter_list.push(Parameter {
             name: key,
-            location: "query".to_owned(),
+            location: "form".to_owned(),
             description,
             required: parameter_required,
             deprecated: false,
@@ -98,27 +78,4 @@ where
         });
     }
     parameter_list
-}
-
-impl<'r, T: 'r + OpenApiFromQuery<'r>> OpenApiFromQuery<'r> for StdResult<T, T::Error> {
-    fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, _required: bool) -> Result {
-        T::query_multi_parameter(gen, name, false)
-    }
-}
-
-impl<'r, T: OpenApiFromQuery<'r>> OpenApiFromQuery<'r> for Option<T> {
-    fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, _required: bool) -> Result {
-        T::query_multi_parameter(gen, name, false)
-    }
-}
-
-// All fields are required.
-// Does not allow extra fields.
-impl<'r, T> OpenApiFromQuery<'r> for rocket::form::Form<T>
-where
-    T: rocket::form::FromForm<'r> + JsonSchema,
-{
-    fn query_multi_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
-        Ok(get_nested_query_parameters::<T>(gen, name, required))
-    }
 }

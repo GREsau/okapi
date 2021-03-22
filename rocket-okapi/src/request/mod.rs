@@ -1,15 +1,15 @@
 mod from_data_impls;
+mod from_form_multi_param_impls;
+mod from_form_param_impls;
 mod from_param_impls;
-mod from_query_multi_param_impls;
-mod from_query_param_impls;
 
 use super::gen::OpenApiGenerator;
 use super::Result;
 use okapi::openapi3::*;
 
 /// Expose this to the public to be use when manualy implementing a
-/// [Query Guard](https://docs.rs/rocket/latest/rocket/request/trait.FromQuery.html).
-pub use from_query_multi_param_impls::get_nested_query_parameters;
+/// [Form Guard](https://api.rocket.rs/master/rocket/form/trait.FromForm.html).
+pub use from_form_multi_param_impls::get_nested_form_parameters;
 
 /// This trait means that the implementer can be used as a `FromData` request guard, and that this
 /// can also be documented.
@@ -35,24 +35,24 @@ pub trait OpenApiFromSegments<'r>: rocket::request::FromSegments<'r> {
     fn path_multi_parameter(gen: &mut OpenApiGenerator, name: String) -> Result<Parameter>;
 }
 
-/// This trait means that the implementer can be used as a `FromFormValue` request guard, and that
+/// This trait means that the implementer can be used as a `FromFormField` request guard, and that
 /// this can also be documented.
-pub trait OpenApiFromFormValue<'r>: rocket::form::FromForm<'r> {
-    /// Return a `RequestBody` containing the information required to document the `FromFormValue`
+pub trait OpenApiFromFormField<'r>: rocket::form::FromForm<'r> {
+    /// Return a `RequestBody` containing the information required to document the `FromFormField`
     /// for implementer.
-    fn query_parameter(
+    fn form_parameter(
         gen: &mut OpenApiGenerator,
         name: String,
         required: bool,
     ) -> Result<Parameter>;
 }
 
-/// This trait means that the implementer can be used as a `FromQuery` request guard, and that this
+/// This trait means that the implementer can be used as a `FromForm` request guard, and that this
 /// can also be documented.
-pub trait OpenApiFromQuery<'r>: rocket::data::FromData<'r> {
-    /// Return a `RequestBody` containing the information required to document the `FromQuery` for
+pub trait OpenApiFromForm<'r>: rocket::form::FromForm<'r> {
+    /// Return a `RequestBody` containing the information required to document the `FromForm` for
     /// implementer.
-    fn query_multi_parameter(
+    fn form_multi_parameter(
         gen: &mut OpenApiGenerator,
         name: String,
         required: bool,
