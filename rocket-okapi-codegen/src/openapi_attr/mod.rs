@@ -14,6 +14,8 @@ use syn::{AttributeArgs, FnArg, Ident, ItemFn, ReturnType, Type, TypeTuple};
 #[darling(default)]
 struct OpenApiAttribute {
     pub skip: bool,
+    #[darling(multiple, rename = "tag")]
+    pub tags: Vec<String>,
 }
 
 pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
@@ -32,7 +34,7 @@ pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
     }
 
     match route_attr::parse_attrs(&input.attrs) {
-        Ok(route) => create_route_operation_fn(input, route),
+        Ok(route) => create_route_operation_fn(input, route, okapi_attr.tags),
         Err(e) => e,
     }
 }
@@ -49,7 +51,11 @@ fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
     })
 }
 
-fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> TokenStream {
+fn create_route_operation_fn(
+    route_fn: ItemFn,
+    route: route_attr::Route,
+    tags: Vec<String>,
+) -> TokenStream {
     let arg_types = get_arg_types(route_fn.sig.inputs.into_iter());
     let return_type = match route_fn.sig.output {
         ReturnType::Type(_, ty) => *ty,
@@ -123,6 +129,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         Some(x) => quote!(Some(#x.to_owned())),
         None => quote!(None),
     };
+    let tags = tags.iter().map(|tag| quote! { #tag.to_string() });
 
     TokenStream::from(quote! {
         pub fn #fn_name(
@@ -140,6 +147,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
                     parameters.push(item.into());
                 }
             }
+            let tags: Vec<String> = vec![#(#tags),*];
             gen.add_operation(::rocket_okapi::OperationInfo {
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,
@@ -150,6 +158,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
                     parameters,
                     summary: #title,
                     description: #desc,
+                    tags,
                     ..Default::default()
                 },
             });
