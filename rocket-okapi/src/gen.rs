@@ -77,6 +77,8 @@ impl OpenApiGenerator {
             }
         }
 
+
+
         OpenApi {
             openapi: "3.0.0".to_owned(),
             paths: {
@@ -91,6 +93,7 @@ impl OpenApiGenerator {
             },
             components: Some(Components {
                 schemas: Map::from_iter(schemas.into_iter().map(|(k, v)| (k, v.into()))),
+                security_schemes: self.settings.security_schemes,
                 ..Default::default()
             }),
             ..Default::default()

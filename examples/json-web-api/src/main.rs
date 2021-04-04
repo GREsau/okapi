@@ -7,9 +7,10 @@ extern crate rocket_okapi;
 
 use rocket::request::{Form, FromForm};
 use rocket_contrib::json::Json;
-use rocket_okapi::swagger_ui::*;
+use rocket_okapi::{settings::OpenApiSettings, swagger_ui::*};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use okapi::openapi3::SecuritySchemeData;
 
 #[derive(Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
@@ -28,7 +29,7 @@ fn example_email() -> &'static str {
 /// # Get all users
 ///
 /// Returns all users in the system.
-#[openapi]
+#[openapi(security = "x-api-key")]
 #[get("/user")]
 fn get_all_users() -> Json<Vec<User>> {
     Json(vec![User {
@@ -97,16 +98,19 @@ fn create_post_by_query(post: Form<Post>) -> Option<Json<Post>> {
 }
 
 fn main() {
+    let mut settings = OpenApiSettings::default();
+    settings.add_security_scheme("x-api-key".to_owned(), SecuritySchemeData::ApiKey {name: "x-api-key".to_owned(),location: "header".to_owned()},None);
     rocket::ignite()
         .mount(
             "/",
-            routes_with_openapi![
+            routes_with_openapi_with_settings![
                 get_all_users,
                 get_user,
                 get_user_by_name,
                 create_user,
                 hidden,
                 create_post_by_query,
+                settings
             ],
         )
         .mount(

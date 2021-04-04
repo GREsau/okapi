@@ -3,6 +3,54 @@ use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use syn::{parse::Parser, punctuated::Punctuated, token::Comma, Path, Result};
 
+
+pub fn parse_with_settings(routes: TokenStream) -> TokenStream {
+    parse_inner_with_settings(routes)
+        .unwrap_or_else(|e| e.to_compile_error())
+        .into()
+}
+
+fn parse_inner_with_settings(routes: TokenStream) -> Result<TokenStream2> {
+    let mut paths = <Punctuated<Path, Comma>>::parse_terminated.parse(routes)?;
+    let settings = paths.pop().unwrap();
+    let add_operations = create_add_operations(paths.clone())?;
+    Ok(quote! {
+        {
+            let settings = #settings;
+            let mut gen = ::rocket_okapi::gen::OpenApiGenerator::new(settings.clone());
+            #add_operations
+            let mut spec = gen.into_openapi();
+            let mut info = ::okapi::openapi3::Info {
+                title: env!("CARGO_PKG_NAME").to_owned(),
+                version: env!("CARGO_PKG_VERSION").to_owned(),
+                ..Default::default()
+            };
+            if !env!("CARGO_PKG_DESCRIPTION").is_empty() {
+                info.description = Some(env!("CARGO_PKG_DESCRIPTION").to_owned());
+            }
+            if !env!("CARGO_PKG_REPOSITORY").is_empty() {
+                info.contact = Some(::okapi::openapi3::Contact{
+                    name: Some("Repository".to_owned()),
+                    url: Some(env!("CARGO_PKG_REPOSITORY").to_owned()),
+                    ..Default::default()
+                });
+            }
+            if !env!("CARGO_PKG_HOMEPAGE").is_empty() {
+                info.contact = Some(::okapi::openapi3::Contact{
+                    name: Some("Homepage".to_owned()),
+                    url: Some(env!("CARGO_PKG_REPOSITORY").to_owned()),
+                    ..Default::default()
+                });
+            }
+            spec.info = info;
+
+            let mut routes = ::rocket::routes![#paths];
+            routes.push(::rocket_okapi::handlers::OpenApiHandler::new(spec).into_route(&settings.json_path));
+            routes
+        }
+    })
+}
+
 pub fn parse(routes: TokenStream) -> TokenStream {
     parse_inner(routes)
         .unwrap_or_else(|e| e.to_compile_error())

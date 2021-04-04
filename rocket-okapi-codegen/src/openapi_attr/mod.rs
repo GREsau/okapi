@@ -14,6 +14,7 @@ use syn::{AttributeArgs, FnArg, Ident, ItemFn, ReturnType, Type, TypeTuple};
 #[darling(default)]
 struct OpenApiAttribute {
     pub skip: bool,
+    pub security: Option<String>
 }
 
 pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
@@ -31,8 +32,9 @@ pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
         return create_empty_route_operation_fn(input);
     }
 
+
     match route_attr::parse_attrs(&input.attrs) {
-        Ok(route) => create_route_operation_fn(input, route),
+        Ok(route) => create_route_operation_fn(input, route,okapi_attr.security),
         Err(e) => e,
     }
 }
@@ -49,7 +51,7 @@ fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
     })
 }
 
-fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> TokenStream {
+fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route, security: Option<String>) -> TokenStream {
     let arg_types = get_arg_types(route_fn.sig.inputs.into_iter());
     let return_type = match route_fn.sig.output {
         ReturnType::Type(_, ty) => *ty,
@@ -123,6 +125,11 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         Some(x) => quote!(Some(#x.to_owned())),
         None => quote!(None),
     };
+    let security = match security {
+        Some(x) => quote!(Some(#x.to_owned())),
+        None => quote!(None),
+    };
+   
 
     TokenStream::from(quote! {
         pub fn #fn_name(
@@ -140,6 +147,16 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
                     parameters.push(item.into());
                 }
             }
+
+            let securityRequirement: Option<Vec<::okapi::openapi3::SecurityRequirement>> = match #security{
+                Some(s) => {
+                    let mut map = ::okapi::openapi3::SecurityRequirement::new();
+                    map.insert(s,Vec::new());
+                    Some(vec![map])
+                },
+                None => None
+            };
+           
             gen.add_operation(::rocket_okapi::OperationInfo {
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,
@@ -150,6 +167,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
                     parameters,
                     summary: #title,
                     description: #desc,
+                    security: securityRequirement,
                     ..Default::default()
                 },
             });

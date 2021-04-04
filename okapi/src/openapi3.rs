@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 type Object = Map<String, Value>;
 
-type SecurityRequirement = Map<String, Vec<String>>;
+pub type SecurityRequirement = Map<String, Vec<String>>;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
@@ -352,8 +352,6 @@ pub struct Header {
 #[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct SecurityScheme {
-    #[serde(rename = "type")]
-    pub schema_type: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     #[serde(flatten)]

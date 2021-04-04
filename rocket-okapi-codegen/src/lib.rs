@@ -41,6 +41,11 @@ pub fn routes_with_openapi(input: TokenStream) -> TokenStream {
     routes_with_openapi::parse(input)
 }
 
+#[proc_macro]
+pub fn routes_with_openapi_with_settings(input: TokenStream) -> TokenStream {
+    routes_with_openapi::parse_with_settings(input)
+}
+
 fn get_add_operation_fn_name(route_fn_name: &Ident) -> Ident {
     Ident::new(
         &format!("okapi_add_operation_for_{}_", route_fn_name),
