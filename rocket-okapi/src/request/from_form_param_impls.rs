@@ -49,8 +49,29 @@ impl_from_form_param!(u64);
 impl_from_form_param!(u128);
 impl_from_form_param!(bool);
 impl_from_form_param!(String);
-// Cow<> does not implement FromFormField
-// impl_from_form_param!(std::borrow::Cow<'r, str>);
+
+impl<'r> OpenApiFromFormField<'r> for &'r str {
+    fn form_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
+        let schema = gen.json_schema::<str>();
+        Ok(Parameter {
+            name,
+            location: "form".to_owned(),
+            description: None,
+            required,
+            deprecated: false,
+            allow_empty_value: false,
+            value: ParameterValue::Schema {
+                style: None,
+                explode: None,
+                allow_reserved: false,
+                schema,
+                example: None,
+                examples: None,
+            },
+            extensions: Default::default(),
+        })
+    }
+}
 
 // OpenAPI specification does not support optional path params, so we leave `required` as true,
 // even for Options and Results.
