@@ -45,7 +45,7 @@ fn hidden() -> Json<&'static str> {
 }
 
 pub fn make_rocket() -> rocket::Rocket {
-    rocket::ignite()
+    rocket::build()
         // routes_with_openapi![...] will host the openapi document at openapi.json
         .mount(
             "/",

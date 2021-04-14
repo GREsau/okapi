@@ -1,5 +1,5 @@
 use okapi::openapi3::{OpenApi, Server};
-use rocket::handler::{Handler, Outcome};
+use rocket::route::{Handler, Outcome};
 use rocket::http::{ContentType, Method};
 use rocket::response::Content;
 use rocket::{Data, Request, Route};

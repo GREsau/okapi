@@ -1,4 +1,4 @@
-use rocket::handler::{Handler, Outcome};
+use rocket::route::{Handler, Outcome};
 use rocket::http::{ContentType, Method};
 use rocket::response::{Content, Responder};
 use rocket::{Data, Request, Route};

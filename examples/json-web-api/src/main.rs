@@ -95,7 +95,7 @@ fn create_post_by_query(post: Post) -> Option<Json<Post>> {
 
 #[rocket::main]
 async fn main() {
-    let result = rocket::ignite()
+    let result = rocket::build()
         .mount(
             "/",
             routes_with_openapi![

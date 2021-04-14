@@ -49,7 +49,7 @@
 //! }
 //!
 //! fn main() {
-//!     rocket::ignite()
+//!     rocket::build()
 //!         .mount("/my_resource", routes_with_openapi![my_controller])
 //!         .mount("/swagger", make_swagger_ui(&get_docs()))
 //!         .launch();
