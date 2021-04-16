@@ -1,6 +1,7 @@
 use super::OpenApiFromData;
 use crate::gen::OpenApiGenerator;
 use okapi::{openapi3::*, Map};
+use rocket::data::Data;
 use rocket_contrib::json::Json; // TODO json feature flag
 use schemars::JsonSchema;
 use serde::Deserialize;
@@ -40,6 +41,27 @@ impl<'a, T: OpenApiFromData<'a> + 'a> OpenApiFromData<'a> for Option<T> {
         Ok(RequestBody {
             required: false,
             ..T::request_body(gen)?
+        })
+    }
+}
+
+impl<'a> OpenApiFromData<'a> for Data {
+    fn request_body(gen: &mut OpenApiGenerator) -> Result {
+        let schema = gen.json_schema::<String>();
+        Ok(RequestBody {
+            content: {
+                let mut map = Map::new();
+                map.insert(
+                    "application/octet-stream".to_owned(),
+                    MediaType {
+                        schema: Some(schema),
+                        ..Default::default()
+                    },
+                );
+                map
+            },
+            required: true,
+            ..Default::default()
         })
     }
 }
