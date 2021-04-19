@@ -43,7 +43,7 @@ impl<R> Handler for ContentHandler<R>
 where
     R: AsRef<[u8]> + Clone + Send + Sync + 'static,
 {
-    async fn handle<'r, 's: 'r>(&'s self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
+    async fn handle<'r>(&self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
         // match e.g. "/index.html" but not "/index.html/"
         if req.uri().path().ends_with('/') {
             Outcome::forward(data)
