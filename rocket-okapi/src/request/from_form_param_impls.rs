@@ -13,7 +13,8 @@ macro_rules! impl_from_form_param {
                 let schema = gen.json_schema::<$ty>();
                 Ok(Parameter {
                     name,
-                    location: "form".to_owned(),
+                    // Currently it's used also by query parameters which are more common than forms
+                    location: "query".to_owned(),
                     description: None,
                     required,
                     deprecated: false,
@@ -55,7 +56,7 @@ impl<'r> OpenApiFromFormField<'r> for &'r str {
         let schema = gen.json_schema::<str>();
         Ok(Parameter {
             name,
-            location: "form".to_owned(),
+            location: "query".to_owned(),
             description: None,
             required,
             deprecated: false,
