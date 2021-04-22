@@ -49,6 +49,9 @@ impl_from_param!(u128);
 impl_from_param!(bool);
 impl_from_param!(String);
 
+#[cfg(feature = "uuid")]
+impl_from_param!(rocket::serde::uuid::Uuid);
+
 impl<'r> OpenApiFromParam<'r> for &'r str {
     fn path_parameter(gen: &mut OpenApiGenerator, name: String) -> Result {
         let schema = gen.json_schema::<str>();

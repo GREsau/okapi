@@ -74,6 +74,9 @@ impl<'r> OpenApiFromFormField<'r> for &'r str {
     }
 }
 
+#[cfg(feature = "uuid")]
+impl_from_form_param!(rocket::serde::uuid::Uuid);
+
 // OpenAPI specification does not support optional path params, so we leave `required` as true,
 // even for Options and Results.
 impl<'r, T: OpenApiFromFormField<'r>> OpenApiFromFormField<'r> for FormResult<'r, T> {
