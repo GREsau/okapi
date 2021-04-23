@@ -1,6 +1,6 @@
 use super::OpenApiFromParam;
 use crate::gen::OpenApiGenerator;
-use okapi::openapi3::*;
+use okapi::openapi3::{Parameter, ParameterValue};
 use std::result::Result as StdResult;
 
 type Result = crate::Result<Parameter>;
@@ -25,7 +25,7 @@ macro_rules! impl_from_param {
                         example: None,
                         examples: None,
                     },
-                    extensions: Default::default(),
+                    extensions: okapi::Map::default(),
                 })
             }
         }
@@ -67,7 +67,7 @@ impl<'r> OpenApiFromParam<'r> for &'r str {
                 example: None,
                 examples: None,
             },
-            extensions: Default::default(),
+            extensions: okapi::Map::default(),
         })
     }
 }

@@ -11,7 +11,7 @@ pub struct RedirectHandler {
 
 impl RedirectHandler {
     /// Create a new `RedirectHandler` that redirects to the specified URL.
-    pub fn to(dest: &'static str) -> Self {
+    #[must_use] pub fn to(dest: &'static str) -> Self {
         Self {
             dest: dest.trim_start_matches('/'),
         }

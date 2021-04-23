@@ -1,5 +1,5 @@
 use crate::gen::OpenApiGenerator;
-use okapi::openapi3::*;
+use okapi::openapi3::{Parameter, ParameterValue};
 use schemars::schema::{Schema, SchemaObject};
 use schemars::JsonSchema;
 
@@ -74,7 +74,7 @@ where
                 example: None,
                 examples: None,
             },
-            extensions: Default::default(),
+            extensions: okapi::Map::default(),
         });
     }
     parameter_list

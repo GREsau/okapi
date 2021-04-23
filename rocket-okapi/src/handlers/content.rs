@@ -24,7 +24,7 @@ impl ContentHandler<String> {
 impl ContentHandler<&'static [u8]> {
     /// Create a `ContentHandler<&[u8]>`, which serves its content with the specified
     /// `content_type`.
-    pub fn bytes(content_type: ContentType, content: &'static [u8]) -> Self {
+    #[must_use] pub fn bytes(content_type: ContentType, content: &'static [u8]) -> Self {
         ContentHandler {
             content: Content(content_type, content),
         }

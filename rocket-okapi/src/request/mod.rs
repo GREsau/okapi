@@ -5,7 +5,7 @@ mod from_param_impls;
 
 use super::gen::OpenApiGenerator;
 use super::Result;
-use okapi::openapi3::*;
+use okapi::openapi3::{Parameter, RequestBody};
 
 /// Expose this to the public to be use when manualy implementing a
 /// [Form Guard](https://api.rocket.rs/master/rocket/form/trait.FromForm.html).
