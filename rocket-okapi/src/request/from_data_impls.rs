@@ -1,6 +1,9 @@
 use super::OpenApiFromData;
 use crate::gen::OpenApiGenerator;
-use okapi::{openapi3::{MediaType, RequestBody}, Map};
+use okapi::{
+    openapi3::{MediaType, RequestBody},
+    Map,
+};
 use rocket::data::Data;
 use rocket_contrib::json::Json; // TODO json feature flag
 use schemars::JsonSchema;

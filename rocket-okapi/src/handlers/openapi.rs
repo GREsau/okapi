@@ -1,7 +1,7 @@
 use okapi::openapi3::{OpenApi, Server};
-use rocket::route::{Handler, Outcome};
 use rocket::http::{ContentType, Method};
 use rocket::response::Content;
+use rocket::route::{Handler, Outcome};
 use rocket::{Data, Request, Route};
 
 /// A handler type that is used to serve the `openapi.json` files.
@@ -12,7 +12,8 @@ pub struct OpenApiHandler {
 
 impl OpenApiHandler {
     /// Create a new handler from an API spec.
-    #[must_use] pub fn new(spec: OpenApi) -> Self {
+    #[must_use]
+    pub fn new(spec: OpenApi) -> Self {
         OpenApiHandler { spec }
     }
 

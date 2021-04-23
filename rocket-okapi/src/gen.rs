@@ -18,7 +18,8 @@ pub struct OpenApiGenerator {
 
 impl OpenApiGenerator {
     /// Create a new `OpenApiGenerator` from the settings provided.
-    #[must_use] pub fn new(settings: OpenApiSettings) -> Self {
+    #[must_use]
+    pub fn new(settings: OpenApiSettings) -> Self {
         OpenApiGenerator {
             schema_generator: settings.schema_settings.clone().into_generator(),
             settings,
@@ -56,7 +57,8 @@ impl OpenApiGenerator {
     }
 
     /// Obtain the internal `SchemaGenerator` object.
-    #[must_use] pub fn schema_generator(&self) -> &SchemaGenerator {
+    #[must_use]
+    pub fn schema_generator(&self) -> &SchemaGenerator {
         &self.schema_generator
     }
 
@@ -66,7 +68,8 @@ impl OpenApiGenerator {
     }
 
     /// Generate an `OpenApi` specification for all added operations.
-    #[must_use] pub fn into_openapi(self) -> OpenApi {
+    #[must_use]
+    pub fn into_openapi(self) -> OpenApi {
         let mut schema_generator = self.schema_generator;
         let mut schemas = schema_generator.take_definitions();
 

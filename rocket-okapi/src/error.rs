@@ -12,7 +12,8 @@ pub struct OpenApiError {
 
 impl OpenApiError {
     /// Create a new `OpenApiError` containing a message.
-    #[must_use] pub fn new(msg: String) -> Self {
+    #[must_use]
+    pub fn new(msg: String) -> Self {
         OpenApiError { msg }
     }
 }

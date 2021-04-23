@@ -1,6 +1,6 @@
-use rocket::route::{Handler, Outcome};
 use rocket::http::{ContentType, Method};
 use rocket::response::{Content, Responder};
+use rocket::route::{Handler, Outcome};
 use rocket::{Data, Request, Route};
 
 /// A content handler is a wrapper type around `rocket::response::Content`, which can be turned into
@@ -24,7 +24,8 @@ impl ContentHandler<String> {
 impl ContentHandler<&'static [u8]> {
     /// Create a `ContentHandler<&[u8]>`, which serves its content with the specified
     /// `content_type`.
-    #[must_use] pub fn bytes(content_type: ContentType, content: &'static [u8]) -> Self {
+    #[must_use]
+    pub fn bytes(content_type: ContentType, content: &'static [u8]) -> Self {
         ContentHandler {
             content: Content(content_type, content),
         }
