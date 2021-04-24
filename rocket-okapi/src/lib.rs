@@ -1,4 +1,3 @@
-#![feature(specialization)]
 #![forbid(missing_docs)]
 
 //! This projects serves to enable automatic rendering of `openapi.json` files, and provides
@@ -21,7 +20,6 @@
 //! able to load the example in the browser!
 //! ### Example
 //! ```rust, no_run
-//! #![feature(decl_macro, proc_macro_hygiene)]
 //!
 //! use rocket::get;
 //! use rocket_contrib::json::Json;
@@ -51,11 +49,14 @@
 //!     }
 //! }
 //!
-//! fn main() {
-//!     rocket::ignite()
+//! #[rocket::main]
+//! async fn main() -> Result<(), Box<std::error::Error>> {
+//!     rocket::build()
 //!         .mount("/my_resource", routes_with_openapi![my_controller])
 //!         .mount("/swagger", make_swagger_ui(&get_docs()))
-//!         .launch();
+//!         .launch()
+//!         .await?;
+//!     Ok(())
 //! }
 //! ```
 

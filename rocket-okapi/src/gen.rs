@@ -7,7 +7,6 @@ use schemars::schema::SchemaObject;
 use schemars::JsonSchema;
 use schemars::{Map, MapEntry};
 use std::collections::HashMap;
-use std::iter::FromIterator;
 
 /// A struct that visits all `rocket::Route`s, and aggregates information about them.
 #[derive(Debug, Clone)]
@@ -90,7 +89,7 @@ impl OpenApiGenerator {
                 paths
             },
             components: Some(Components {
-                schemas: Map::from_iter(schemas.into_iter().map(|(k, v)| (k, v.into()))),
+                schemas: schemas.into_iter().map(|(k, v)| (k, v.into())).collect(),
                 ..Default::default()
             }),
             ..Default::default()

@@ -1,4 +1,4 @@
-use rocket::handler::{Handler, Outcome};
+use rocket::route::{Handler, Outcome};
 use rocket::http::{ContentType, Method};
 use rocket::response::{Content, Responder};
 use rocket::{Data, Request, Route};
@@ -34,7 +34,7 @@ impl ContentHandler<&'static [u8]> {
 impl<R: AsRef<[u8]> + Clone + Send + Sync + 'static> ContentHandler<R> {
     /// Create a `rocket::Route` from the current `ContentHandler`.
     pub fn into_route(self, path: impl AsRef<str>) -> Route {
-        Route::new(Method::Get, path, self)
+        Route::new(Method::Get, path.as_ref(), self)
     }
 }
 
@@ -43,7 +43,7 @@ impl<R> Handler for ContentHandler<R>
 where
     R: AsRef<[u8]> + Clone + Send + Sync + 'static,
 {
-    async fn handle<'r, 's: 'r>(&'s self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
+    async fn handle<'r>(&self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
         // match e.g. "/index.html" but not "/index.html/"
         if req.uri().path().ends_with('/') {
             Outcome::forward(data)

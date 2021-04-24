@@ -100,7 +100,7 @@ fn create_route_operation_fn(
             .into(),
         };
         params.push(quote! {
-            <#ty as ::rocket_okapi::request::OpenApiFromFormValue>::query_parameter(gen, #arg.to_owned(), true)?.into()
+            <#ty as ::rocket_okapi::request::OpenApiFromFormField>::form_parameter(gen, #arg.to_owned(), true)?.into()
         })
     }
     let mut params_nested_list = Vec::new();
@@ -113,12 +113,12 @@ fn create_route_operation_fn(
             }.into(),
         };
         params_nested_list.push(quote! {
-            <#ty as ::rocket_okapi::request::OpenApiFromQuery>::query_multi_parameter(gen, #arg.to_owned(), true)?.into()
+            <#ty as ::rocket_okapi::request::OpenApiFromForm>::form_multi_parameter(gen, #arg.to_owned(), true)?.into()
         })
     }
 
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
-    let path = route.origin.path().replace("<", "{").replace(">", "}");
+    let path = route.origin.path().as_str().replace("<", "{").replace(">", "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
     let (title, desc) = doc_attr::get_title_and_desc_from_doc(&route_fn.attrs);
     let title = match title {

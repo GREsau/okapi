@@ -50,7 +50,7 @@ fn get_doc(attrs: &[Attribute]) -> Option<String> {
         .iter()
         .flat_map(|a| a.split('\n'))
         .map(str::trim)
-        .skip_while(|s| *s == "")
+        .skip_while(|s| s.is_empty())
         .collect::<Vec<_>>()
         .join("\n");
     none_if_empty(doc)

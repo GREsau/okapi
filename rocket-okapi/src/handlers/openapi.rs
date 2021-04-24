@@ -1,5 +1,5 @@
 use okapi::openapi3::{OpenApi, Server};
-use rocket::handler::{Handler, Outcome};
+use rocket::route::{Handler, Outcome};
 use rocket::http::{ContentType, Method};
 use rocket::response::Content;
 use rocket::{Data, Request, Route};
@@ -18,17 +18,18 @@ impl OpenApiHandler {
 
     /// Create a new route from this `OpenApiHandler`.
     pub fn into_route(self, path: impl AsRef<str>) -> Route {
-        Route::new(Method::Get, path, self)
+        Route::new(Method::Get, path.as_ref(), self)
     }
 }
 
 #[rocket::async_trait]
 impl Handler for OpenApiHandler {
-    async fn handle<'r, 's: 'r>(&'s self, req: &'r Request<'_>, _: Data) -> Outcome<'r> {
+    async fn handle<'r>(&self, req: &'r Request<'_>, _: Data) -> Outcome<'r> {
         let mut spec = self.spec.clone();
         let base_path = req
             .route()
             .expect("Routing should already have occurred.")
+            .uri
             .base();
 
         if spec.servers.is_empty() && base_path != "/" {

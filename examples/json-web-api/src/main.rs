@@ -1,22 +1,15 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
-#[macro_use]
-extern crate rocket;
-#[macro_use]
-extern crate rocket_okapi;
-
-use rocket::request::{Form, FromForm};
 use rocket_contrib::json::Json;
-use rocket_okapi::swagger_ui::*;
+use rocket_okapi::{swagger_ui::*, openapi, routes_with_openapi};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use rocket::{get, post, FromForm};
 
 #[derive(Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 struct User {
     user_id: u64,
     username: String,
-    #[serde(default)]
+    #[serde(default)] 
     #[schemars(example = "example_email")]
     email: Option<String>,
 }
@@ -92,13 +85,13 @@ struct Post {
 /// Returns the created post.
 #[openapi]
 #[get("/post_by_query?<post..>")]
-fn create_post_by_query(post: Form<Post>) -> Option<Json<Post>> {
-    Some(Json(post.into_inner()))
+fn create_post_by_query(post: Post) -> Option<Json<Post>> {
+    Some(Json(post))
 }
 
 #[rocket::main]
 async fn main() {
-    let result = rocket::ignite()
+    let result = rocket::build()
         .mount(
             "/",
             routes_with_openapi![
