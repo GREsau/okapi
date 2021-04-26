@@ -1,6 +1,6 @@
-use rocket::route::{Handler, Outcome};
 use rocket::http::Method;
 use rocket::response::Redirect;
+use rocket::route::{Handler, Outcome};
 use rocket::{Data, Request, Route};
 
 /// A handler that instead of serving content always redirects to some specified destination URL.

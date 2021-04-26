@@ -1,6 +1,7 @@
 use super::OpenApiResponderInner;
 use crate::{gen::OpenApiGenerator, util::*};
 use okapi::openapi3::Responses;
+use rocket::response::NamedFile;
 use rocket_contrib::json::{Json, JsonValue}; // TODO json feature flag
 use schemars::JsonSchema;
 use serde::Serialize;
@@ -74,6 +75,12 @@ impl<T: OpenApiResponderInner> OpenApiResponderInner for Option<T> {
         let mut responses = T::responses(gen)?;
         ensure_status_code_exists(&mut responses, 404);
         Ok(responses)
+    }
+}
+
+impl OpenApiResponderInner for NamedFile {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
     }
 }
 
