@@ -21,7 +21,7 @@
 //! ### Example
 //! ```rust, no_run
 //! use rocket::get;
-//! use rocket_contrib::json::Json;
+//! use rocket::serde::json::Json;
 //! use rocket_okapi::{openapi, routes_with_openapi, JsonSchema};
 //! use rocket_okapi::swagger_ui::{make_swagger_ui, SwaggerUIConfig};
 //!

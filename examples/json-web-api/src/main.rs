@@ -4,7 +4,7 @@ extern crate rocket;
 extern crate rocket_okapi;
 
 use rocket::form::FromForm;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use rocket_okapi::swagger_ui::*;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
