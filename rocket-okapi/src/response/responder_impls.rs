@@ -2,7 +2,7 @@ use super::OpenApiResponderInner;
 use crate::{gen::OpenApiGenerator, util::*};
 use okapi::openapi3::Responses;
 use rocket::fs::NamedFile;
-use rocket::serde::json::Json;
+use rocket::serde::json::{Json, Value};
 use schemars::JsonSchema;
 use serde::Serialize;
 use std::fmt::Debug;
@@ -15,6 +15,15 @@ impl<T: Serialize + JsonSchema + Send> OpenApiResponderInner for Json<T> {
         let mut responses = Responses::default();
         let schema = gen.json_schema::<T>();
         add_schema_response(&mut responses, 200, "application/json", schema)?;
+        Ok(responses)
+    }
+}
+
+impl OpenApiResponderInner for Value {
+    fn responses(_gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = Responses::default();
+        let schema = schemars::schema::Schema::Bool(true);
+        add_schema_response(&mut responses, 200, "application/json", schema.into())?;
         Ok(responses)
     }
 }
