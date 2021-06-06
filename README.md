@@ -37,6 +37,13 @@ fn get_user(id: u64) -> Option<Json<User>> {
     }))
 }
 
+// You can tag your routes to group them together
+#[openapi(tag = "Users")]
+#[post("/user", data = "<user>")]
+fn create_user(user: Json<User>) -> Json<User> {
+    user
+}
+
 // You can skip routes that you don't want to include in the openapi doc
 #[openapi(skip)]
 #[get("/hidden")]

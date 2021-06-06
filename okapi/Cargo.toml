@@ -12,6 +12,6 @@ keywords = ["rust", "openapi", "swagger"]
 derive_json_schema = ["schemars/derive_json_schema"]
 
 [dependencies]
-schemars = { version = "0.8" }
+schemars = "0.8"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
