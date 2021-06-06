@@ -1,6 +1,6 @@
 use super::{get_nested_form_parameters, OpenApiFromForm, OpenApiFromFormField};
 use crate::gen::OpenApiGenerator;
-use okapi::openapi3::*;
+use okapi::openapi3::{Parameter, ParameterValue};
 use rocket::form::Result as FormResult;
 use schemars::JsonSchema;
 
@@ -27,7 +27,7 @@ macro_rules! impl_from_form_param {
                         example: None,
                         examples: None,
                     },
-                    extensions: Default::default(),
+                    extensions: okapi::Map::default(),
                 })
             }
         }
@@ -69,7 +69,7 @@ impl<'r> OpenApiFromFormField<'r> for &'r str {
                 example: None,
                 examples: None,
             },
-            extensions: Default::default(),
+            extensions: okapi::Map::default(),
         })
     }
 }

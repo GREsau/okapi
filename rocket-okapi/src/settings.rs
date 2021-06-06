@@ -21,9 +21,10 @@ impl Default for OpenApiSettings {
 
 impl OpenApiSettings {
     /// Create a new instance of `OpenApiSettings`. Equivalent to calling `Default::default`.
+    #[must_use]
     pub fn new() -> Self {
         OpenApiSettings {
-            ..Default::default()
+            ..OpenApiSettings::default()
         }
     }
 }

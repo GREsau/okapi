@@ -168,7 +168,7 @@ fn create_route_operation_fn(
                     summary: #title,
                     description: #desc,
                     tags: vec![#(#tags),*],
-                    ..Default::default()
+                    ..okapi::openapi3::Operation::default()
                 },
             });
             Ok(())
@@ -178,8 +178,8 @@ fn create_route_operation_fn(
 
 fn unit_type() -> Type {
     Type::Tuple(TypeTuple {
-        paren_token: Default::default(),
-        elems: Default::default(),
+        paren_token: syn::token::Paren::default(),
+        elems: syn::punctuated::Punctuated::default(),
     })
 }
 

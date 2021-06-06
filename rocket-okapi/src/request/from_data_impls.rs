@@ -1,6 +1,9 @@
 use super::OpenApiFromData;
 use crate::gen::OpenApiGenerator;
-use okapi::{openapi3::*, Map};
+use okapi::{
+    openapi3::{MediaType, RequestBody},
+    Map,
+};
 use rocket::data::Data;
 use rocket::serde::json::Json;
 use schemars::JsonSchema;
@@ -19,13 +22,13 @@ impl<'a, T: JsonSchema + Deserialize<'a>> OpenApiFromData<'a> for Json<T> {
                     "application/json".to_owned(),
                     MediaType {
                         schema: Some(schema),
-                        ..Default::default()
+                        ..okapi::openapi3::MediaType::default()
                     },
                 );
                 map
             },
             required: true,
-            ..Default::default()
+            ..okapi::openapi3::RequestBody::default()
         })
     }
 }
@@ -55,13 +58,13 @@ impl<'a> OpenApiFromData<'a> for Data {
                     "application/octet-stream".to_owned(),
                     MediaType {
                         schema: Some(schema),
-                        ..Default::default()
+                        ..okapi::openapi3::MediaType::default()
                     },
                 );
                 map
             },
             required: true,
-            ..Default::default()
+            ..okapi::openapi3::RequestBody::default()
         })
     }
 }

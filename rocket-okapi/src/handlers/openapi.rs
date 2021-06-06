@@ -12,6 +12,7 @@ pub struct OpenApiHandler {
 
 impl OpenApiHandler {
     /// Create a new handler from an API spec.
+    #[must_use]
     pub fn new(spec: OpenApi) -> Self {
         OpenApiHandler { spec }
     }
@@ -35,7 +36,7 @@ impl Handler for OpenApiHandler {
         if spec.servers.is_empty() && base_path != "/" {
             spec.servers.push(Server {
                 url: base_path.to_owned(),
-                ..Default::default()
+                ..okapi::openapi3::Server::default()
             })
         }
 
