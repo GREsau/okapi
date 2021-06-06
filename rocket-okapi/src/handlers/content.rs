@@ -1,5 +1,5 @@
 use rocket::http::{ContentType, Method};
-use rocket::response::{Content, Responder};
+use rocket::response::{content::Custom, Responder};
 use rocket::route::{Handler, Outcome};
 use rocket::{Data, Request, Route};
 
@@ -7,7 +7,7 @@ use rocket::{Data, Request, Route};
 /// a `rocket::Route` that serves the content with correct content-type.
 #[derive(Clone)]
 pub struct ContentHandler<R: AsRef<[u8]> + Clone + Send + Sync> {
-    content: Content<R>,
+    content: Custom<R>,
 }
 
 impl ContentHandler<String> {
@@ -16,7 +16,7 @@ impl ContentHandler<String> {
         let json =
             serde_json::to_string_pretty(content).expect("Could not serialize content as JSON.");
         ContentHandler {
-            content: Content(ContentType::JSON, json),
+            content: Custom(ContentType::JSON, json),
         }
     }
 }
@@ -27,7 +27,7 @@ impl ContentHandler<&'static [u8]> {
     #[must_use]
     pub fn bytes(content_type: ContentType, content: &'static [u8]) -> Self {
         ContentHandler {
-            content: Content(content_type, content),
+            content: Custom(content_type, content),
         }
     }
 }
@@ -49,8 +49,8 @@ where
         if req.uri().path().ends_with('/') {
             Outcome::forward(data)
         } else {
-            let content: Content<Vec<u8>> =
-                Content(self.content.0.clone(), self.content.1.as_ref().into());
+            let content: Custom<Vec<u8>> =
+                Custom(self.content.0.clone(), self.content.1.as_ref().into());
             match content.respond_to(req) {
                 Ok(response) => Outcome::Success(response),
                 Err(status) => Outcome::Failure(status),

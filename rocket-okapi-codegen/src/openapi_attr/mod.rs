@@ -14,6 +14,9 @@ use syn::{AttributeArgs, FnArg, Ident, ItemFn, ReturnType, Type, TypeTuple};
 #[darling(default)]
 struct OpenApiAttribute {
     pub skip: bool,
+
+    #[darling(multiple, rename = "tag")]
+    pub tags: Vec<String>,
 }
 
 pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
@@ -32,7 +35,7 @@ pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
     }
 
     match route_attr::parse_attrs(&input.attrs) {
-        Ok(route) => create_route_operation_fn(input, route),
+        Ok(route) => create_route_operation_fn(input, route, okapi_attr.tags),
         Err(e) => e,
     }
 }
@@ -49,7 +52,11 @@ fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
     })
 }
 
-fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> TokenStream {
+fn create_route_operation_fn(
+    route_fn: ItemFn,
+    route: route_attr::Route,
+    tags: Vec<String>,
+) -> TokenStream {
     let arg_types = get_arg_types(route_fn.sig.inputs.into_iter());
     let return_type = match route_fn.sig.output {
         ReturnType::Type(_, ty) => *ty,
@@ -129,6 +136,11 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
         None => quote!(None),
     };
 
+    let tags = tags
+        .into_iter()
+        .map(|tag| quote!(#tag.to_owned()))
+        .collect::<Vec<_>>();
+
     TokenStream::from(quote! {
         pub fn #fn_name(
             gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
@@ -155,6 +167,7 @@ fn create_route_operation_fn(route_fn: ItemFn, route: route_attr::Route) -> Toke
                     parameters,
                     summary: #title,
                     description: #desc,
+                    tags: vec![#(#tags),*],
                     ..okapi::openapi3::Operation::default()
                 },
             });

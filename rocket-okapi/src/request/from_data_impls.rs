@@ -5,7 +5,7 @@ use okapi::{
     Map,
 };
 use rocket::data::Data;
-use rocket_contrib::json::Json; // TODO json feature flag
+use rocket::serde::json::Json;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use std::result::Result as StdResult;

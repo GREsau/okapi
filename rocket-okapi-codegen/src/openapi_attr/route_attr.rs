@@ -15,7 +15,7 @@ pub struct Route {
 
 impl Route {
     pub fn path_params(&self) -> impl Iterator<Item = &str> {
-        self.origin.path_segments().filter_map(|s| {
+        self.origin.path().segments().filter_map(|s| {
             if s.starts_with('<') && s.ends_with('>') && !s.ends_with("..>") {
                 Some(&s[1..s.len() - 1])
             } else {
@@ -61,7 +61,7 @@ impl Route {
     }
 
     pub fn _path_multi_param(&self) -> Option<&str> {
-        self.origin.path_segments().find_map(|s| {
+        self.origin.path().segments().find_map(|s| {
             if s.starts_with('<') && s.ends_with("..>") {
                 Some(&s[1..s.len() - 3])
             } else {

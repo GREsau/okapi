@@ -7,7 +7,8 @@ use crate::{
     },
 };
 use okapi::openapi3::Responses;
-use rocket_contrib::json::{Json, JsonValue}; // TODO json feature flag
+use rocket::fs::NamedFile;
+use rocket::serde::json::{Json, Value};
 use schemars::JsonSchema;
 use serde::Serialize;
 use std::fmt::Debug;
@@ -24,7 +25,7 @@ impl<T: Serialize + JsonSchema + Send> OpenApiResponderInner for Json<T> {
     }
 }
 
-impl OpenApiResponderInner for JsonValue {
+impl OpenApiResponderInner for Value {
     fn responses(_gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
         let schema = schemars::schema::Schema::Bool(true);
@@ -80,6 +81,12 @@ impl<T: OpenApiResponderInner> OpenApiResponderInner for Option<T> {
         let mut responses = T::responses(gen)?;
         ensure_status_code_exists(&mut responses, 404);
         Ok(responses)
+    }
+}
+
+impl OpenApiResponderInner for NamedFile {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
     }
 }
 
