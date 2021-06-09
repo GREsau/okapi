@@ -9,7 +9,7 @@ license = "MIT"
 keywords = ["rust", "openapi", "swagger", "rocket"]
 
 [dependencies]
-rocket = { git = "https://github.com/SergioBenitez/Rocket.git", branch = "master", default-features = false, features = ["json"] }
+rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json"] }
 schemars = { version = "0.8" }
 okapi = { version = "0.5.0-alpha-1", path = "../okapi" }
 rocket_okapi_codegen = { version = "=0.6.0-alpha-1", path = "../rocket-okapi-codegen" }
