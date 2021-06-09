@@ -48,7 +48,7 @@ impl<'a, T: OpenApiFromData<'a> + 'a> OpenApiFromData<'a> for Option<T> {
     }
 }
 
-impl<'a> OpenApiFromData<'a> for Data {
+impl<'a> OpenApiFromData<'a> for Data<'a> {
     fn request_body(gen: &mut OpenApiGenerator) -> Result {
         let schema = gen.json_schema::<String>();
         Ok(RequestBody {

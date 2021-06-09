@@ -25,7 +25,7 @@ impl OpenApiHandler {
 
 #[rocket::async_trait]
 impl Handler for OpenApiHandler {
-    async fn handle<'r>(&self, req: &'r Request<'_>, _: Data) -> Outcome<'r> {
+    async fn handle<'r>(&self, req: &'r Request<'_>, _: Data<'r>) -> Outcome<'r> {
         let mut spec = self.spec.clone();
         let base_path = req
             .route()
