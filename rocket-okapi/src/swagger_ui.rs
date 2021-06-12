@@ -61,7 +61,6 @@ pub struct SwaggerUIConfig {
     /// your web ui. If this field is populated, the `url` field is not used.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub urls: Vec<UrlObject>,
-
     // display options:
     /// If set to true, enables deep linking for tags and operations. See the
     /// [Deep Linking documentation](https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/deep-linking.md)
@@ -138,6 +137,7 @@ pub struct UrlObject {
 
 impl UrlObject {
     /// Create a new `UrlObject` from the provided name and url.
+    #[must_use]
     pub fn new(name: &str, url: &str) -> Self {
         Self {
             name: name.to_string(),
@@ -147,6 +147,7 @@ impl UrlObject {
 }
 
 /// Transform the provided `SwaggerUIConfig` into a list of `Route`s that serve the swagger web ui.
+#[must_use]
 pub fn make_swagger_ui(config: &SwaggerUIConfig) -> impl Into<Vec<Route>> {
     let config_handler = ContentHandler::json(config);
     vec![

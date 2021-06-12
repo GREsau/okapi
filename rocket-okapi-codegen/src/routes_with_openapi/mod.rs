@@ -11,7 +11,7 @@ pub fn parse(routes: TokenStream) -> TokenStream {
 
 fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
     let paths = <Punctuated<Path, Comma>>::parse_terminated.parse(routes)?;
-    let add_operations = create_add_operations(paths.clone())?;
+    let add_operations = create_add_operations(paths.clone());
     Ok(quote! {
         {
             let settings = ::rocket_okapi::settings::OpenApiSettings::new();
@@ -21,7 +21,7 @@ fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
             let mut info = ::okapi::openapi3::Info {
                 title: env!("CARGO_PKG_NAME").to_owned(),
                 version: env!("CARGO_PKG_VERSION").to_owned(),
-                ..Default::default()
+                ..okapi::openapi3::Info::default()
             };
             if !env!("CARGO_PKG_DESCRIPTION").is_empty() {
                 info.description = Some(env!("CARGO_PKG_DESCRIPTION").to_owned());
@@ -30,14 +30,14 @@ fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
                 info.contact = Some(::okapi::openapi3::Contact{
                     name: Some("Repository".to_owned()),
                     url: Some(env!("CARGO_PKG_REPOSITORY").to_owned()),
-                    ..Default::default()
+                    ..okapi::openapi3::Contact::default()
                 });
             }
             if !env!("CARGO_PKG_HOMEPAGE").is_empty() {
                 info.contact = Some(::okapi::openapi3::Contact{
                     name: Some("Homepage".to_owned()),
                     url: Some(env!("CARGO_PKG_REPOSITORY").to_owned()),
-                    ..Default::default()
+                    ..okapi::openapi3::Contact::default()
                 });
             }
             spec.info = info;
@@ -49,7 +49,7 @@ fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
     })
 }
 
-fn create_add_operations(paths: Punctuated<Path, Comma>) -> Result<TokenStream2> {
+fn create_add_operations(paths: Punctuated<Path, Comma>) -> TokenStream2 {
     let function_calls = paths.into_iter().map(|path| {
         let fn_name = fn_name_for_add_operation(path.clone());
         let operation_id = operation_id(&path);
@@ -58,9 +58,9 @@ fn create_add_operations(paths: Punctuated<Path, Comma>) -> Result<TokenStream2>
                 .expect(&format!("Could not generate OpenAPI operation for `{}`.", stringify!(#path)));
         }
     });
-    Ok(quote! {
+    quote! {
         #(#function_calls)*
-    })
+    }
 }
 
 fn fn_name_for_add_operation(mut fn_path: Path) -> Path {

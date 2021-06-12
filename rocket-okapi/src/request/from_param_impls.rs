@@ -1,6 +1,6 @@
 use super::OpenApiFromParam;
 use crate::gen::OpenApiGenerator;
-use okapi::openapi3::*;
+use okapi::openapi3::{Parameter, ParameterValue};
 use std::result::Result as StdResult;
 
 type Result = crate::Result<Parameter>;
@@ -25,7 +25,7 @@ macro_rules! impl_from_param {
                         example: None,
                         examples: None,
                     },
-                    extensions: Default::default(),
+                    extensions: okapi::Map::default(),
                 })
             }
         }
@@ -48,7 +48,29 @@ impl_from_param!(u64);
 impl_from_param!(u128);
 impl_from_param!(bool);
 impl_from_param!(String);
-impl_from_param!(std::borrow::Cow<'r, str>);
+
+impl<'r> OpenApiFromParam<'r> for &'r str {
+    fn path_parameter(gen: &mut OpenApiGenerator, name: String) -> Result {
+        let schema = gen.json_schema::<str>();
+        Ok(Parameter {
+            name,
+            location: "path".to_owned(),
+            description: None,
+            required: true,
+            deprecated: false,
+            allow_empty_value: false,
+            value: ParameterValue::Schema {
+                style: None,
+                explode: None,
+                allow_reserved: false,
+                schema,
+                example: None,
+                examples: None,
+            },
+            extensions: okapi::Map::default(),
+        })
+    }
+}
 
 // OpenAPI specification does not support optional path params, so we leave `required` as true,
 // even for Options and Results.

@@ -12,8 +12,8 @@ keywords = ["rust", "openapi", "swagger", "rocket"]
 proc-macro = true
 
 [dependencies]
-rocket_http = "0.4.3"
-darling = "0.10"
+rocket_http = { version = "0.5.0-rc.1" }
+darling = "0.13"
 syn = "1.0"
 proc-macro2 = "1.0"
 quote = "1.0"

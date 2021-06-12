@@ -6,8 +6,6 @@ Work in progress!
 ## Basic Usage
 
 ```rust
-#![feature(proc_macro_hygiene, decl_macro)]
-
 #[macro_use]
 extern crate rocket;
 #[macro_use]
@@ -39,6 +37,13 @@ fn get_user(id: u64) -> Option<Json<User>> {
     }))
 }
 
+// You can tag your routes to group them together
+#[openapi(tag = "Users")]
+#[post("/user", data = "<user>")]
+fn create_user(user: Json<User>) -> Json<User> {
+    user
+}
+
 // You can skip routes that you don't want to include in the openapi doc
 #[openapi(skip)]
 #[get("/hidden")]
@@ -47,7 +52,7 @@ fn hidden() -> Json<&'static str> {
 }
 
 pub fn make_rocket() -> rocket::Rocket {
-    rocket::ignite()
+    rocket::build()
         // routes_with_openapi![...] will host the openapi document at openapi.json
         .mount(
             "/",

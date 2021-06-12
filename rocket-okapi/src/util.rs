@@ -1,5 +1,5 @@
 use crate::{OpenApiError, Result};
-use okapi::openapi3::*;
+use okapi::openapi3::{MediaType, RefOr, Response, Responses, SchemaObject};
 use okapi::Map;
 
 // FIXME this whole file is a huge mess...
@@ -7,7 +7,7 @@ use okapi::Map;
 /// Takes a `Responses` struct, and sets the status code to the status code provided for each
 /// response in the `Responses`.
 pub fn set_status_code(responses: &mut Responses, status: u16) -> Result<()> {
-    let old_responses = std::mem::replace(&mut responses.responses, Map::new());
+    let old_responses = std::mem::take(&mut responses.responses);
     let new_response = ensure_not_ref(ensure_status_code_exists(responses, status))?;
     for (_, mut response) in old_responses {
         *new_response =
@@ -59,7 +59,7 @@ pub fn set_content_type(responses: &mut Responses, content_type: impl ToString) 
         let mt = if content.values().len() == 1 {
             content.values().next().unwrap().clone()
         } else {
-            content.values().fold(Default::default(), |mt, mt2| {
+            content.values().fold(MediaType::default(), |mt, mt2| {
                 accept_either_media_type(mt, mt2.clone())
             })
         };
@@ -78,7 +78,7 @@ pub fn add_schema_response(
 ) -> Result<()> {
     let media = MediaType {
         schema: Some(schema),
-        ..Default::default()
+        ..okapi::openapi3::MediaType::default()
     };
     add_content_response(responses, status, content_type, media)
 }

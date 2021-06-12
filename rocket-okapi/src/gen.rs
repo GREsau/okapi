@@ -1,13 +1,12 @@
 use crate::settings::OpenApiSettings;
 use crate::OperationInfo;
-use okapi::openapi3::*;
+use okapi::openapi3::{Components, OpenApi, Operation, PathItem};
 use rocket::http::Method;
 use schemars::gen::SchemaGenerator;
 use schemars::schema::SchemaObject;
 use schemars::JsonSchema;
 use schemars::{Map, MapEntry};
 use std::collections::HashMap;
-use std::iter::FromIterator;
 
 /// A struct that visits all `rocket::Route`s, and aggregates information about them.
 #[derive(Debug, Clone)]
@@ -19,11 +18,12 @@ pub struct OpenApiGenerator {
 
 impl OpenApiGenerator {
     /// Create a new `OpenApiGenerator` from the settings provided.
+    #[must_use]
     pub fn new(settings: OpenApiSettings) -> Self {
         OpenApiGenerator {
             schema_generator: settings.schema_settings.clone().into_generator(),
             settings,
-            operations: Default::default(),
+            operations: okapi::Map::default(),
         }
     }
 
@@ -57,6 +57,7 @@ impl OpenApiGenerator {
     }
 
     /// Obtain the internal `SchemaGenerator` object.
+    #[must_use]
     pub fn schema_generator(&self) -> &SchemaGenerator {
         &self.schema_generator
     }
@@ -67,6 +68,7 @@ impl OpenApiGenerator {
     }
 
     /// Generate an `OpenApi` specification for all added operations.
+    #[must_use]
     pub fn into_openapi(self) -> OpenApi {
         let mut schema_generator = self.schema_generator;
         let mut schemas = schema_generator.take_definitions();
@@ -90,16 +92,16 @@ impl OpenApiGenerator {
                 paths
             },
             components: Some(Components {
-                schemas: Map::from_iter(schemas.into_iter().map(|(k, v)| (k, v.into()))),
-                ..Default::default()
+                schemas: schemas.into_iter().map(|(k, v)| (k, v.into())).collect(),
+                ..Components::default()
             }),
-            ..Default::default()
+            ..OpenApi::default()
         }
     }
 }
 
 fn set_operation(path_item: &mut PathItem, method: Method, op: Operation) {
-    use Method::*;
+    use Method::{Connect, Delete, Get, Head, Options, Patch, Post, Put, Trace};
     let option = match method {
         Get => &mut path_item.get,
         Put => &mut path_item.put,

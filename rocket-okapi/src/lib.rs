@@ -1,4 +1,3 @@
-#![feature(specialization)]
 #![forbid(missing_docs)]
 
 //! This projects serves to enable automatic rendering of `openapi.json` files, and provides
@@ -9,7 +8,7 @@
 //! ```toml
 //! [dependencies]
 //! rocket_okapi = "0.5"
-//! schemars = "0.7"
+//! schemars = "0.8"
 //! okapi = { version = "0.5", features = ["derive_json_schema"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
@@ -21,10 +20,8 @@
 //! able to load the example in the browser!
 //! ### Example
 //! ```rust, no_run
-//! #![feature(decl_macro, proc_macro_hygiene)]
-//!
 //! use rocket::get;
-//! use rocket_contrib::json::Json;
+//! use rocket::serde::json::Json;
 //! use rocket_okapi::{openapi, routes_with_openapi, JsonSchema};
 //! use rocket_okapi::swagger_ui::{make_swagger_ui, SwaggerUIConfig};
 //!
@@ -52,7 +49,7 @@
 //! }
 //!
 //! fn main() {
-//!     rocket::ignite()
+//!     rocket::build()
 //!         .mount("/my_resource", routes_with_openapi![my_controller])
 //!         .mount("/swagger", make_swagger_ui(&get_docs()))
 //!         .launch();
