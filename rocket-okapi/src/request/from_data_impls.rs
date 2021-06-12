@@ -22,7 +22,7 @@ impl<'a, T: JsonSchema + Deserialize<'a>> OpenApiFromData<'a> for Json<T> {
                     "application/json".to_owned(),
                     MediaType {
                         schema: Some(schema),
-                        ..okapi::openapi3::MediaType::default()
+                        ..MediaType::default()
                     },
                 );
                 map
@@ -58,7 +58,7 @@ impl<'a> OpenApiFromData<'a> for Data<'a> {
                     "application/octet-stream".to_owned(),
                     MediaType {
                         schema: Some(schema),
-                        ..okapi::openapi3::MediaType::default()
+                        ..MediaType::default()
                     },
                 );
                 map

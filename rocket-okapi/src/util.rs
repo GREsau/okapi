@@ -78,7 +78,7 @@ pub fn add_schema_response(
 ) -> Result<()> {
     let media = MediaType {
         schema: Some(schema),
-        ..okapi::openapi3::MediaType::default()
+        ..MediaType::default()
     };
     add_content_response(responses, status, content_type, media)
 }
