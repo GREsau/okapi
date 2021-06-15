@@ -367,7 +367,7 @@ pub struct Header {
 #[serde(rename_all = "camelCase")]
 pub struct SecurityScheme {
     // unique name for the security scheme
-    pub name: String,
+    pub scheme_identifier: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     #[serde(flatten)]

@@ -214,7 +214,6 @@ fn create_route_operation_fn(
             let request_inputs: Vec<RequestHeaderInput> = vec![#(#params),*];
 
             let mut parameters: Vec<::okapi::openapi3::RefOr<Parameter>> = Vec::new();
-
             use std::collections::BTreeMap as Map;
             let mut security_schemes = Map::new();
             for inp in request_inputs {
@@ -224,9 +223,9 @@ fn create_route_operation_fn(
                     }
                     RequestHeaderInput::Security(s) => {
                         // Make sure to add the security scheme listing
-                        security_schemes.insert(s.0.name.clone(), Vec::new());
+                        security_schemes.insert(s.0.scheme_identifier.clone(), Vec::new());
                         // Add the scheme to components definition of openapi
-                        gen.add_security_scheme(s.0.name.clone(), s.0.clone());
+                        gen.add_security_scheme(s.0.scheme_identifier.clone(), s.0.clone());
                     }
                     _ => {
                     }
@@ -258,7 +257,7 @@ fn create_route_operation_fn(
                     description: #desc,
                     security,
                     tags: vec![#(#tags),*],
-                    ..okapi::openapi3::Operation::default()
+                    ..::okapi::openapi3::Operation::default()
                 },
             });
             Ok(())
