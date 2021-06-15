@@ -2,10 +2,11 @@ mod from_data_impls;
 mod from_form_multi_param_impls;
 mod from_form_param_impls;
 mod from_param_impls;
+mod from_request_impls;
 
 use super::gen::OpenApiGenerator;
 use super::Result;
-use okapi::openapi3::{Parameter, RequestBody};
+use okapi::openapi3::{Parameter, RequestBody, SecurityRequirement, SecurityScheme};
 
 /// Expose this to the public to be use when manualy implementing a
 /// [Form Guard](https://api.rocket.rs/master/rocket/form/trait.FromForm.html).
@@ -57,4 +58,30 @@ pub trait OpenApiFromForm<'r>: rocket::form::FromForm<'r> {
         name: String,
         required: bool,
     ) -> Result<Vec<Parameter>>;
+}
+
+/// Commonly the items in the request header can be parameters, or authorization methods in rocket,
+/// this item will let the implementer choose what they are
+pub enum RequestHeaderInput {
+    /// This request header requires no input anywhere
+    None,
+    /// Parameter input to the path
+    Parameter(Parameter),
+    /// the path implements a security scheme
+    Security((SecurityScheme, SecurityRequirement)),
+}
+
+impl Into<RequestHeaderInput> for Parameter {
+    fn into(self) -> RequestHeaderInput {
+        RequestHeaderInput::Parameter(self)
+    }
+}
+
+/// This will let the request guards add to the openapi spec
+pub trait OpenApiFromRequest<'a>: rocket::request::FromRequest<'a> {
+    /// Return a parameter for items that are found in the function call, but are not found
+    /// anywhere in the path definition by rocket, defaults to a none implementation for simplicity
+    fn request_input(_gen: &mut OpenApiGenerator, _name: String) -> Result<RequestHeaderInput> {
+        Ok(RequestHeaderInput::None)
+    }
 }
