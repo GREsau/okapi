@@ -366,8 +366,8 @@ pub struct Header {
 #[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct SecurityScheme {
-    #[serde(rename = "type")]
-    pub schema_type: String,
+    // unique name for the security scheme
+    pub name: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     #[serde(flatten)]
