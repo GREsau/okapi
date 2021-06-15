@@ -1,11 +1,11 @@
 use crate::settings::OpenApiSettings;
 use crate::OperationInfo;
-use okapi::openapi3::{Components, OpenApi, Operation, PathItem};
+use okapi::openapi3::{Components, OpenApi, Operation, PathItem, RefOr, SecurityScheme};
+use okapi::{Map, MapEntry};
 use rocket::http::Method;
 use schemars::gen::SchemaGenerator;
 use schemars::schema::SchemaObject;
 use schemars::JsonSchema;
-use schemars::{Map, MapEntry};
 use std::collections::HashMap;
 
 /// A struct that visits all `rocket::Route`s, and aggregates information about them.
@@ -13,6 +13,7 @@ use std::collections::HashMap;
 pub struct OpenApiGenerator {
     settings: OpenApiSettings,
     schema_generator: SchemaGenerator,
+    security_schemes: Map<String, SecurityScheme>,
     operations: Map<String, HashMap<Method, Operation>>,
 }
 
@@ -23,8 +24,14 @@ impl OpenApiGenerator {
         OpenApiGenerator {
             schema_generator: settings.schema_settings.clone().into_generator(),
             settings: settings.clone(),
-            operations: okapi::Map::default(),
+            security_schemes: Map::default(),
+            operations: Map::default(),
         }
+    }
+
+    /// Adds a security scheme to the generated output
+    pub fn add_security_scheme(&mut self, name: String, scheme: SecurityScheme) {
+        self.security_schemes.insert(name, scheme);
     }
 
     /// Add a new `HTTP Method` to the collection of endpoints in the `OpenApiGenerator`.
@@ -73,6 +80,12 @@ impl OpenApiGenerator {
         let mut schema_generator = self.schema_generator;
         let mut schemas = schema_generator.take_definitions();
 
+        // Add the security schemes
+        let mut schemes: Map<String, RefOr<SecurityScheme>> = Default::default();
+        for (name, schema) in self.security_schemes {
+            schemes.insert(name, schema.into());
+        }
+
         for visitor in schema_generator.visitors_mut() {
             for schema in schemas.values_mut() {
                 visitor.visit_schema(schema)
@@ -93,7 +106,8 @@ impl OpenApiGenerator {
             },
             components: Some(Components {
                 schemas: schemas.into_iter().map(|(k, v)| (k, v.into())).collect(),
-                ..Components::default()
+                security_schemes: schemes,
+                ..Default::default()
             }),
             ..OpenApi::default()
         }
