@@ -1,5 +1,13 @@
 # okapi
-OpenAPI (AKA Swagger) document generation for Rust projects
+OpenAPI (AKA Swagger) document generation for Rust projects forked version to enable some new features
+
+only change your usage in Cargo toml to something like this by adding the "package" parameter:
+
+```toml
+okapi = { version = "0.x.x", features = ["derive_json_schema"], package = "okapi_fork" }
+rocket_okapi = { version = "0.x.x", package = "rocket_okapi_fork" }
+
+```
 
 Work in progress!
 
