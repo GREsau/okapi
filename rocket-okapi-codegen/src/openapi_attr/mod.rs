@@ -118,6 +118,46 @@ fn create_route_operation_fn(
          })
     }
 
+    // Request quards, checks if the items are not found in the rocket route parameters, if that is the
+    // case, we assume they are request guards
+    let mut responses = Vec::new();
+    responses.push(quote! {
+      <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?
+    });
+
+    let data_param_arg = route.data_param.clone().unwrap_or_else(|| String::new());
+    for arg_type in arg_types {
+        let ty = arg_type.1;
+        let arg = arg_type.0;
+
+        // If the items are not found in the list of path/query parameters, assume the item is a request
+        // guard and let them add to the openapi specification from the trait OpenApiFromRequest
+        // Request guards can add or define their own responses, and can thus add to the possible
+        // responses from an API
+        if route
+            .path_params()
+            .find(|item| arg == item.to_string())
+            .is_none()
+            // Verify it is not in query parameters
+            && route
+                .query_params()
+                .find(|item| arg == item.to_string())
+                .is_none()
+            && data_param_arg != arg
+        {
+            // println!("assuming request guard for: {:?}", arg);
+            params.push(quote! {
+                <#ty as ::rocket_okapi::request::OpenApiFromRequest>::request_input(gen, #arg.to_owned())?.into()
+            });
+            //TODO: implement that RequestGuards can specify the different types of responses
+
+            // Create a response for this one
+            // responses.push(quote! {
+            //   <#ty as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?
+            // })
+        }
+    }
+
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
     let path = route
         .origin
@@ -148,7 +188,38 @@ fn create_route_operation_fn(
         ) -> ::rocket_okapi::Result<()> {
             let responses = <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?;
             let request_body = #request_body;
-            let mut parameters: Vec<::okapi::openapi3::RefOr<::okapi::openapi3::Parameter>> = vec![#(#params),*];
+
+            //###############
+            use ::rocket_okapi::request::RequestHeaderInput;
+            use ::okapi::openapi3::Parameter;
+            use ::okapi::openapi3::RefOr;
+
+            let request_inputs: Vec<RequestHeaderInput> = vec![#(#params),*];
+
+            let mut parameters: Vec<::okapi::openapi3::RefOr<Parameter>> = Vec::new();
+            use std::collections::BTreeMap as Map;
+            let mut security_schemes = Map::new();
+            for inp in request_inputs {
+                match inp {
+                    RequestHeaderInput::Parameter(p) => {
+                       parameters.push(p.into());
+                    }
+                    RequestHeaderInput::Security(s) => {
+                        // Make sure to add the security scheme listing
+                        security_schemes.insert(s.0.scheme_identifier.clone(), Vec::new());
+                        // Add the scheme to components definition of openapi
+                        gen.add_security_scheme(s.0.scheme_identifier.clone(), s.0.clone());
+                    }
+                    _ => {
+                    }
+                }
+            }
+            let security = if security_schemes.is_empty() {
+                None
+            } else {
+                Some(vec![security_schemes])
+            };
+
             // add nested lists
             let parameters_nested_list: Vec<Vec<::okapi::openapi3::Parameter>> = vec![#(#params_nested_list),*];
             for inner_list in parameters_nested_list{
@@ -167,8 +238,9 @@ fn create_route_operation_fn(
                     parameters,
                     summary: #title,
                     description: #desc,
+                    security,
                     tags: vec![#(#tags),*],
-                    ..okapi::openapi3::Operation::default()
+                    ..::okapi::openapi3::Operation::default()
                 },
             });
             Ok(())
