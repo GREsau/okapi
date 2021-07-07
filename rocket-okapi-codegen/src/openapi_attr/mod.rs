@@ -143,14 +143,17 @@ fn create_route_operation_fn(
                 .query_params()
                 .find(|item| arg == item.to_string())
                 .is_none()
+            && route.query_multi_params()
+                .find(|item| arg == item.to_string() )
+                .is_none()
             && data_param_arg != arg
         {
             // println!("assuming request guard for: {:?}", arg);
             params.push(quote! {
                 <#ty as ::rocket_okapi::request::OpenApiFromRequest>::request_input(gen, #arg.to_owned())?.into()
             });
-            //TODO: implement that RequestGuards can specify the different types of responses
 
+            //TODO: implement that RequestGuards can specify the different types of responses
             // Create a response for this one
             // responses.push(quote! {
             //   <#ty as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?
