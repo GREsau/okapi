@@ -65,9 +65,9 @@ pub trait OpenApiFromForm<'r>: rocket::form::FromForm<'r> {
 pub enum RequestHeaderInput {
     /// This request header requires no input anywhere
     None,
-    /// Parameter input to the path
+    /// Parameter input to the path, can be used to parse values from the header for example
     Parameter(Parameter),
-    /// the path implements a security scheme
+    /// the request guard implements a security scheme
     Security((SecurityScheme, SecurityRequirement)),
 }
 
