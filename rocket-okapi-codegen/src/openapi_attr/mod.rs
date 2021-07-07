@@ -7,7 +7,7 @@ use proc_macro::TokenStream;
 use proc_macro2::Span;
 use quote::ToTokens;
 use rocket_http::Method;
-use std::collections::BTreeMap as Map;
+use std::collections::BTreeMap;
 use syn::{AttributeArgs, FnArg, Ident, ItemFn, ReturnType, Type, TypeTuple};
 
 #[derive(Debug, Default, FromMeta)]
@@ -197,8 +197,8 @@ fn create_route_operation_fn(
             let request_inputs: Vec<RequestHeaderInput> = vec![#(#params),*];
 
             let mut parameters: Vec<::okapi::openapi3::RefOr<Parameter>> = Vec::new();
-            use std::collections::BTreeMap as Map;
-            let mut security_schemes = Map::new();
+            use std::collections::BTreeMap;
+            let mut security_schemes = BTreeMap::new();
             for inp in request_inputs {
                 match inp {
                     RequestHeaderInput::Parameter(p) => {
@@ -262,8 +262,8 @@ fn to_pascal_case_string(method: Method) -> String {
     format!("{}{}", first_char, rest)
 }
 
-fn get_arg_types(args: impl Iterator<Item = FnArg>) -> Map<String, Type> {
-    let mut result = Map::new();
+fn get_arg_types(args: impl Iterator<Item = FnArg>) -> BTreeMap<String, Type> {
+    let mut result = BTreeMap::new();
     for arg in args {
         if let syn::FnArg::Typed(arg) = arg {
             if let syn::Pat::Ident(ident) = *arg.pat {

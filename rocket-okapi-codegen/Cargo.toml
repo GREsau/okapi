@@ -1,9 +1,9 @@
 [package]
-name = "rocket_okapi_codegen"
-description = "Macros supporting rocket_okapi"
-repository = "https://github.com/GREsau/okapi"
+name = "rocket_okapi_codegen_fork"
+description = "Macros supporting rocket_okapi forked from rocket_okapi_codegen_fork"
+repository = "https://github.com/TotalKrill/okapi"
 version = "0.7.0-alpha-1"
-authors = ["Graham Esau <gesau@hotmail.co.uk>"]
+authors = ["Graham Esau <gesau@hotmail.co.uk>, Kristoffer Ödmark <kristoffer@widefind.se>"]
 edition = "2018"
 license = "MIT"
 keywords = ["rust", "openapi", "swagger", "rocket"]

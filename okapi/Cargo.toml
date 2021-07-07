@@ -1,9 +1,9 @@
 [package]
-name = "okapi"
-description = "Structs for OpenAPI (AKA Swagger) documents"
-repository = "https://github.com/GREsau/okapi"
+name = "okapi_fork"
+description = "Structs for OpenAPI (AKA Swagger) documents, forked with patches until original library catches up"
+repository = "https://github.com/TotalKrill/okapi"
 version = "0.6.0-alpha-1"
-authors = ["Graham Esau <gesau@hotmail.co.uk>"]
+authors = ["Graham Esau <gesau@hotmail.co.uk>, Kristoffer Ödmark <kristoffer@widefind.se>"]
 edition = "2018"
 license = "MIT"
 keywords = ["rust", "openapi", "swagger"]
