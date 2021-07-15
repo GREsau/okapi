@@ -1,7 +1,7 @@
 [package]
 name = "rocket_okapi_fork"
 description = "OpenAPI (AKA Swagger) document generation for Rocket applications, forked version from rocket_okapi"
-version = "0.7.1"
+version = "0.7.2"
 repository = "https://github.com/TotalKrill/okapi"
 authors = ["Graham Esau <gesau@hotmail.co.uk>, Kristoffer Ödmark <kristoffer@widefind.se>"]
 edition = "2018"
