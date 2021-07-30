@@ -214,8 +214,7 @@ fn create_route_operation_fn(
             let request_inputs: Vec<RequestHeaderInput> = vec![#(#params),*];
 
             let mut parameters: Vec<::okapi::openapi3::RefOr<Parameter>> = Vec::new();
-            use std::collections::BTreeMap as Map;
-            let mut security_schemes = Map::new();
+            let mut security_schemes = ::okapi::Map::new();
             for inp in request_inputs {
                 match inp {
                     RequestHeaderInput::Parameter(p) => {
