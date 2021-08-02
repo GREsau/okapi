@@ -2,6 +2,7 @@ mod responder_impls;
 
 use super::gen::OpenApiGenerator;
 use super::Result;
+extern crate okapi;
 use okapi::openapi3::Responses;
 
 /// See `OpenApiResponderInner`. This is a wrapper around

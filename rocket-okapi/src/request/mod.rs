@@ -6,6 +6,7 @@ mod from_request_impls;
 
 use super::gen::OpenApiGenerator;
 use super::Result;
+extern crate okapi;
 use okapi::openapi3::{Parameter, RequestBody, SecurityRequirement, SecurityScheme};
 
 /// Expose this to the public to be use when manualy implementing a

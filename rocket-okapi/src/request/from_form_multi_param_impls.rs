@@ -1,4 +1,5 @@
 use crate::gen::OpenApiGenerator;
+extern crate okapi;
 use okapi::openapi3::{Parameter, ParameterValue};
 use schemars::schema::{Schema, SchemaObject};
 use schemars::JsonSchema;

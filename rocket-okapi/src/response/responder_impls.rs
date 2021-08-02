@@ -6,6 +6,7 @@ use crate::{
         produce_any_responses, set_content_type, set_status_code,
     },
 };
+extern crate okapi;
 use okapi::openapi3::Responses;
 use rocket::fs::NamedFile;
 use rocket::serde::json::{Json, Value};

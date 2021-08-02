@@ -1,5 +1,6 @@
 use super::{get_nested_form_parameters, OpenApiFromForm, OpenApiFromFormField};
 use crate::gen::OpenApiGenerator;
+extern crate okapi;
 use okapi::openapi3::{Parameter, ParameterValue};
 use rocket::form::Result as FormResult;
 use schemars::JsonSchema;

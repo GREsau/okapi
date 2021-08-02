@@ -1,5 +1,8 @@
 use crate::settings::OpenApiSettings;
 use crate::OperationInfo;
+
+extern crate okapi;
+
 use okapi::openapi3::{Components, OpenApi, Operation, PathItem, RefOr, SecurityScheme};
 use rocket::http::Method;
 use schemars::gen::SchemaGenerator;

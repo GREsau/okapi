@@ -1,4 +1,7 @@
 use crate::{OpenApiError, Result};
+
+extern crate okapi;
+
 use okapi::openapi3::{MediaType, RefOr, Response, Responses, SchemaObject};
 use okapi::Map;
 

@@ -1,3 +1,4 @@
+extern crate okapi;
 use okapi::openapi3::{OpenApi, Server};
 use rocket::http::{ContentType, Method};
 use rocket::response::content::Custom;
