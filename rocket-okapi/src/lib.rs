@@ -79,6 +79,9 @@ pub mod swagger_ui;
 pub mod util;
 
 pub use error::*;
+
+extern crate rocket_okapi_codegen;
+
 pub use rocket_okapi_codegen::*;
 pub use schemars::JsonSchema;
 
