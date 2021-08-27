@@ -222,9 +222,9 @@ fn create_route_operation_fn(
                     }
                     RequestHeaderInput::Security(s) => {
                         // Make sure to add the security scheme listing
-                        security_schemes.insert(s.0.scheme_identifier.clone(), Vec::new());
+                        security_schemes.insert(s.2.scheme_identifier.clone(), Vec::new());
                         // Add the scheme to components definition of openapi
-                        gen.add_security_scheme(s.0.scheme_identifier.clone(), s.0.clone());
+                        gen.add_security_scheme(s.2.scheme_identifier.clone(), s.0.clone());
                     }
                     _ => {
                     }

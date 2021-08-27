@@ -366,8 +366,6 @@ pub struct Header {
 #[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct SecurityScheme {
-    // unique name for the security scheme
-    pub scheme_identifier: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     // This also sets `type`
@@ -375,6 +373,15 @@ pub struct SecurityScheme {
     pub data: SecuritySchemeData,
     #[serde(flatten)]
     pub extensions: Object,
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[serde(rename_all = "camelCase")]
+pub struct SchemeIdentifier {
+    #[serde(default)]
+    /// Unique name for the security scheme.
+    pub scheme_identifier: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
