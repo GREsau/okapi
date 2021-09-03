@@ -1,4 +1,6 @@
 #![forbid(missing_docs)]
+#![forbid(unsafe_code)]
+#![deny(clippy::all)]
 
 //! This projects serves to enable automatic rendering of `openapi.json` files, and provides
 //! facilities to also serve the documentation alongside your api.

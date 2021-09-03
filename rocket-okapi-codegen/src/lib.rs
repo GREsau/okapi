@@ -1,3 +1,6 @@
+#![forbid(unsafe_code)]
+#![deny(clippy::all)]
+
 #[macro_use]
 extern crate quote;
 #[macro_use]
@@ -22,7 +25,7 @@ use syn::Ident;
 /// #[openapi]
 /// #[get("/hello/<number>")]
 /// fn hello_world(number: i32) -> String {
-///     format!("Hellow world number {}", number)
+///     format!("Hello world number {}", number)
 /// }
 /// ```
 #[proc_macro_attribute]

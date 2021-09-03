@@ -8,6 +8,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 - Added feature flag `rapidoc` to enable [RapiDoc](https://mrin9.github.io/RapiDoc/) documentation
 viewer. (Based on #33)
 - Added RapiDoc v9.0.0
+- Forbid unsafe code in this crate. (#36)
 
 ### Changed
 - Swagger UI is now only available under the feature `swagger`.

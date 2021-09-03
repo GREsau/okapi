@@ -5,6 +5,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ## Version 0.6.0-alpha-2 (2021-xx-xx)
 
 ### Added
+- Forbid unsafe code in this crate. (#36)
 
 ### Changed
 
