@@ -1,7 +1,32 @@
 # okapi
-OpenAPI (AKA Swagger) document generation for Rust projects
+okapi: [![Download](https://img.shields.io/crates/v/okapi)](https://crates.io/crates/okapi/)
+[![API Docs](https://img.shields.io/badge/docs-okapi-blue)](https://docs.rs/okapi/latest/okapi/)
 
-Work in progress!
+rocket-okapi: [![Download](https://img.shields.io/crates/v/rocket_okapi)](https://crates.io/crates/rocket_okapi)
+[![API Docs](https://img.shields.io/badge/docs-rocket_okapi-blue)](https://docs.rs/rocket_okapi/latest/rocket_okapi/)
+
+[![unsafe forbidden](https://img.shields.io/badge/unsafe-forbidden-success.svg)](https://github.com/rust-secure-code/safety-dance/)
+
+Automated OpenAPI (AKA Swagger) document generation for Rust/Rocket projects.
+
+Never have outdated documentation again. Okapi will generate documentation for you at compile time.
+It uses a combination of [Rust Doc comments](https://doc.rust-lang.org/reference/comments.html#doc-comments)
+and programming logic to document your API.
+
+The generated [OpenAPI][OpenAPI_3.0.0] files can then be used to in by various programs to
+visualize the documentation. Rocket-okapi currently includes [RapiDoc][RapiDoc] and
+[Swagger UI][Swagger_UI], but others can be used too.
+
+Supported OpenAPI Spec: [3.0.0][OpenAPI_3.0.0]
+
+Example of generated documentation using okapi:
+- DF Storyteller: [RapiDoc](https://docs.dfstoryteller.com/rapidoc/), [Swagger UI](https://docs.dfstoryteller.com/swagger-ui/)
+- ...[^1]
+
+[OpenAPI_3.0.0]: https://spec.openapis.org/oas/v3.0.0
+[RapiDoc]: https://mrin9.github.io/RapiDoc/
+[Swagger_UI]: https://swagger.io/tools/swagger-ui/
+[^1]: More examples will be added, please open an issue if you have a good example.
 
 ## Basic Usage
 
@@ -78,3 +103,9 @@ pub fn make_rocket() -> rocket::Rocket {
 - Allow customizing openapi generation settings, e.g.
     - custom json schema generation settings
     - change path the document is hosted at
+
+## License
+
+This project is licensed under the [MIT license](LICENSE).
+
+All contributions to this project will be similarly licensed.
