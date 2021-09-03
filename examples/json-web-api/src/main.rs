@@ -1,11 +1,7 @@
-#[macro_use]
-extern crate rocket;
-#[macro_use]
-extern crate rocket_okapi;
-
 use rocket::form::FromForm;
-use rocket::serde::json::Json;
-use rocket_okapi::swagger_ui::*;
+use rocket::{get, post, serde::json::Json};
+use rocket_okapi::settings::UrlObject;
+use rocket_okapi::{openapi, rapidoc::*, routes_with_openapi, swagger_ui::*};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -95,7 +91,7 @@ fn create_post_by_query(post: Post) -> Option<Json<Post>> {
 
 #[rocket::main]
 async fn main() {
-    let result = rocket::build()
+    let launch_result = rocket::build()
         .mount(
             "/",
             routes_with_openapi![
@@ -111,10 +107,28 @@ async fn main() {
             "/swagger-ui/",
             make_swagger_ui(&SwaggerUIConfig {
                 url: "../openapi.json".to_owned(),
-                ..SwaggerUIConfig::default()
+                ..Default::default()
+            }),
+        )
+        .mount(
+            "/rapidoc/",
+            make_rapidoc(&RapiDocConfig {
+                general: GeneralConfig {
+                    spec_urls: vec![UrlObject::new("General", "../openapi.json")],
+                    ..Default::default()
+                },
+                hide_show: HideShowConfig {
+                    allow_spec_url_load: false,
+                    allow_spec_file_load: false,
+                    ..Default::default()
+                },
+                ..Default::default()
             }),
         )
         .launch()
         .await;
-    assert!(result.is_ok());
+    match launch_result {
+        Ok(()) => println!("Rocket shut down gracefully."),
+        Err(err) => println!("Rocket had an error: {}", err),
+    };
 }

@@ -1,8 +1,8 @@
 use crate::handlers::{ContentHandler, RedirectHandler};
-use serde::{Deserialize, Serialize};
-
+use crate::settings::UrlObject;
 use rocket::http::ContentType;
 use rocket::Route;
+use serde::{Deserialize, Serialize};
 
 macro_rules! static_file {
     ($name: literal, $type: ident) => {
@@ -126,38 +126,17 @@ impl Default for SwaggerUIConfig {
     }
 }
 
-/// Contains a named url.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct UrlObject {
-    /// The name of the url.
-    pub name: String,
-    /// The url itself.
-    pub url: String,
-}
-
-impl UrlObject {
-    /// Create a new `UrlObject` from the provided name and url.
-    #[must_use]
-    pub fn new(name: &str, url: &str) -> Self {
-        Self {
-            name: name.to_string(),
-            url: url.to_string(),
-        }
-    }
-}
-
 /// Transform the provided `SwaggerUIConfig` into a list of `Route`s that serve the swagger web ui.
 #[must_use]
 pub fn make_swagger_ui(config: &SwaggerUIConfig) -> impl Into<Vec<Route>> {
     let config_handler = ContentHandler::json(config);
     vec![
-        config_handler.into_route("/swagger-ui-config.json"),
         RedirectHandler::to("index.html").into_route("/"),
-        static_file!("favicon-16x16.png", PNG),
-        static_file!("favicon-32x32.png", PNG),
+        // Add custom config file
+        config_handler.into_route("/swagger-ui-config.json"),
+        // Add other static files
         static_file!("index.html", HTML),
         static_file!("oauth2-redirect.html", HTML),
-        static_file!("swagger-ui.js", JavaScript),
         static_file!("swagger-ui-standalone-preset.js", JavaScript),
         static_file!("swagger-ui-bundle.js", JavaScript),
         static_file!("swagger-ui.css", CSS),

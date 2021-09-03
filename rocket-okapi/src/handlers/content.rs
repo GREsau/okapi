@@ -24,8 +24,17 @@ impl ContentHandler<String> {
 impl ContentHandler<&'static [u8]> {
     /// Create a `ContentHandler<&[u8]>`, which serves its content with the specified
     /// `content_type`.
-    #[must_use]
     pub fn bytes(content_type: ContentType, content: &'static [u8]) -> Self {
+        ContentHandler {
+            content: Custom(content_type, content),
+        }
+    }
+}
+
+impl ContentHandler<Vec<u8>> {
+    /// Create a `ContentHandler<Vec<u8>>`, which serves its content with the specified
+    /// `content_type`.
+    pub fn bytes_owned(content_type: ContentType, content: Vec<u8>) -> Self {
         ContentHandler {
             content: Custom(content_type, content),
         }

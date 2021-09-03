@@ -7,9 +7,10 @@
 //! First, add the following lines to your `Cargo.toml`
 //! ```toml
 //! [dependencies]
-//! rocket_okapi = "0.5"
+//! rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json"] }
 //! schemars = "0.8"
-//! okapi = { version = "0.5", features = ["derive_json_schema"] }
+//! okapi = { version = "0.6.0-alpha-1", features = ["derive_json_schema"] }
+//! rocket_okapi = { version = "0.8.0-alpha-1", features = ["swagger"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
 //! response types of the endpoint must implement `JsonSchema`. Secondly, the function must be
@@ -64,6 +65,9 @@ pub mod gen;
 /// Contains several `Rocket` `Handler`s, which are used for serving the json files and the swagger
 /// interface.
 pub mod handlers;
+/// Contains the functions and structs required to display the RapiDoc UI.
+#[cfg(feature = "rapidoc")]
+pub mod rapidoc;
 /// This module contains several traits that correspond to the `Rocket` traits pertaining to request
 /// guards and responses
 pub mod request;
@@ -73,7 +77,8 @@ pub mod response;
 /// Contains then `OpenApiSettings` struct, which can be used to customise the behaviour of a
 /// `Generator`.
 pub mod settings;
-/// Contains the functions and structs required to display the swagger web ui.
+/// Contains the functions and structs required to display the Swagger UI.
+#[cfg(feature = "swagger")]
 pub mod swagger_ui;
 /// Assorted function that are used throughout the application.
 pub mod util;

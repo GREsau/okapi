@@ -201,7 +201,7 @@ pub(crate) fn parse_attrs<'a>(
     match attrs.into_iter().find(|a| is_route_attribute(a)) {
         Some(attr) => {
             let span = attr.span();
-            let (name, args) = to_name_and_args(&attr)
+            let (name, args) = to_name_and_args(attr)
                 .ok_or_else(|| TokenStream::from(quote_spanned! {span=>
                     compile_error!("Malformed route attribute");
                 }))?;
