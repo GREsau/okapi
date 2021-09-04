@@ -17,6 +17,7 @@ okapi = { version = "0.6.0-alpha-1", path = "../okapi" }
 rocket_okapi_codegen = { version = "=0.7.0-alpha-1", path = "../rocket-okapi-codegen" }
 serde = "1.0"
 serde_json = "1.0"
+uuid = { version = "0.8", optional = true }
 
 [features]
 # Feature to enable Swagger UI for rendering documention

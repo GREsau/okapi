@@ -50,6 +50,8 @@ impl_from_form_param!(u64);
 impl_from_form_param!(u128);
 impl_from_form_param!(bool);
 impl_from_form_param!(String);
+#[cfg(feature="uuid")]
+impl_from_form_param!(::uuid::Uuid);
 
 impl<'r> OpenApiFromFormField<'r> for &'r str {
     fn form_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
