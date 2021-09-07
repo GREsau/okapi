@@ -6,6 +6,9 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Added
 - Forbid unsafe code in this crate. (#36)
+- Allow customization of OpenApi object.
+- Allow merging of OpenApi objects.
+- Added `log v0.4` as a dependency.
 
 ### Changed
 

@@ -9,11 +9,12 @@ rocket-okapi: [![Download](https://img.shields.io/crates/v/rocket_okapi)](https:
 
 Automated OpenAPI (AKA Swagger) document generation for Rust/Rocket projects.
 
-Never have outdated documentation again. Okapi will generate documentation for you at compile time.
+Never have outdated documentation again.
+Okapi will generate documentation for you while setting up the server.
 It uses a combination of [Rust Doc comments](https://doc.rust-lang.org/reference/comments.html#doc-comments)
 and programming logic to document your API.
 
-The generated [OpenAPI][OpenAPI_3.0.0] files can then be used to in by various programs to
+The generated [OpenAPI][OpenAPI_3.0.0] files can then be used by various programs to
 visualize the documentation. Rocket-okapi currently includes [RapiDoc][RapiDoc] and
 [Swagger UI][Swagger_UI], but others can be used too.
 
@@ -95,14 +96,14 @@ pub fn make_rocket() -> rocket::Rocket {
 ```
 
 ## TODO
-- Tests
-- Documentation
-- Benchmark/optimise memory usage and allocations
+- [ ] Tests
+- [ ] Documentation
+- [ ] Benchmark/optimise memory usage and allocations
   - Note to self: https://crates.io/crates/graphannis-malloc_size_of looks useful
-- Implement `OpenApiFrom___`/`OpenApiResponder` for more rocket/rocket-contrib types
-- Allow customizing openapi generation settings, e.g.
-    - custom json schema generation settings
-    - change path the document is hosted at
+- [ ] Implement `OpenApiFrom___`/`OpenApiResponder` for more rocket/rocket-contrib types
+- [ ] Allow customizing openapi generation settings, e.g.
+    - [ ] custom json schema generation settings
+    - [x] change path the document is hosted at
 
 ## License
 

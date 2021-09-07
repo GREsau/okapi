@@ -9,6 +9,11 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 viewer. (Based on #33)
 - Added RapiDoc v9.0.0
 - Forbid unsafe code in this crate. (#36)
+- Retrieve OpenApi object after generating. (#28)
+- Create `mount_endpoints_and_merged_docs` marco in order to streamline code structure for
+bigger projects. (#30)
+- Added new example for structuring bigger projects.
+- Allowed changing path where OpenApi file is hosted.
 
 ### Changed
 - Swagger UI is now only available under the feature `swagger`.

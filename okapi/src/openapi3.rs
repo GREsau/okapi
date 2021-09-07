@@ -4,9 +4,9 @@ pub use schemars::schema::SchemaObject;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-type Object = Map<String, Value>;
 
-type SecurityRequirement = Map<String, Vec<String>>;
+pub type Object = Map<String, Value>;
+pub type SecurityRequirement = Map<String, Vec<String>>;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
@@ -26,6 +26,19 @@ pub struct Ref {
 impl<T> From<T> for RefOr<T> {
     fn from(o: T) -> Self {
         RefOr::<T>::Object(o)
+    }
+}
+
+impl OpenApi {
+    pub fn new() -> Self {
+        OpenApi {
+            openapi: Self::default_version(),
+            ..Default::default()
+        }
+    }
+
+    pub fn default_version() -> String {
+        "3.0.0".to_owned()
     }
 }
 
@@ -57,6 +70,7 @@ pub struct Info {
     pub title: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// URL to the terms of service.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub terms_of_service: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -242,7 +256,7 @@ pub struct Response {
 #[serde(rename_all = "camelCase")]
 pub struct Parameter {
     pub name: String,
-    // TODO this should probaby be an enum, not String
+    // TODO this should probably be an enum, not String
     #[serde(rename = "in")]
     pub location: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]

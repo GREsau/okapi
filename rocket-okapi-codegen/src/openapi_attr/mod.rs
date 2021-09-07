@@ -5,10 +5,11 @@ use crate::get_add_operation_fn_name;
 use darling::FromMeta;
 use proc_macro::TokenStream;
 use proc_macro2::Span;
+use quote::quote;
 use quote::ToTokens;
 use rocket_http::Method;
 use std::collections::BTreeMap as Map;
-use syn::{AttributeArgs, FnArg, Ident, ItemFn, ReturnType, Type, TypeTuple};
+use syn::{parse_macro_input, AttributeArgs, FnArg, Ident, ItemFn, ReturnType, Type, TypeTuple};
 
 #[derive(Debug, Default, FromMeta)]
 #[darling(default)]

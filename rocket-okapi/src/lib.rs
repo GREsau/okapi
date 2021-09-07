@@ -42,7 +42,7 @@
 //! }
 //!
 //! fn get_docs() -> SwaggerUIConfig {
-//!     use rocket_okapi::swagger_ui::UrlObject;
+//!     use rocket_okapi::settings::UrlObject;
 //!
 //!     SwaggerUIConfig {
 //!         url: "/my_resource/openapi.json".to_string(),
@@ -97,4 +97,73 @@ pub struct OperationInfo {
     pub method: rocket::http::Method,
     /// Contains information to be showed in the documentation about this endpoint.
     pub operation: okapi::openapi3::Operation,
+}
+
+/// Convert OpenApi object to routable endpoint.
+pub fn get_openapi_route(
+    spec: okapi::openapi3::OpenApi,
+    settings: &settings::OpenApiSettings,
+) -> rocket::Route {
+    handlers::OpenApiHandler::new(spec).into_route(&settings.json_path)
+}
+
+/// Mount endpoints and mount merged OpenAPI documentation.
+///
+/// This marco just makes to code look cleaner and improves readability
+/// for bigger codebases.
+///
+/// The macro expects the following arguments:
+/// - rocket_builder: `Rocket<Build>`,
+/// - docs_path: `&str`, `String` or [`Uri`](rocket::http::uri::Uri).
+/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0-rc.1/rocket/struct.Rocket.html#method.mount)
+/// - openapi_settings: (optional) `OpenApiSettings`,
+/// - List of (0 or more):
+///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).
+///   Anything accepted by `mount()`
+///   - route_and_docs: `(Vec<rocket::Route>, OpenApi)`
+///
+/// Example:
+/// ```rust,ignore
+/// let custom_route_spec = (vec![], custom_spec());
+/// mount_endpoints_and_merged_docs! {
+///     building_rocket, "/".to_owned(),
+///     "/" => custom_route_spec,
+///     "/v1/post" => post::get_routes_and_docs(),
+///     "/v1/message" => message::get_routes_and_docs(),
+/// };
+/// ```
+///
+#[macro_export]
+macro_rules! mount_endpoints_and_merged_docs {
+    ($rocket_builder:ident, $docs_path:expr, $openapi_settings:ident,
+     $($path:expr => $route_and_docs:expr),* $(,)*) => {{
+        let mut openapi_list: Vec<(_, okapi::openapi3::OpenApi)> = Vec::new();
+        $({
+            let (routes, openapi) = $route_and_docs;
+            $rocket_builder = $rocket_builder.mount($path, routes);
+            openapi_list.push(($path, openapi));
+        })*
+        // Combine all OpenApi documentation into one struct.
+        let openapi_docs = match okapi::merge::marge_spec_list(&openapi_list){
+            Ok(docs) => docs,
+            Err(err) => panic!("Could not merge OpenAPI spec: {}", err),
+        };
+        // Add OpenApi route
+        $rocket_builder = $rocket_builder.mount(
+            $docs_path,
+            vec![rocket_okapi::get_openapi_route(
+                openapi_docs,
+                &$openapi_settings,
+            )],
+        );
+    }};
+
+    ($rocket_builder:ident, $docs_path:expr,
+     $($path:expr => $route_and_docs:expr),* $(,)*) => {
+        let openapi_settings = rocket_okapi::settings::OpenApiSettings::default();
+        mount_endpoints_and_merged_docs!{
+            $rocket_builder, $docs_path, openapi_settings,
+            $($path:expr => $route_and_docs:expr),*
+        }
+    }
 }

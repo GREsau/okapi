@@ -1,5 +1,6 @@
 use darling::{Error, FromMeta};
 use proc_macro::TokenStream;
+use quote::{quote, quote_spanned};
 use rocket_http::{ext::IntoOwned, uri::Origin, MediaType, Method};
 use std::str::FromStr;
 use syn::spanned::Spanned;

@@ -1,21 +1,16 @@
 use crate::get_add_operation_fn_name;
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
+use quote::quote;
 use syn::{parse::Parser, punctuated::Punctuated, token::Comma, Path, Result};
 
-pub fn parse(routes: TokenStream) -> TokenStream {
-    parse_inner(routes)
-        .unwrap_or_else(|e| e.to_compile_error())
-        .into()
-}
-
-fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
+/// Parses routes and returns a function that takes `OpenApiSettings` and returns `OpenApi` spec.
+pub fn create_openapi_spec(routes: TokenStream) -> Result<TokenStream2> {
     let paths = <Punctuated<Path, Comma>>::parse_terminated.parse(routes)?;
-    let add_operations = create_add_operations(paths.clone());
+    let add_operations = create_add_operations(paths);
     Ok(quote! {
-        {
-            let settings = ::rocket_okapi::settings::OpenApiSettings::new();
-            let mut gen = ::rocket_okapi::gen::OpenApiGenerator::new(settings.clone());
+        |settings: ::rocket_okapi::settings::OpenApiSettings| -> ::okapi::openapi3::OpenApi {
+            let mut gen = ::rocket_okapi::gen::OpenApiGenerator::new(settings);
             #add_operations
             let mut spec = gen.into_openapi();
             let mut info = ::okapi::openapi3::Info {
@@ -36,15 +31,13 @@ fn parse_inner(routes: TokenStream) -> Result<TokenStream2> {
             if !env!("CARGO_PKG_HOMEPAGE").is_empty() {
                 info.contact = Some(::okapi::openapi3::Contact{
                     name: Some("Homepage".to_owned()),
-                    url: Some(env!("CARGO_PKG_REPOSITORY").to_owned()),
+                    url: Some(env!("CARGO_PKG_HOMEPAGE").to_owned()),
                     ..okapi::openapi3::Contact::default()
                 });
             }
             spec.info = info;
 
-            let mut routes = ::rocket::routes![#paths];
-            routes.push(::rocket_okapi::handlers::OpenApiHandler::new(spec).into_route(&settings.json_path));
-            routes
+            spec
         }
     })
 }

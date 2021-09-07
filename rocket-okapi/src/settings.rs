@@ -1,10 +1,10 @@
 use schemars::gen::SchemaSettings;
 use serde::{Deserialize, Serialize};
 
-/// Settings which are used to customise the behaviour of the `OpenApiGenerator`.
+/// Settings which are used to customize the behavior of the `OpenApiGenerator`.
 #[derive(Debug, Clone)]
 pub struct OpenApiSettings {
-    /// Settings to customise how JSON Schemas are generated.
+    /// Settings to customize how JSON Schemas are generated.
     pub schema_settings: SchemaSettings,
     /// The path to the json file that contains the API specification. Then default is
     /// `openapi.json`.

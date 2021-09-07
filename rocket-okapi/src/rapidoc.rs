@@ -20,7 +20,7 @@ macro_rules! static_file {
 ///
 /// ```rust
 /// use std::collections::HashMap;
-/// use df_ls_diagnostics::hash_map;
+/// use rocket_okapi::hash_map;
 ///
 /// let my_hash_map = hash_map!{
 ///     "token_name".to_owned() => "CREATURE",
