@@ -1,7 +1,7 @@
 use rocket::form::FromForm;
 use rocket::{get, post, serde::json::Json};
 use rocket_okapi::settings::UrlObject;
-use rocket_okapi::{openapi, rapidoc::*, routes_with_openapi, swagger_ui::*};
+use rocket_okapi::{openapi, openapi_get_routes, rapidoc::*, swagger_ui::*};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -94,7 +94,7 @@ async fn main() {
     let launch_result = rocket::build()
         .mount(
             "/",
-            routes_with_openapi![
+            openapi_get_routes![
                 get_all_users,
                 get_user,
                 get_user_by_name,

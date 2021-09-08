@@ -14,6 +14,11 @@ viewer. (Based on #33)
 bigger projects. (#30)
 - Added new example for structuring bigger projects.
 - Allowed changing path where OpenApi file is hosted.
+- Added `openapi_routes` and `openapi_spec` macros to allow lower level access to the generation
+of the routes and specification respectively.
+- Added `openapi_get_routes`, `openapi_get_routes_spec` and `openapi_get_spec` to get a combination
+of `Vec<rocket::Route>` and/or `okapi::openapi3::OpenApi`.
+- Optionally allows the setting of `OpenApiSettings` when generating the OpenApi objects and Routes.
 
 ### Changed
 - Swagger UI is now only available under the feature `swagger`.
@@ -24,6 +29,7 @@ bigger projects. (#30)
 
 ### Removed
 - Removed unused and unneeded files from Swagger UI to decrease file size.
+- `routes_with_openapi` has be removed and replaced with `openapi_routes`.
 
 ### Fixed
 

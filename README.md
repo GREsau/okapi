@@ -32,13 +32,8 @@ Example of generated documentation using okapi:
 ## Basic Usage
 
 ```rust
-#[macro_use]
-extern crate rocket;
-#[macro_use]
-extern crate rocket_okapi;
-
-use rocket_contrib::json::Json;
-use rocket_okapi::swagger_ui::make_swagger_ui;
+use rocket::{get, post, serde::json::Json};
+use rocket_okapi::{openapi, openapi_get_routes, swagger_ui::*};
 use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 
@@ -79,10 +74,10 @@ fn hidden() -> Json<&'static str> {
 
 pub fn make_rocket() -> rocket::Rocket {
     rocket::build()
-        // routes_with_openapi![...] will host the openapi document at openapi.json
+        // openapi_get_routes![...] will host the openapi document at `openapi.json`
         .mount(
             "/",
-            routes_with_openapi![get_user, hidden],
+            openapi_get_routes![get_user, create_user, hidden],
         )
         // You can optionally host swagger-ui too
         .mount(

@@ -50,8 +50,8 @@ pub fn create_server() -> Rocket<Build> {
     mount_endpoints_and_merged_docs! {
         building_rocket, "/v1/".to_owned(), openapi_settings,
         "/v1/" => custom_route_spec,
-        "/v1/post" => post::get_routes_and_docs(),
-        "/v1/message" => message::get_routes_and_docs(),
+        "/v1/post" => post::get_routes_and_docs(&openapi_settings),
+        "/v1/message" => message::get_routes_and_docs(&openapi_settings),
     };
 
     building_rocket

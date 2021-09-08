@@ -4,15 +4,8 @@
 //! This crate is used by [`rocket_okapi`](https://crates.io/crates/rocket_okapi)
 //! for code generation. This crate includes the procedural macros like:
 //! - `#[openapi]`: To generate the documentation for an endpoint/route.
-//! - `routes_with_openapi![...]`: To generate and add the `openapi.json` route.
-//! - `parse_openapi_routes![...]`: To generate and return a list of routes and the openapi spec.
-//! - `create_openapi_spec![...]`: To generate and return the openapi spec.
-//!
-//! The last 3 macros have very similar behavior, but differ in what they return.
-//! Here is a list of the marcos and what they return:
-//! - `routes_with_openapi![...]`: `Vec<rocket::Route>` (adds route for `openapi.json`)
-//! - `parse_openapi_routes![...]`: `(Vec<rocket::Route>, okapi::openapi3::OpenApi)`
-//! - `create_openapi_spec![...]`: `okapi::openapi3::OpenApi`
+//! - `openapi_routes![...]`: Returns a closure for generating routes.
+//! - `openapi_spec![...]`: Returns a closure for generating OpenApi objects.
 //!
 
 mod openapi_attr;
@@ -45,71 +38,48 @@ pub fn openapi(args: TokenStream, mut input: TokenStream) -> TokenStream {
     input
 }
 
-/// A replacement macro for `rocket::routes`. The key differences are that this macro will add an
-/// additional element to the resulting `Vec<rocket::Route>`, which serves a static file called
-/// `openapi.json`. This file can then be used to display the routes in the Swagger/RapiDoc UI.
-#[proc_macro]
-pub fn routes_with_openapi(input: TokenStream) -> TokenStream {
-    let settings = quote! {
-        ::rocket_okapi::settings::OpenApiSettings::new()
-    };
-    let spec =
-        openapi_spec::create_openapi_spec(input.clone()).unwrap_or_else(|e| e.to_compile_error());
-    let routes = parse_routes::parse_routes(input, true).unwrap_or_else(|e| e.to_compile_error());
-    (quote! {
-        {
-            let settings = #settings;
-            let spec: ::okapi::openapi3::OpenApi = #spec(settings.clone());
-            let routes: Vec<::rocket::Route> = #routes(spec, settings);
-            routes
-        }
-    })
-    .into()
-}
-
-/// A replacement macro for `rocket::routes`. This parses the routes and provides
-/// a tuple with 2 parts `(Vec<rocket::Route>, OpenApi)`:
-/// - `Vec<rocket::Route>`: A list of all the routes that `rocket::routes![]` would have provided.
-/// - `OpenApi`: The `okapi::openapi3::OpenApi` spec for all the routes.
+/// Generate and return a closure that can be used to generate the routes.
 ///
-/// NOTE: This marco is different from `routes_with_openapi` in that it does not add
-/// the `openapi.json` file to the list of routes. This is done so the `OpenApi` spec can be changed
-/// before serving it.
+/// This closure take 2 arguments:
+/// - `spec_opt`: `Option<::okapi::openapi3::OpenApi>`
+/// - `settings`: `rocket_okapi::settings::OpenApiSettings`
+///
+/// It returns `Vec<::rocket::Route>`.
+///
+/// If `spec_opt` is set to `None` it will not add a route to serve the `openapi.json` file.
+///
+/// Example:
+/// ```rust,ignore
+/// let settings = rocket_okapi::settings::OpenApiSettings::new();
+/// let spec = rocket_okapi::openapi_spec![get_message, post_message](settings.clone());
+/// let routes = rocket_okapi::openapi_routes![get_message, post_message](Some(spec), settings);
+/// ```
 #[proc_macro]
-pub fn parse_openapi_routes(input: TokenStream) -> TokenStream {
-    let settings = quote! {
-        ::rocket_okapi::settings::OpenApiSettings::new()
-    };
-    let spec =
-        openapi_spec::create_openapi_spec(input.clone()).unwrap_or_else(|e| e.to_compile_error());
-    let routes = parse_routes::parse_routes(input, false).unwrap_or_else(|e| e.to_compile_error());
+pub fn openapi_routes(input: TokenStream) -> TokenStream {
+    let routes = parse_routes::parse_routes(input).unwrap_or_else(|e| e.to_compile_error());
     (quote! {
-        {
-            let settings = #settings;
-            let spec: ::okapi::openapi3::OpenApi = #spec(settings.clone());
-            let routes: Vec<::rocket::Route> = #routes(spec.clone(), settings);
-            (routes, spec)
-        }
+        #routes
     })
     .into()
 }
 
-/// Generate `OpenApi` spec only, no parsing of routes.
-/// This can be used in cases where you are only interested in openAPI spec, but not in the routes.
-/// A use case could be inside of `build.rs` scripts or where you want to alter OpenAPI object
-/// at runtime.
+/// Generate and return a closure that can be used to generate the OpenAPI specification.
+///
+/// This closure take 1 argument:
+/// - `settings`: `rocket_okapi::settings::OpenApiSettings`
+///
+/// It returns `okapi::openapi3::OpenApi`.
+///
+/// Example:
+/// ```rust,ignore
+/// let settings = rocket_okapi::settings::OpenApiSettings::new();
+/// let spec = rocket_okapi::openapi_spec![get_message, post_message](settings);
+/// ```
 #[proc_macro]
-pub fn create_openapi_spec(input: TokenStream) -> TokenStream {
-    let settings = quote! {
-        ::rocket_okapi::settings::OpenApiSettings::new()
-    };
+pub fn openapi_spec(input: TokenStream) -> TokenStream {
     let spec = openapi_spec::create_openapi_spec(input).unwrap_or_else(|e| e.to_compile_error());
     (quote! {
-        {
-            let settings = #settings;
-            let spec: ::okapi::openapi3::OpenApi = #spec(settings);
-            (spec)
-        }
+        #spec
     })
     .into()
 }

@@ -19,10 +19,10 @@ pub struct OpenApiGenerator {
 impl OpenApiGenerator {
     /// Create a new `OpenApiGenerator` from the settings provided.
     #[must_use]
-    pub fn new(settings: OpenApiSettings) -> Self {
+    pub fn new(settings: &OpenApiSettings) -> Self {
         OpenApiGenerator {
             schema_generator: settings.schema_settings.clone().into_generator(),
-            settings,
+            settings: settings.clone(),
             operations: okapi::Map::default(),
         }
     }

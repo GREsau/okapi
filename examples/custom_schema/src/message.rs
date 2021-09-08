@@ -2,12 +2,13 @@ use okapi::openapi3::OpenApi;
 use rocket::form::FromForm;
 use rocket::{get, post, serde::json::Json};
 use rocket_okapi::openapi;
-use rocket_okapi::parse_openapi_routes;
+use rocket_okapi::openapi_get_routes_spec;
+use rocket_okapi::settings::OpenApiSettings;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-pub fn get_routes_and_docs() -> (Vec<rocket::Route>, OpenApi) {
-    parse_openapi_routes![create_message, get_message]
+pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
+    openapi_get_routes_spec![settings: create_message, get_message]
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, FromForm)]

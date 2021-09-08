@@ -17,7 +17,7 @@
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
 //! response types of the endpoint must implement `JsonSchema`. Secondly, the function must be
 //! marked with `#[openapi]`. After that, you can simply replace `routes!` with
-//! `routes_with_openapi!`. This will append an additional route to the resulting `Vec<Route>`,
+//! `openapi_get_routes!`. This will append an additional route to the resulting `Vec<Route>`,
 //! which contains the `openapi.json` file that is required by swagger. Now that we have the json
 //! file that we need, we can serve the swagger web interface at another endpoint, and we should be
 //! able to load the example in the browser!
@@ -25,7 +25,7 @@
 //! ```rust, no_run
 //! use rocket::get;
 //! use rocket::serde::json::Json;
-//! use rocket_okapi::{openapi, routes_with_openapi, JsonSchema};
+//! use rocket_okapi::{openapi, openapi_get_routes, JsonSchema};
 //! use rocket_okapi::swagger_ui::{make_swagger_ui, SwaggerUIConfig};
 //!
 //! #[derive(serde::Serialize, JsonSchema)]
@@ -46,18 +46,30 @@
 //!
 //!     SwaggerUIConfig {
 //!         url: "/my_resource/openapi.json".to_string(),
-//!         urls: vec![UrlObject::new("My Resource", "/v1/company/openapi.json")],
 //!         ..Default::default()
 //!     }
 //! }
 //!
 //! fn main() {
 //!     rocket::build()
-//!         .mount("/my_resource", routes_with_openapi![my_controller])
+//!         .mount("/my_resource", openapi_get_routes![my_controller])
 //!         .mount("/swagger", make_swagger_ui(&get_docs()))
 //!         .launch();
 //! }
 //! ```
+//!
+//! This crate exposes a few macros that can be used to generate and serve routes and OpenApi objects.
+//! - `mount_endpoints_and_merged_docs!{...}`: Mount endpoints and mount merged OpenAPI documentation.
+//! - `openapi_get_routes![...]`: To generate and add the `openapi.json` route.
+//! - `openapi_get_routes_spec![...]`: To generate and return a list of routes and the openapi spec.
+//! - `openapi_get_spec![...]`: To generate and return the openapi spec.
+//!
+//! The last 3 macros have very similar behavior, but differ in what they return.
+//! Here is a list of the marcos and what they return:
+//! - `openapi_get_routes![...]`: `Vec<rocket::Route>` (adds route for `openapi.json`)
+//! - `openapi_get_routes_spec![...]`: `(Vec<rocket::Route>, okapi::openapi3::OpenApi)`
+//! - `openapi_get_spec![...]`: `okapi::openapi3::OpenApi`
+//!
 
 mod error;
 
@@ -76,7 +88,7 @@ pub mod request;
 /// Contains the trait `OpenApiResponder`, meaning that a response implementing this trait can be
 /// documented.
 pub mod response;
-/// Contains then `OpenApiSettings` struct, which can be used to customise the behaviour of a
+/// Contains then `OpenApiSettings` struct, which can be used to customize the behavior of a
 /// `Generator`.
 pub mod settings;
 /// Contains the functions and structs required to display the Swagger UI.
@@ -100,6 +112,8 @@ pub struct OperationInfo {
 }
 
 /// Convert OpenApi object to routable endpoint.
+///
+/// Used to serve an `OpenApi` object as an `openapi.json` file in Rocket.
 pub fn get_openapi_route(
     spec: okapi::openapi3::OpenApi,
     settings: &settings::OpenApiSettings,
@@ -120,6 +134,7 @@ pub fn get_openapi_route(
 /// - List of (0 or more):
 ///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).
 ///   Anything accepted by `mount()`
+///   - `=>`: divider
 ///   - route_and_docs: `(Vec<rocket::Route>, OpenApi)`
 ///
 /// Example:
@@ -166,4 +181,111 @@ macro_rules! mount_endpoints_and_merged_docs {
             $($path:expr => $route_and_docs:expr),*
         }
     }
+}
+
+/// A replacement macro for `rocket::routes`. This also takes a optional settings object.
+///
+/// The key differences are that this macro will add an additional element to the
+/// resulting `Vec<rocket::Route>`, which serves a static file called
+/// `openapi.json`. This file can then be used to display the routes in the Swagger/RapiDoc UI.
+///
+/// Example:
+/// ```rust,ignore
+/// use okapi::openapi3::OpenApi;
+/// let settings = rocket_okapi::settings::OpenApiSettings::new();
+/// let routes: Vec<rocket::Route> =
+///     openapi_get_routes![settings: create_message, get_message];
+/// ```
+/// Or
+/// ```rust,ignore
+/// use okapi::openapi3::OpenApi;
+/// let routes: Vec<rocket::Route> =
+///     openapi_get_routes![create_message, get_message];
+/// ```
+#[macro_export]
+macro_rules! openapi_get_routes {
+    // With settings
+    ($settings:ident :
+     $($route:expr),* $(,)*) => {{
+        let spec = rocket_okapi::openapi_spec![$($route),*](&$settings);
+        let routes = rocket_okapi::openapi_routes![$($route),*](Some(spec), &$settings);
+        routes
+    }};
+
+    // Without settings
+    ($($route:expr),* $(,)*) => {{
+        let settings = rocket_okapi::settings::OpenApiSettings::new();
+        rocket_okapi::openapi_get_routes![settings: $($route),*]
+    }};
+}
+
+/// A replacement macro for `rocket::routes`. This parses the routes and provides
+/// a tuple with 2 parts `(Vec<rocket::Route>, OpenApi)`:
+/// - `Vec<rocket::Route>`: A list of all the routes that `rocket::routes![]` would have provided.
+/// - `OpenApi`: The `okapi::openapi3::OpenApi` spec for all the routes.
+///
+/// NOTE: This marco is different from `openapi_get_routes` in that this does not add
+/// the `openapi.json` file to the list of routes. This is done so the `OpenApi` spec can be changed
+/// before serving it.
+///
+/// Example:
+/// ```rust,ignore
+/// use okapi::openapi3::OpenApi;
+/// let settings = rocket_okapi::settings::OpenApiSettings::new();
+/// let (routes, spec): (Vec<rocket::Route>, OpenApi) =
+///     openapi_get_routes_spec![settings: create_message, get_message];
+/// ```
+/// Or
+/// ```rust,ignore
+/// use okapi::openapi3::OpenApi;
+/// let (routes, spec): (Vec<rocket::Route>, OpenApi) =
+///     openapi_get_routes_spec![create_message, get_message];
+/// ```
+#[macro_export]
+macro_rules! openapi_get_routes_spec {
+    // With settings
+    ($settings:ident :
+     $($route:expr),* $(,)*) => {{
+        let spec = rocket_okapi::openapi_spec![$($route),*](&$settings);
+        let routes = rocket_okapi::openapi_routes![$($route),*](None, &$settings);
+        (routes, spec)
+    }};
+
+    // Without settings
+    ($($route:expr),* $(,)*) => {{
+        let settings = rocket_okapi::settings::OpenApiSettings::new();
+        rocket_okapi::openapi_get_routes_spec![settings: $($route),*]
+    }};
+}
+
+/// Generate `OpenApi` spec only, does not generate routes.
+/// This can be used in cases where you are only interested in the openAPI spec, but not in the routes.
+/// A use case could be inside of `build.rs` scripts or where you want to alter OpenAPI object
+/// at runtime.
+///
+/// Example:
+/// ```rust,ignore
+/// use okapi::openapi3::OpenApi;
+/// let settings = rocket_okapi::settings::OpenApiSettings::new();
+/// let spec: OpenApi = openapi_get_spec![settings: create_message, get_message];
+/// ```
+/// Or
+/// ```rust,ignore
+/// use okapi::openapi3::OpenApi;
+/// let spec: OpenApi = openapi_get_spec![create_message, get_message];
+/// ```
+#[macro_export]
+macro_rules! openapi_get_spec {
+    // With settings
+    ($settings:ident :
+     $($route:expr),* $(,)*) => {{
+        let spec = rocket_okapi::openapi_spec![$($route),*](&$settings);
+        spec
+    }};
+
+    // Without settings
+    ($($route:expr),* $(,)*) => {{
+        let settings = rocket_okapi::settings::OpenApiSettings::new();
+        rocket_okapi::openapi_get_spec![settings: $($route),*]
+    }};
 }
