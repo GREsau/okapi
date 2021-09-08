@@ -25,4 +25,5 @@ swagger = []
 # Feature to enable RapiDoc for rendering documentation
 # Project: https://github.com/mrin9/RapiDoc
 rapidoc = []
-uuid = ["rocket/uuid"]
+# Allow the use of UUIDs
+uuid = ["rocket/uuid", "schemars/uuid"]

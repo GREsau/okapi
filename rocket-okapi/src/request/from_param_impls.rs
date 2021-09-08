@@ -48,7 +48,6 @@ impl_from_param!(u64);
 impl_from_param!(u128);
 impl_from_param!(bool);
 impl_from_param!(String);
-
 #[cfg(feature = "uuid")]
 impl_from_param!(rocket::serde::uuid::Uuid);
 

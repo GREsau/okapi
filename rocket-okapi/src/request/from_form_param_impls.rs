@@ -50,8 +50,8 @@ impl_from_form_param!(u64);
 impl_from_form_param!(u128);
 impl_from_form_param!(bool);
 impl_from_form_param!(String);
-#[cfg(feature="uuid")]
-impl_from_form_param!(::uuid::Uuid);
+#[cfg(feature = "uuid")]
+impl_from_form_param!(rocket::serde::uuid::Uuid);
 
 impl<'r> OpenApiFromFormField<'r> for &'r str {
     fn form_parameter(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
@@ -75,9 +75,6 @@ impl<'r> OpenApiFromFormField<'r> for &'r str {
         })
     }
 }
-
-#[cfg(feature = "uuid")]
-impl_from_form_param!(rocket::serde::uuid::Uuid);
 
 // OpenAPI specification does not support optional path params, so we leave `required` as true,
 // even for Options and Results.

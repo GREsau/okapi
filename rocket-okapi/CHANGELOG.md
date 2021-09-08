@@ -19,6 +19,7 @@ of the routes and specification respectively.
 - Added `openapi_get_routes`, `openapi_get_routes_spec` and `openapi_get_spec` to get a combination
 of `Vec<rocket::Route>` and/or `okapi::openapi3::OpenApi`.
 - Optionally allows the setting of `OpenApiSettings` when generating the OpenApi objects and Routes.
+- Add support for UUIDs, and added example. (#38, #46, #54)
 
 ### Changed
 - Swagger UI is now only available under the feature `swagger`.
