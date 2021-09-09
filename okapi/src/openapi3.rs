@@ -370,6 +370,7 @@ pub struct SecurityScheme {
     pub scheme_identifier: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    // This also sets `type`
     #[serde(flatten)]
     pub data: SecuritySchemeData,
     #[serde(flatten)]
