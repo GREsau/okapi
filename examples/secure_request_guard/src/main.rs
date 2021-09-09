@@ -8,10 +8,9 @@ use rocket::{
 };
 use rocket_okapi::{
     gen::OpenApiGenerator,
-    openapi,
+    openapi, openapi_get_routes,
     request::{OpenApiFromRequest, RequestHeaderInput},
     response::OpenApiResponder,
-    routes_with_openapi,
     swagger_ui::{make_swagger_ui, SwaggerUIConfig},
 };
 
@@ -100,7 +99,7 @@ async fn main() {
     let rocket_config = Config::debug_default();
 
     let e = rocket::custom(rocket_config)
-        .mount("/", routes_with_openapi![restricted])
+        .mount("/", openapi_get_routes![restricted])
         .mount(
             "/api/",
             make_swagger_ui(&SwaggerUIConfig {

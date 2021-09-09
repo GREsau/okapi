@@ -192,16 +192,18 @@ pub fn merge_tags(s1: &mut Vec<Tag>, s2: &[Tag]) -> Result<Vec<Tag>, MergeError>
     // Convert `Map` to `Vec`
     let mut new_tags_vec = Vec::new();
 
-    // Remove/add in reverser order
-    for _i in 0..new_tags.len() {
-        if let Some((_name, tag)) = new_tags.pop() {
+    // Remove/add in order
+    // Clone all keys because that is faster then cloning all the tags.
+    // `BTreeMap` does not implement `pop()` so can not use that.
+    // Code below works both for `BTreeMap` as for `IndexMap`.
+    let keys: Vec<String> = new_tags.keys().cloned().collect();
+    for key in keys {
+        if let Some(tag) = new_tags.remove(&key) {
             new_tags_vec.push(tag);
         } else {
             unreachable!("List sizes or same list do not match.");
         }
     }
-    // Switch the order to to keep the order consistent.
-    new_tags_vec.reverse();
     Ok(new_tags_vec)
 }
 
