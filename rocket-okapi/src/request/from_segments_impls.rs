@@ -1,15 +1,15 @@
-use super::OpenApiFromParam;
+use super::OpenApiFromSegments;
 use crate::gen::OpenApiGenerator;
 use okapi::openapi3::{Parameter, ParameterValue};
 use schemars::JsonSchema;
 
 type Result = crate::Result<Parameter>;
 
-impl<'r, T> OpenApiFromParam<'r> for T
+impl<'r, T> OpenApiFromSegments<'r> for T
 where
-    T: rocket::request::FromParam<'r> + JsonSchema,
+    T: rocket::request::FromSegments<'r> + JsonSchema,
 {
-    fn path_parameter(gen: &mut OpenApiGenerator, name: String) -> Result {
+    fn path_multi_parameter(gen: &mut OpenApiGenerator, name: String) -> Result {
         let schema = gen.json_schema::<T>();
         Ok(Parameter {
             name,
@@ -21,7 +21,7 @@ where
             value: ParameterValue::Schema {
                 style: None,
                 explode: None,
-                allow_reserved: false,
+                allow_reserved: true,
                 schema,
                 example: None,
                 examples: None,

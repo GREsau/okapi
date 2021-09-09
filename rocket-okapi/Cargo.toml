@@ -17,6 +17,12 @@ okapi = { version = "0.6.0-alpha-1", path = "../okapi" }
 rocket_okapi_codegen = { version = "=0.7.0-alpha-1", path = "../rocket-okapi-codegen" }
 serde = "1.0"
 serde_json = "1.0"
+log = "0.4"
+# Rocket dependencie but not re-exposed (update to 0.3 is Rocket master)
+# See issue: https://github.com/GREsau/schemars/issues/104
+# time = { version = "0.2.27" }
+# Rocket dependencie but not re-exposed
+either = "1"
 
 [features]
 # Feature to enable Swagger UI for rendering documention
@@ -27,3 +33,6 @@ swagger = []
 rapidoc = []
 # Allow the use of UUIDs
 uuid = ["rocket/uuid", "schemars/uuid"]
+# Re-expost Rocket feature flag
+# https://docs.rs/rocket/0.5.0-rc.1/rocket/serde/msgpack/struct.MsgPack.html
+msgpack = ["rocket/msgpack"]

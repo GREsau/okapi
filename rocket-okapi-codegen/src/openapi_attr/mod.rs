@@ -78,6 +78,8 @@ fn create_route_operation_fn(
         None => quote! { None },
     };
 
+    // Parse Query Strings
+    // https://rocket.rs/v0.5-rc/guide/requests/#query-strings
     let mut params = Vec::new();
     // Path parameters: `/<id>/<name>`
     for arg in route.path_params() {
@@ -92,6 +94,20 @@ fn create_route_operation_fn(
             <#ty as ::rocket_okapi::request::OpenApiFromParam>::path_parameter(gen, #arg.to_owned())?.into()
         })
     }
+    // Multi Path parameters: `/<path..>`
+    if let Some(arg) = route.path_multi_param() {
+        let ty = match arg_types.get(arg) {
+            Some(ty) => ty,
+            None => return quote! {
+                compile_error!(concat!("Could not find argument ", #arg, " matching multi path param."));
+            }
+            .into(),
+        };
+        params.push(quote! {
+            <#ty as ::rocket_okapi::request::OpenApiFromSegments>::path_multi_parameter(gen, #arg.to_owned())?.into()
+        })
+    }
+    let mut params_nested_list = Vec::new();
     // Query parameters: `/?<id>&<name>`
     for arg in route.query_params() {
         let ty = match arg_types.get(arg) {
@@ -101,22 +117,21 @@ fn create_route_operation_fn(
             }
             .into(),
         };
-        params.push(quote! {
-            <#ty as ::rocket_okapi::request::OpenApiFromFormField>::form_parameter(gen, #arg.to_owned(), true)?.into()
+        params_nested_list.push(quote! {
+            <#ty as ::rocket_okapi::request::OpenApiFromForm>::form_multi_parameter(gen, #arg.to_owned(), true)?.into()
         })
     }
-    let mut params_nested_list = Vec::new();
     // Multi Query parameters: `/?<param..>`
     for arg in route.query_multi_params() {
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
-                compile_error!(concat!("Could not find argument ", #arg, " matching query multi param."));
+                compile_error!(concat!("Could not find argument ", #arg, " matching multi query param."));
             }.into(),
         };
         params_nested_list.push(quote! {
-             <#ty as ::rocket_okapi::request::OpenApiFromForm>::form_multi_parameter(gen, #arg.to_owned(), true)?.into()
-         })
+            <#ty as ::rocket_okapi::request::OpenApiFromForm>::form_multi_parameter(gen, #arg.to_owned(), true)?.into()
+        })
     }
 
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
@@ -125,6 +140,7 @@ fn create_route_operation_fn(
         .path()
         .as_str()
         .replace("<", "{")
+        .replace("..>", "}")
         .replace(">", "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
     let (title, desc) = doc_attr::get_title_and_desc_from_doc(&route_fn.attrs);

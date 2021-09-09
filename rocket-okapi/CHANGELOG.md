@@ -20,11 +20,63 @@ of the routes and specification respectively.
 of `Vec<rocket::Route>` and/or `okapi::openapi3::OpenApi`.
 - Optionally allows the setting of `OpenApiSettings` when generating the OpenApi objects and Routes.
 - Add support for UUIDs, and added example. (#38, #46, #54)
+- Added `log v0.4` as a dependency.
+- Added `either v1` as a dependency. (Rocket dependency)
+- Added feature flag for [`msgpack`](https://docs.rs/rocket/0.5.0-rc.1/rocket/serde/msgpack/struct.MsgPack.html)
+- Added support for new [`Responder`](https://docs.rs/rocket/0.5.0-rc.1/rocket/response/trait.Responder.html)
+types (implemented `OpenApiResponderInner`):
+   - `std::fs::File`
+   - `rocket::tokio::fs::File`
+   - `std::borrow::Cow<'o, T>`
+   - `either::Either<L, R>`
+   - `std::io::Error`
+   - `(rocket::http::ContentType, R)`
+   - `(rocket::http::Status, R)`
+   - `rocket::http::Status` (#20)
+   - `rocket::response::status::NoContent`
+   - `rocket::response::Redirect`
+   - `rocket::response::content::Custom<T>`
+   - `rocket::response::status::Conflict<T>`
+   - `rocket::response::status::Custom<T>`
+   - `rocket::response::Flash<R>`
+   - `rocket::data::Capped<R>`
+   - `rocket::response::Debug<E>`
+   - `rocket::response::stream::ByteStream<S>`
+   - `rocket::response::stream::ReaderStream<S>`
+   - `rocket::response::stream::TextStream<S>`
+   - `rocket::serde::msgpack::MsgPack<T>` (only when feature `msgpack` is enabled)
+- Fully implement `FromSegments` for `<param..>` in path. (#41)
+- Implement `OpenApiFromSegments` for all that implement `FromSegments` and `JsonSchema`. (#41)
+- Implement `OpenApiFromParam` for all that implement `FromParam` and `JsonSchema`.
+- Implement `OpenApiFromFormField` for all that implement `FromFormField` and `JsonSchema`.
+- Added support for new [`FromData`](https://docs.rs/rocket/0.5.0-rc.1/rocket/data/trait.FromData.html)
+types (implemented `OpenApiFromData`):
+   - `String`
+   - `&'r str`
+   - `Cow<'r, str>`
+   - `Vec<u8>`
+   - `&'r [u8]`
+   - `rocket::fs::TempFile<'r>`
+   - `rocket::data::Capped<rocket::fs::TempFile<'r>>`
+   - `rocket::data::Capped<Cow<'r, str>>`
+   - `rocket::data::Capped<&'r str>`
+   - `rocket::data::Capped<&'r rocket::http::RawStr>`
+   - `rocket::data::Capped<&'r [u8]>`
+   - `rocket::data::Capped<String>`
+   - `rocket::data::Capped<Vec<u8>>`
+   - `&'r rocket::http::RawStr`
+   - `rocket::form::Form<T>`
+   - `rocket::serde::msgpack::MsgPack<T>` (only when feature `msgpack` is enabled)
 
 ### Changed
 - Swagger UI is now only available under the feature `swagger`.
 - Updated Swagger UI to v3.52.0
 - `UrlObject` has been moved from `swagger_ui::UrlObject` to `settings::UrlObject`.
+- Replaced manual implementations of `OpenApiFromParam` with generic version.
+So `OpenApiFromParam` is implemented for more types.
+- Replaced manual implementations of `OpenApiFromFormField` with generic version.
+So `OpenApiFromFormField` is implemented for more types.
+- Fixed setting of parameter location from "form" to "query".
 
 ### Deprecated
 
