@@ -41,12 +41,18 @@ where
                 parameter_list.push(parameter_from_schema(schema, name, required));
             }
         }
+        None => {
+            // Used when `SchemaObject.reference` is set.
+            // https://github.com/GREsau/schemars/issues/105
+            parameter_list.push(parameter_from_schema(schema, name, required));
+        }
         _ => {
             // TODO: Do nothing for now, might need implementation later.
             log::warn!(
                 "Please let `okapi` devs know how you triggered this type: `{:?}`.",
                 schema.instance_type
             );
+            parameter_list.push(parameter_from_schema(schema, name, required));
         }
     }
     parameter_list

@@ -72,7 +72,7 @@ types (implemented `OpenApiFromData`):
 (Re-exposing Rocket feature flag)
 - Added support for [Request Guards](https://rocket.rs/v0.4/guide/requests/#request-guards)
 and [Security Scheme](https://swagger.io/docs/specification/authentication/)
-(aka Authentication and Authorization) (#47, #9, #3)
+(aka Authentication and Authorization) (#47, #9, #8, #56)
 - Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0-rc.1/rocket/request/trait.FromRequest.html)
   types (implemented `OpenApiFromRequest`):
   - `std::net::IpAddr`

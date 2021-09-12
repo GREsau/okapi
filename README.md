@@ -18,10 +18,12 @@ The generated [OpenAPI][OpenAPI_3.0.0] files can then be used by various program
 visualize the documentation. Rocket-okapi currently includes [RapiDoc][RapiDoc] and
 [Swagger UI][Swagger_UI], but others can be used too.
 
-Supported OpenAPI Spec: [3.0.0][OpenAPI_3.0.0]
+Supported OpenAPI Spec: [3.0.0][OpenAPI_3.0.0]<br/>
+Supported Rocket version (for `rocket_okapi`): [0.5.0-rc.1](https://crates.io/crates/rocket/0.5.0-rc.1)
 
 Example of generated documentation using okapi:
-- DF Storyteller: [RapiDoc](https://docs.dfstoryteller.com/rapidoc/), [Swagger UI](https://docs.dfstoryteller.com/swagger-ui/)
+- DF Storyteller: [RapiDoc](https://docs.dfstoryteller.com/rapidoc/),
+[Swagger UI](https://docs.dfstoryteller.com/swagger-ui/)
 - ...[^1]
 
 [OpenAPI_3.0.0]: https://spec.openapis.org/oas/v3.0.0
@@ -95,9 +97,9 @@ pub fn make_rocket() -> rocket::Rocket {
 - [ ] Documentation
 - [ ] Benchmark/optimise memory usage and allocations
   - Note to self: https://crates.io/crates/graphannis-malloc_size_of looks useful
-- [ ] Implement `OpenApiFrom___`/`OpenApiResponder` for more rocket/rocket-contrib types
-- [ ] Allow customizing openapi generation settings, e.g.
-    - [ ] custom json schema generation settings
+- [x] Implement `OpenApiFrom___`/`OpenApiResponder` for more rocket/rocket-contrib types
+- [x] Allow customizing openapi generation settings, e.g.
+    - [x] custom json schema generation settings
     - [x] change path the document is hosted at
 
 ## License
