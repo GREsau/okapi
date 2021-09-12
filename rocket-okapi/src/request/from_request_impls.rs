@@ -1,23 +1,134 @@
 use super::{OpenApiFromRequest, RequestHeaderInput};
 use crate::gen::OpenApiGenerator;
 use okapi::openapi3::*;
+use std::result::Result as StdResult;
 
-impl<'a, T: Send + Sync> OpenApiFromRequest<'a> for &'a rocket::State<T> {
-    fn request_input(
-        _gen: &mut OpenApiGenerator,
-        name: String,
-    ) -> crate::Result<RequestHeaderInput> {
+// Implement `OpenApiFromRequest` for everything that implements `FromRequest`
+// https://docs.rs/rocket/0.5.0-rc.1/rocket/request/trait.FromRequest.html#foreign-impls
+
+type Result = crate::Result<RequestHeaderInput>;
+
+impl<'r> OpenApiFromRequest<'r> for std::net::IpAddr {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for std::net::SocketAddr {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r> for StdResult<T, T::Error> {
+    fn from_request_input(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
+        T::from_request_input(gen, name, required)
+    }
+}
+
+impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r> for Option<T> {
+    fn from_request_input(gen: &mut OpenApiGenerator, name: String, _required: bool) -> Result {
+        T::from_request_input(gen, name, false)
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for &'r rocket::config::Config {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+#[cfg(feature = "secrets")]
+impl<'r> OpenApiFromRequest<'r> for &'r rocket::config::SecretKey {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for &'r rocket::data::Limits {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for &'r rocket::http::Accept {
+    fn from_request_input(gen: &mut OpenApiGenerator, _name: String, required: bool) -> Result {
+        let schema = gen.json_schema::<String>();
         Ok(RequestHeaderInput::Parameter(Parameter {
-            required: false,
-            name: name,
-            location: "header".into(),
+            name: "Accept".to_owned(),
+            location: "header".to_owned(),
             description: None,
+            required,
             deprecated: false,
-            allow_empty_value: true,
-            extensions: Object::default(),
-            value: ParameterValue::Content {
-                content: Default::default(),
+            allow_empty_value: false,
+            value: ParameterValue::Schema {
+                style: None,
+                explode: None,
+                allow_reserved: false,
+                schema,
+                example: None,
+                examples: None,
             },
+            extensions: Object::default(),
         }))
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for &'r rocket::http::ContentType {
+    fn from_request_input(gen: &mut OpenApiGenerator, _name: String, required: bool) -> Result {
+        let schema = gen.json_schema::<String>();
+        Ok(RequestHeaderInput::Parameter(Parameter {
+            name: "Content-Type".to_owned(),
+            location: "header".to_owned(),
+            description: None,
+            required,
+            deprecated: false,
+            allow_empty_value: false,
+            value: ParameterValue::Schema {
+                style: None,
+                explode: None,
+                allow_reserved: false,
+                schema,
+                example: None,
+                examples: None,
+            },
+            extensions: Object::default(),
+        }))
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for &'r rocket::http::CookieJar<'r> {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for &'r rocket::http::uri::Origin<'r> {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for &'r rocket::route::Route {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for rocket::http::Method {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+impl<'r> OpenApiFromRequest<'r> for rocket::Shutdown {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+impl<'r, T: Send + Sync + 'static> OpenApiFromRequest<'r> for &'r rocket::State<T> {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
     }
 }

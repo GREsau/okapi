@@ -7,43 +7,44 @@ mod from_segments_impls;
 
 use super::gen::OpenApiGenerator;
 use super::Result;
-use okapi::openapi3::{
-    Parameter, RequestBody, SchemeIdentifier, SecurityRequirement, SecurityScheme,
-};
+use okapi::openapi3::{Parameter, RequestBody, Responses, SecurityRequirement, SecurityScheme};
 
 /// Expose this to the public to be use when manually implementing a
 /// [Form Guard](https://api.rocket.rs/master/rocket/form/trait.FromForm.html).
 pub use from_form_multi_param_impls::get_nested_form_parameters;
 
-/// This trait means that the implementer can be used as a `FromData` request guard,
-/// and that this can also be documented.
+/// This trait is used to document the request body that implements
+/// [`FromData`](rocket::data::FromData).
 pub trait OpenApiFromData<'r>: rocket::data::FromData<'r> {
-    /// Return a `RequestBody` containing the information required to document the `FromData` for
-    /// implementer.
+    /// Return a [`RequestBody`] containing the information required to document the
+    /// [`FromData`](rocket::data::FromData) object.
     fn request_body(gen: &mut OpenApiGenerator) -> Result<RequestBody>;
 }
 
-/// This trait means that the implementer can be used as a `FromParam` request guard,
-/// and that this can also be documented.
+/// This trait is used to document a dynamic part of a path that implements
+/// [`FromParam`](rocket::request::FromParam).
+/// For example `<user_id>` in route path.
 pub trait OpenApiFromParam<'r>: rocket::request::FromParam<'r> {
-    /// Return a `RequestBody` containing the information required to document the `FromParam` for
-    /// implementer. Path parameters.
+    /// Return a [`Parameter`] containing the information required to document the
+    /// [`FromParam`](rocket::request::FromParam) path parameter.
     fn path_parameter(gen: &mut OpenApiGenerator, name: String) -> Result<Parameter>;
 }
 
-/// This trait means that the implementer can be used as a `FromSegments` request guard,
-/// and that this can also be documented.
+/// This trait is used to document a dynamic path segment that implements
+/// [`FromSegments`](rocket::request::FromSegments).
+/// For example `<param..>` in route path.
 pub trait OpenApiFromSegments<'r>: rocket::request::FromSegments<'r> {
-    /// Return a `RequestBody` containing the information required to document the `FromSegments`
-    /// for implementer.
+    /// Return a [`Parameter`] containing the information required to document the
+    /// [`FromSegments`](rocket::request::FromSegments) path parameter.
     fn path_multi_parameter(gen: &mut OpenApiGenerator, name: String) -> Result<Parameter>;
 }
 
-/// This trait means that the implementer can be used as a `FromFormField` request guard,
-/// and that this can also be documented.
+/// This trait is used to document a query guard segment that implements
+/// [`FromFormField`](rocket::form::FromFormField).
+/// For example `?<param>` in the route's query part.
 pub trait OpenApiFromFormField<'r>: rocket::form::FromFormField<'r> {
-    /// Return a `RequestBody` containing the information required to document the `FromFormField`
-    /// for implementer.
+    /// Return a [`Parameter`] containing the information required to document the
+    /// [`FromFormField`](rocket::form::FromFormField) route's query part.
     fn form_parameter(
         gen: &mut OpenApiGenerator,
         name: String,
@@ -51,11 +52,12 @@ pub trait OpenApiFromFormField<'r>: rocket::form::FromFormField<'r> {
     ) -> Result<Parameter>;
 }
 
-/// This trait means that the implementer can be used as a `FromForm` request guard,
-/// and that this can also be documented.
+/// This trait is used to document multiple query guard segments that implement
+/// [`FromForm`](rocket::form::FromForm).
+/// For example `?<param>` in the route's query part.
 pub trait OpenApiFromForm<'r>: rocket::form::FromForm<'r> {
-    /// Return a `RequestBody` containing the information required to document the `FromForm` for
-    /// implementer.
+    /// Return a [`Vec<Parameter>`] containing the information required to document the
+    /// [`FromForm`](rocket::form::FromForm) route's query part.
     fn form_multi_parameter(
         gen: &mut OpenApiGenerator,
         name: String,
@@ -63,28 +65,52 @@ pub trait OpenApiFromForm<'r>: rocket::form::FromForm<'r> {
     ) -> Result<Vec<Parameter>>;
 }
 
-/// Commonly the items in the request header can be parameters, or authorization methods in rocket,
-/// this item will let the implementer choose what they are
+/// Used as a return type for [`OpenApiFromRequest`] trait.
+/// Defines what requirements a Request Guard needs in order to be validated.
+#[allow(clippy::large_enum_variant)]
 pub enum RequestHeaderInput {
     /// This request header requires no input anywhere
     None,
-    /// Parameter input to the path
+    /// Useful for when you want to set a header per route.
     Parameter(Parameter),
-    /// the request guard implements a security scheme
-    Security((SecurityScheme, SecurityRequirement, SchemeIdentifier)),
+    /// The request guard implements a security scheme.
+    ///
+    /// Parameters:
+    /// - The name of the [`SecurityScheme`].
+    /// - [`SecurityScheme`] is global definition of the authentication (per OpenApi spec).
+    /// - [`SecurityRequirement`] is the requirements for the route.
+    Security(String, SecurityScheme, SecurityRequirement),
 }
 
-impl Into<RequestHeaderInput> for Parameter {
-    fn into(self) -> RequestHeaderInput {
-        RequestHeaderInput::Parameter(self)
-    }
-}
+// Re-export derive trait here for convenience.
+pub use rocket_okapi_codegen::OpenApiFromRequest;
 
-/// This will let the request guards add to the openapi spec
+/// Trait that needs to be implemented for all types that implement
+/// [`FromRequest`](rocket::request::FromRequest).
+/// This trait specifies what headers or other parameters are required for this
+/// [Request Guards](https://rocket.rs/v0.5-rc/guide/requests/#request-guards)
+/// to be validated successfully.
+///
+/// If it does not quire any headers or parameters you can use the derive macro:
+/// ```rust,ignore
+/// use rocket_okapi::request::OpenApiFromRequest;
+///
+/// #[derive(OpenApiFromRequest)]
+/// pub struct MyStructName;
+/// ```
 pub trait OpenApiFromRequest<'a>: rocket::request::FromRequest<'a> {
-    /// Return a parameter for items that are found in the function call, but are not found
-    /// anywhere in the path definition by rocket, defaults to a none implementation for simplicity
-    fn request_input(_gen: &mut OpenApiGenerator, _name: String) -> Result<RequestHeaderInput> {
-        Ok(RequestHeaderInput::None)
+    /// Specifies what headers or other parameters are required for this Request Guards to validate
+    /// successfully.
+    fn from_request_input(
+        gen: &mut OpenApiGenerator,
+        name: String,
+        required: bool,
+    ) -> Result<RequestHeaderInput>;
+
+    /// Optionally add responses to the Request Guard.
+    /// This can be used for when the request guard could return a "401 Unauthorized".
+    /// Or any other responses, other then one from the default response.
+    fn get_responses(_gen: &mut OpenApiGenerator) -> Result<Responses> {
+        Ok(Responses::default())
     }
 }

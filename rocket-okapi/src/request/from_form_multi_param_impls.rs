@@ -1,5 +1,5 @@
 use crate::gen::OpenApiGenerator;
-use okapi::openapi3::{Parameter, ParameterValue};
+use okapi::openapi3::{Object, Parameter, ParameterValue};
 use schemars::schema::{InstanceType, Schema, SchemaObject, SingleOrVec};
 use schemars::JsonSchema;
 
@@ -7,22 +7,10 @@ use schemars::JsonSchema;
 /// that are used to create documentation.
 /// Use when manually implementing a
 /// [Form Guard](https://api.rocket.rs/master/rocket/form/trait.FromForm.html).
-/// Example:
-/// ```
-/// use rocket::form::FromForm;
-/// use serde::{Serialize, Deserialize};
-/// use schemars::JsonSchema;
-/// use rocket_okapi::{
-///     gen::OpenApiGenerator,
-///     request::OpenApiFromForm,
-///     request::get_nested_form_parameters
-/// };
 ///
-/// #[derive(Serialize, Deserialize, Clone, Debug, Default, JsonSchema, FromForm)]
-/// pub struct ApiPagination{
-///     page: Option<u32>,
-///     per_page: Option<u32>,
-/// }
+/// Manual implementation is not needed anymore because of Generic trait implementation of
+/// `OpenApiFromForm` and `OpenApiFromFormField`.
+/// But still used internally for implementation.
 pub fn get_nested_form_parameters<T>(
     gen: &mut OpenApiGenerator,
     name: String,
@@ -91,6 +79,6 @@ fn parameter_from_schema(schema: SchemaObject, name: String, mut required: bool)
             example: None,
             examples: None,
         },
-        extensions: okapi::Map::default(),
+        extensions: Object::default(),
     }
 }

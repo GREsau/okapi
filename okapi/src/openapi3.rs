@@ -377,64 +377,68 @@ pub struct SecurityScheme {
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
-#[serde(rename_all = "camelCase")]
-pub struct SchemeIdentifier {
-    #[serde(default)]
-    /// Unique name for the security scheme.
-    pub scheme_identifier: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
 #[serde(tag = "type", rename_all = "camelCase")]
 #[allow(clippy::large_enum_variant)]
 pub enum SecuritySchemeData {
+    #[serde(rename_all = "camelCase")]
     ApiKey {
         name: String,
         #[serde(rename = "in")]
         location: String,
     },
+    #[serde(rename_all = "camelCase")]
     Http {
         scheme: String,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         bearer_format: Option<String>,
     },
-    #[serde(rename = "oauth2")]
-    OAuth2 {
-        flows: OAuthFlows,
-    },
-    OpenIdConnect {
-        open_id_connect_url: String,
-    },
+    #[serde(rename = "oauth2", rename_all = "camelCase")]
+    OAuth2 { flows: OAuthFlows },
+    #[serde(rename_all = "camelCase")]
+    OpenIdConnect { open_id_connect_url: String },
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
-#[serde(default, rename_all = "camelCase")]
-pub struct OAuthFlows {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub implicit: Option<OAuthFlow>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub password: Option<OAuthFlow>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub client_credentials: Option<OAuthFlow>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub authorization_code: Option<OAuthFlow>,
-    #[serde(flatten)]
-    pub extensions: Object,
-}
-
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
-pub struct OAuthFlow {
-    pub authorization_url: String,
-    pub token_url: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub refresh_url: Option<String>,
-    pub scopes: Map<String, String>,
-    #[serde(flatten)]
-    pub extensions: Object,
+pub enum OAuthFlows {
+    #[serde(rename_all = "camelCase")]
+    Implicit {
+        authorization_url: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        refresh_url: Option<String>,
+        scopes: Map<String, String>,
+        #[serde(flatten)]
+        extensions: Object,
+    },
+    #[serde(rename_all = "camelCase")]
+    Password {
+        token_url: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        refresh_url: Option<String>,
+        scopes: Map<String, String>,
+        #[serde(flatten)]
+        extensions: Object,
+    },
+    #[serde(rename_all = "camelCase")]
+    ClientCredentials {
+        token_url: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        refresh_url: Option<String>,
+        scopes: Map<String, String>,
+        #[serde(flatten)]
+        extensions: Object,
+    },
+    #[serde(rename_all = "camelCase")]
+    AuthorizationCode {
+        authorization_url: String,
+        token_url: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        refresh_url: Option<String>,
+        scopes: Map<String, String>,
+        #[serde(flatten)]
+        extensions: Object,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]

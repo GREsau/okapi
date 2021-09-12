@@ -1,4 +1,4 @@
-use crate::openapi3::{Components, Info, OpenApi, PathItem, Tag};
+use crate::openapi3::{Components, Info, OpenApi, PathItem, Responses, Tag};
 use crate::{Map, MapEntry};
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -213,6 +213,13 @@ pub fn merge_tag(s1: &mut Tag, s2: &Tag) -> Result<(), MergeError> {
     }
     merge_opt_string(&mut s1.description, &s2.description);
     merge_option(&mut s1.external_docs, &s2.external_docs);
+    merge_map(&mut s1.extensions, &s2.extensions, "extensions");
+    Ok(())
+}
+
+pub fn merge_responses(s1: &mut Responses, s2: &Responses) -> Result<(), MergeError> {
+    merge_option(&mut s1.default, &s2.default);
+    merge_map(&mut s1.responses, &s2.responses, "responses");
     merge_map(&mut s1.extensions, &s2.extensions, "extensions");
     Ok(())
 }

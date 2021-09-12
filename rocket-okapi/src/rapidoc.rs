@@ -866,5 +866,6 @@ pub fn make_rapidoc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
             .into_route("/index.html"),
         // Add other static files
         static_file!("rapidoc-min.js", JavaScript),
+        static_file!("oauth-receiver.html", HTML),
     ]
 }

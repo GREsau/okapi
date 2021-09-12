@@ -36,3 +36,6 @@ uuid = ["rocket/uuid", "schemars/uuid"]
 # Re-expost Rocket feature flag
 # https://docs.rs/rocket/0.5.0-rc.1/rocket/serde/msgpack/struct.MsgPack.html
 msgpack = ["rocket/msgpack"]
+# Re-expost Rocket feature flag
+# https://rocket.rs/v0.5-rc/guide/requests/#secret-key
+secrets = ["rocket/secrets"]

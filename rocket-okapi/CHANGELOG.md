@@ -23,6 +23,7 @@ of `Vec<rocket::Route>` and/or `okapi::openapi3::OpenApi`.
 - Added `log v0.4` as a dependency.
 - Added `either v1` as a dependency. (Rocket dependency)
 - Added feature flag for [`msgpack`](https://docs.rs/rocket/0.5.0-rc.1/rocket/serde/msgpack/struct.MsgPack.html)
+(Re-exposing Rocket feature flag)
 - Added support for new [`Responder`](https://docs.rs/rocket/0.5.0-rc.1/rocket/response/trait.Responder.html)
 types (implemented `OpenApiResponderInner`):
    - `std::fs::File`
@@ -67,6 +68,29 @@ types (implemented `OpenApiFromData`):
    - `&'r rocket::http::RawStr`
    - `rocket::form::Form<T>`
    - `rocket::serde::msgpack::MsgPack<T>` (only when feature `msgpack` is enabled)
+- Added feature flag for [`secrets`](https://rocket.rs/v0.5-rc/guide/requests/#secret-key)
+(Re-exposing Rocket feature flag)
+- Added support for [Request Guards](https://rocket.rs/v0.4/guide/requests/#request-guards)
+and [Security Scheme](https://swagger.io/docs/specification/authentication/)
+(aka Authentication and Authorization) (#47, #9, #3)
+- Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0-rc.1/rocket/request/trait.FromRequest.html)
+  types (implemented `OpenApiFromRequest`):
+  - `std::net::IpAddr`
+  - `std::net::SocketAddr`
+  - `Result<T, T::Error>`
+  - `Option<T>`
+  - `&'r rocket::config::Config`
+  - `&'r rocket::config::SecretKey`(only when feature `secrets` is enabled)
+  - `&'r rocket::data::Limits`
+  - `&'r rocket::http::Accept`
+  - `&'r rocket::http::ContentType`
+  - `&'r rocket::http::CookieJar<'r>`
+  - `&'r rocket::http::uri::Origin<'r>`
+  - `&'r rocket::route::Route`
+  - `rocket::http::Method`
+  - `rocket::Shutdown`
+  - `&'r rocket::State<T>`
+- Added `OpenApiFromRequest` derive macro.
 
 ### Changed
 - Swagger UI is now only available under the feature `swagger`.

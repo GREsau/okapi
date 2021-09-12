@@ -1,13 +1,14 @@
 [package]
 name = "secure_request_guard"
 version = "0.1.0"
-authors = ["Kristoffer Ödmark <kristoffer.odmark90@gmail.com>"]
+authors = ["Kristoffer Ödmark <kristoffer.odmark90@gmail.com>", "Ralph Bisschops <ralph.bisschops.dev@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json"] }
+rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json", "secrets"] }
 schemars = { version = "0.8"}
 okapi = { version = "0.6.0-alpha-1", path = "../../okapi" }
-rocket_okapi = { version = "0.8.0-alpha-1", path = "../../rocket-okapi", features = ["swagger"] }
+rocket_okapi = { version = "0.8.0-alpha-1", path = "../../rocket-okapi", features = ["rapidoc", "swagger", "secrets"] }
 serde = "1.0"
 tokio = "1.6"
+serde_json = "1.0"

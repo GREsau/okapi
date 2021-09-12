@@ -29,7 +29,7 @@ impl OpenApiGenerator {
         }
     }
 
-    /// Adds a security scheme to the generated output
+    /// Adds/Replace a security scheme to the generated output
     pub fn add_security_scheme(&mut self, name: String, scheme: SecurityScheme) {
         self.security_schemes.insert(name, scheme);
     }
