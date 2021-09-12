@@ -84,6 +84,57 @@ pub fn openapi_spec(input: TokenStream) -> TokenStream {
     .into()
 }
 
+/// Derive marco for the [`OpenApiFromRequest`](rocket_okapi::request::OpenApiFromRequest) trait.
+///
+/// This derive trait is a very simple implementation for anything that does not
+/// require any other special headers or parameters to be validated.
+///
+/// Use:
+/// ```rust,ignore
+/// use rocket_okapi::request::OpenApiFromRequest;
+///
+/// #[derive(OpenApiFromRequest)]
+/// pub struct MyStructName;
+/// ```
+///
+/// This code is equivalent to:
+/// ```rust,ignore
+/// use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
+/// use rocket_okapi::gen::OpenApiGenerator;
+///
+/// pub struct MyStructName;
+///
+/// impl<'r> OpenApiFromRequest<'r> for MyStructName {
+///     fn from_request_input(
+///         _gen: &mut OpenApiGenerator,
+///         _name: String,
+///         _required: bool,
+///     ) -> rocket_okapi::Result<RequestHeaderInput> {
+///         Ok(RequestHeaderInput::None)
+///     }
+/// }
+/// ```
+#[proc_macro_derive(OpenApiFromRequest)]
+pub fn open_api_from_request_derive(input: TokenStream) -> TokenStream {
+    // Construct a representation of Rust code as a syntax tree
+    // that we can manipulate
+    let ast: syn::DeriveInput = syn::parse(input).unwrap();
+    let name = &ast.ident;
+
+    let gen = quote! {
+        impl<'r> rocket_okapi::request::OpenApiFromRequest<'r> for #name {
+            fn from_request_input(
+                _gen: &mut rocket_okapi::gen::OpenApiGenerator,
+                _name: String,
+                _required: bool,
+            ) -> rocket_okapi::Result<rocket_okapi::request::RequestHeaderInput> {
+                Ok(rocket_okapi::request::RequestHeaderInput::None)
+            }
+        }
+    };
+    gen.into()
+}
+
 fn get_add_operation_fn_name(route_fn_name: &Ident) -> Ident {
     Ident::new(
         &format!("okapi_add_operation_for_{}_", route_fn_name),

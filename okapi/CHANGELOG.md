@@ -9,14 +9,19 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 - Allow customization of OpenApi object.
 - Allow merging of OpenApi objects.
 - Added `log v0.4` as a dependency.
+- Added `map!` macro for easy creation of `okapi::Map` objects.
 
 ### Changed
+
+- Change `OAuthFlows` to better represent the different flows and allowed values within them.
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- Fixed casing in `SecuritySchemeData`.
 
 ### Security
 
