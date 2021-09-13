@@ -128,12 +128,12 @@ pub fn get_openapi_route(
 ///
 /// The macro expects the following arguments:
 /// - rocket_builder: `Rocket<Build>`,
-/// - docs_path: `&str`, `String` or [`Uri`](rocket::http::uri::Uri).
+/// - base_path: `&str`, `String` or [`Uri`](rocket::http::uri::Uri). (Anything that implements `ToString`)
 /// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0-rc.1/rocket/struct.Rocket.html#method.mount)
 /// - openapi_settings: (optional) `OpenApiSettings`,
 /// - List of (0 or more):
 ///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).
-///   Anything accepted by `mount()`
+///   Anything accepted by `mount()` (`base_path` should not be included).
 ///   - `=>`: divider
 ///   - route_and_docs: `(Vec<rocket::Route>, OpenApi)`
 ///
@@ -141,21 +141,23 @@ pub fn get_openapi_route(
 /// ```rust,ignore
 /// let custom_route_spec = (vec![], custom_spec());
 /// mount_endpoints_and_merged_docs! {
-///     building_rocket, "/".to_owned(),
+///     building_rocket, "/v1".to_owned(),
 ///     "/" => custom_route_spec,
-///     "/v1/post" => post::get_routes_and_docs(),
-///     "/v1/message" => message::get_routes_and_docs(),
+///     "/post" => post::get_routes_and_docs(),
+///     "/message" => message::get_routes_and_docs(),
 /// };
 /// ```
 ///
 #[macro_export]
 macro_rules! mount_endpoints_and_merged_docs {
-    ($rocket_builder:ident, $docs_path:expr, $openapi_settings:ident,
+    ($rocket_builder:ident, $base_path:expr, $openapi_settings:ident,
      $($path:expr => $route_and_docs:expr),* $(,)*) => {{
+        let base_path = $base_path.to_string();
+        assert!(!base_path.ends_with("/"), "`base_path` should not end with an `/`.");
         let mut openapi_list: Vec<(_, okapi::openapi3::OpenApi)> = Vec::new();
         $({
             let (routes, openapi) = $route_and_docs;
-            $rocket_builder = $rocket_builder.mount($path, routes);
+            $rocket_builder = $rocket_builder.mount(format!("{}{}", base_path, $path), routes);
             openapi_list.push(($path, openapi));
         })*
         // Combine all OpenApi documentation into one struct.
@@ -165,7 +167,7 @@ macro_rules! mount_endpoints_and_merged_docs {
         };
         // Add OpenApi route
         $rocket_builder = $rocket_builder.mount(
-            $docs_path,
+            $base_path,
             vec![rocket_okapi::get_openapi_route(
                 openapi_docs,
                 &$openapi_settings,

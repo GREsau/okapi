@@ -84,7 +84,7 @@ pub fn openapi_spec(input: TokenStream) -> TokenStream {
     .into()
 }
 
-/// Derive marco for the [`OpenApiFromRequest`](rocket_okapi::request::OpenApiFromRequest) trait.
+/// Derive marco for the `OpenApiFromRequest` trait.
 ///
 /// This derive trait is a very simple implementation for anything that does not
 /// require any other special headers or parameters to be validated.

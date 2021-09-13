@@ -1,7 +1,11 @@
+use okapi::openapi3::{MediaType, Responses};
+use rocket::config::Config;
 use rocket::Request;
 use rocket::{catch, catchers, response, response::Responder, Response};
+use rocket_okapi::gen::OpenApiGenerator;
+use rocket_okapi::response::OpenApiResponderInner;
 use rocket_okapi::settings::UrlObject;
-use rocket_okapi::{openapi_get_routes, rapidoc::*, swagger_ui::*};
+use rocket_okapi::{openapi_get_routes, rapidoc::*, swagger_ui::*, OpenApiError};
 
 // --------- All different methods of implementing `OpenApiFromRequest` ------------
 // There are a few different ways of doing things.
@@ -30,7 +34,11 @@ mod cookies;
 
 #[tokio::main]
 async fn main() {
-    let launch_result = rocket::build()
+    let figment = Config::figment()
+        // Set a dummy secret
+        .merge(("secret_key", vec![1u8; 64]));
+
+    let launch_result = rocket::custom(figment)
         .mount(
             "/",
             openapi_get_routes![
@@ -81,7 +89,7 @@ async fn main() {
 
 /// Error messages returned to user
 #[derive(Debug, serde::Serialize, schemars::JsonSchema)]
-struct MyError {
+pub struct MyError {
     /// The title of the error message
     pub err: String,
     /// The description of the error
@@ -109,6 +117,46 @@ fn unauthorized() -> MyError {
     }
 }
 
+/// Create my custom response
+///
+/// Putting this in a separate function somewhere will resolve issues like
+/// <https://github.com/GREsau/okapi/issues/57>
+pub fn bad_request_response(gen: &mut OpenApiGenerator) -> okapi::openapi3::Response {
+    let schema = gen.json_schema::<MyError>();
+    okapi::openapi3::Response {
+        description: "\
+        # 400 Bad Request\n\
+        The request given is wrongly formatted or data was missing. \
+        "
+        .to_owned(),
+        content: okapi::map! {
+            "application/json".to_owned() => MediaType {
+                schema: Some(schema),
+                ..Default::default()
+            }
+        },
+        ..Default::default()
+    }
+}
+
+pub fn unauthorized_response(gen: &mut OpenApiGenerator) -> okapi::openapi3::Response {
+    let schema = gen.json_schema::<MyError>();
+    okapi::openapi3::Response {
+        description: "\
+        # 401 Unauthorized\n\
+        The authentication given was incorrect or insufficient. \
+        "
+        .to_owned(),
+        content: okapi::map! {
+            "application/json".to_owned() => MediaType {
+                schema: Some(schema),
+                ..Default::default()
+            }
+        },
+        ..Default::default()
+    }
+}
+
 impl<'r> Responder<'r, 'static> for MyError {
     fn respond_to(self, _: &'r Request<'_>) -> response::Result<'static> {
         // Convert object to json
@@ -118,5 +166,18 @@ impl<'r> Responder<'r, 'static> for MyError {
             .header(rocket::http::ContentType::JSON)
             .status(rocket::http::Status::new(self.http_status_code))
             .ok()
+    }
+}
+
+impl OpenApiResponderInner for MyError {
+    fn responses(gen: &mut OpenApiGenerator) -> Result<Responses, OpenApiError> {
+        use okapi::openapi3::RefOr;
+        Ok(Responses {
+            responses: okapi::map! {
+                "400".to_owned() => RefOr::Object(bad_request_response(gen)),
+                "401".to_owned() => RefOr::Object(unauthorized_response(gen)),
+            },
+            ..Default::default()
+        })
     }
 }

@@ -48,10 +48,10 @@ pub fn create_server() -> Rocket<Build> {
     let openapi_settings = rocket_okapi::settings::OpenApiSettings::default();
     let custom_route_spec = (vec![], custom_openapi_spec());
     mount_endpoints_and_merged_docs! {
-        building_rocket, "/v1/".to_owned(), openapi_settings,
-        "/v1/" => custom_route_spec,
-        "/v1/post" => post::get_routes_and_docs(&openapi_settings),
-        "/v1/message" => message::get_routes_and_docs(&openapi_settings),
+        building_rocket, "/v1".to_owned(), openapi_settings,
+        "/" => custom_route_spec,
+        "/post" => post::get_routes_and_docs(&openapi_settings),
+        "/message" => message::get_routes_and_docs(&openapi_settings),
     };
 
     building_rocket

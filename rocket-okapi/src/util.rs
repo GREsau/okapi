@@ -31,7 +31,7 @@ pub fn ensure_status_code_exists(responses: &mut Responses, status: u16) -> &mut
 }
 
 /// Add `default` response with a Schema, for when status code is defined at runtime.
-/// https://spec.openapis.org/oas/v3.0.0#fixed-fields-13
+/// <https://spec.openapis.org/oas/v3.0.0#fixed-fields-13>
 pub fn add_default_response_schema(
     responses: &mut Responses,
     content_type: impl ToString,
@@ -52,7 +52,7 @@ pub fn add_default_response_schema(
 }
 
 /// Add `default` response, for when status code is defined at runtime.
-/// https://spec.openapis.org/oas/v3.0.0#fixed-fields-13
+/// <https://spec.openapis.org/oas/v3.0.0#fixed-fields-13>
 pub fn add_default_response_code(responses: &mut Responses) -> &mut RefOr<Response> {
     responses
         .responses

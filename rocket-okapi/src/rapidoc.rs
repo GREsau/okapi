@@ -56,7 +56,7 @@ pub struct RapiDocConfig {
     pub layout: LayoutConfig,
     /// Settings used to control what features should or should not be displayed.
     pub hide_show: HideShowConfig,
-    /// Settings used to confugre access to the api.
+    /// Settings used to configure access to the api.
     pub api: ApiConfig,
     /// Settings to configure the Rapi Doc "slots".
     pub slots: SlotsConfig,
@@ -426,15 +426,15 @@ impl Default for ApiConfig {
 /// Each slot usually corresponds with one section.
 /// Each field can include any HTML tags.
 ///
-/// For an example of all the slots locations see: https://mrin9.github.io/RapiDoc/examples/slots.html
+/// For an example of all the slots locations see: <https://mrin9.github.io/RapiDoc/examples/slots.html>
 #[derive(Debug, Clone, Default)]
 pub struct SlotsConfig {
     /// Any content here will be shown immediately under the header and above the info section.
     pub default: Vec<String>,
     /// An image used as the page logo.
     /// This can contain:
-    /// - An URL to an image (eg: "https://example.com/example.png")
-    /// - An encoded image (eg: "data:image/svg+xml;base64,...==")
+    /// - An URL to an image (eg: `"https://example.com/example.png"`)
+    /// - An encoded image (eg: `"data:image/svg+xml;base64,...=="`)
     pub logo: Option<String>,
     /// The contents appear at the header after the spec-url input.
     pub header: Option<String>,

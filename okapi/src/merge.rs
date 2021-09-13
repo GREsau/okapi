@@ -258,7 +258,11 @@ pub fn merge_option<T: Clone>(s1: &mut Option<T>, s2: &Option<T>) {
 
 /// Merge `Map<String, _>`/`&Map<String, _>`:
 /// Merge together. If key already exists, use s1 version.
-pub fn merge_map<T: Clone + PartialEq>(s1: &mut Map<String, T>, s2: &Map<String, T>, name: &str) {
+pub fn merge_map<T: Clone + PartialEq + std::fmt::Debug>(
+    s1: &mut Map<String, T>,
+    s2: &Map<String, T>,
+    name: &str,
+) {
     // Add all s2 values
     // (if key does not already exists)
     for (key, value) in s2 {
@@ -267,9 +271,13 @@ pub fn merge_map<T: Clone + PartialEq>(s1: &mut Map<String, T>, s2: &Map<String,
             if value != s1_value {
                 log::warn!(
                     "Found conflicting {} keys while merging, \
-                    they have the same name but different values: `{}`",
+                    they have the same name but different values for `{}`:\n\
+                    {:?}\n\
+                    {:?}",
                     name,
-                    key
+                    key,
+                    s1_value,
+                    value,
                 );
             }
         } else {

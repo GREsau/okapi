@@ -70,21 +70,64 @@ impl<'a> OpenApiFromRequest<'a> for ApiKey {
     // Optionally add responses
     // Also see `main.rs` part of this.
     fn get_responses(gen: &mut OpenApiGenerator) -> rocket_okapi::Result<Responses> {
-        let mut responses = Responses::default();
+        use okapi::openapi3::RefOr;
+        // Can switch between to the but both are checked if they compile correctly
+        let use_method = "recommended";
         // It can return a "400 BadRequest" and a "401 Unauthorized"
         // In both cases we just return a what we have set in the catches (if any).
         // In our cases this is: `crate::MyError`
-        let schema = gen.json_schema::<crate::MyError>();
-        // Add "400 BadRequest"
-        rocket_okapi::util::add_schema_response(
-            &mut responses,
-            400,
-            "application/json",
-            schema.clone(),
-        )?;
-        // Add "401 Unauthorized"
-        rocket_okapi::util::add_schema_response(&mut responses, 401, "application/json", schema)?;
-        Ok(responses)
+        // This depends on you catcher return type.
+
+        // Below are 3 examples, all are similar, first 2 are recommended.
+        match use_method {
+            "recommended" => Ok(Responses {
+                // Recommended and most strait forward.
+                // And easy to add or remove new responses.
+                responses: okapi::map! {
+                    "400".to_owned() => RefOr::Object(crate::bad_request_response(gen)),
+                    "401".to_owned() => RefOr::Object(crate::unauthorized_response(gen)),
+                },
+                ..Default::default()
+            }),
+            "1st alternative" => {
+                // This is same as macro above does, so just depends on what you like more.
+                let mut responses = Responses::default();
+                responses.responses.insert(
+                    "400".to_owned(),
+                    RefOr::Object(crate::bad_request_response(gen)),
+                );
+                responses.responses.insert(
+                    "401".to_owned(),
+                    RefOr::Object(crate::unauthorized_response(gen)),
+                );
+                Ok(responses)
+            }
+            "2nd alternative" => {
+                // This not advised because of issue #57.
+                // But this does work.
+                // https://github.com/GREsau/okapi/issues/57
+                // Note: this one does not add the `description` field to the responses.
+                // So it is slightly different in output.
+                let mut responses = Responses::default();
+                let schema = gen.json_schema::<crate::MyError>();
+                // Add "400 BadRequest"
+                rocket_okapi::util::add_schema_response(
+                    &mut responses,
+                    400,
+                    "application/json",
+                    schema.clone(),
+                )?;
+                // Add "401 Unauthorized"
+                rocket_okapi::util::add_schema_response(
+                    &mut responses,
+                    401,
+                    "application/json",
+                    schema,
+                )?;
+                Ok(responses)
+            }
+            _ => Ok(Responses::default()),
+        }
     }
 }
 
@@ -96,11 +139,11 @@ impl<'a> OpenApiFromRequest<'a> for ApiKey {
 ///
 /// Using `query` is not recommended for secrets!
 /// For more info see:
-/// https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url
+/// <https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url>
 #[openapi]
 #[get("/apikey")]
-pub fn api_key(key: ApiKey) -> Json<&'static str> {
+pub fn api_key(key: ApiKey) -> Result<Json<&'static str>, crate::MyError> {
     // Use api key
     let _seems_you_have_access = key;
-    Json("You got access")
+    Ok(Json("You got access"))
 }
