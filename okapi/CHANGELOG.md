@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project follows the [Semantic Versioning standard](https://semver.org/).
 
-## Version 0.6.0-alpha-2 (2021-xx-xx)
+## Version 0.7.0-alpha-1 (2021-xx-xx)
 
 ### Added
 - Forbid unsafe code in this crate. (#36)
@@ -12,7 +12,6 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 - Added `map!` macro for easy creation of `okapi::Map` objects.
 
 ### Changed
-
 - Change `OAuthFlows` to better represent the different flows and allowed values within them.
 
 ### Deprecated
@@ -20,11 +19,10 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ### Removed
 
 ### Fixed
-
 - Fixed casing in `SecuritySchemeData`.
 
 ### Security
 
-## Pre version 0.6.0-alpha-2 (2021-06-12)
+## Pre version 0.7.0-alpha-1 (2021-06-12)
 All changes before 2021-06-12 where not documented.
 This is everything before and including: 4080d574bdd7d86d3061d19bf735a14efd7cd103
