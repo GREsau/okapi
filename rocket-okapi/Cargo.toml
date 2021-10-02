@@ -25,7 +25,9 @@ log = "0.4"
 either = "1"
 
 [features]
-# Feature to enable Swagger UI for rendering documention
+# Preserve the order of items in schema and other part of the OpenAPI documentation.
+preserve_order = ["schemars/preserve_order", "okapi/preserve_order"]
+# Feature to enable Swagger UI for rendering documentation
 # Project: https://github.com/swagger-api/swagger-ui
 swagger = []
 # Feature to enable RapiDoc for rendering documentation

@@ -10,9 +10,11 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 - Allow merging of OpenApi objects.
 - Added `log v0.4` as a dependency.
 - Added `map!` macro for easy creation of `okapi::Map` objects.
+- Re-exported `Schemars` so the same version can be used without needing to import it.
 
 ### Changed
 - Change `OAuthFlows` to better represent the different flows and allowed values within them.
+- Renamed `derive_json_schema` feature flag to `derive` feature flag.
 
 ### Deprecated
 

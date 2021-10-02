@@ -7,6 +7,9 @@ pub type MapEntry<'a, K, V> = schemars::MapEntry<'a, K, V>;
 pub mod merge;
 pub mod openapi3;
 
+/// Re-export the current version of `Schemars` used by `Okapi`.
+pub use schemars;
+
 /// Macro to crate an `okapi::Map` with a number of key-value pairs in it.
 ///
 /// # Examples

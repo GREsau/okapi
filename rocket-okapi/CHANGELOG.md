@@ -91,6 +91,8 @@ and [Security Scheme](https://swagger.io/docs/specification/authentication/)
   - `rocket::Shutdown`
   - `&'r rocket::State<T>`
 - Added `OpenApiFromRequest` derive macro.
+- Added feature flag for `preserve_order` to keep the order of struct fields in `Schema`
+all parts of the `OpenAPI` documentation.
 
 ### Changed
 - Swagger UI is now only available under the feature `swagger`.

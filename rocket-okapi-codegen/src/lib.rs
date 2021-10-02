@@ -6,6 +6,7 @@
 //! - `#[openapi]`: To generate the documentation for an endpoint/route.
 //! - `openapi_routes![...]`: Returns a closure for generating routes.
 //! - `openapi_spec![...]`: Returns a closure for generating OpenApi objects.
+//! - `#[derive(OpenApiFromRequest)]`: Implement `OpenApiFromRequest` trait for a given struct.
 //!
 
 mod openapi_attr;
