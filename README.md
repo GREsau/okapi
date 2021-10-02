@@ -103,7 +103,7 @@ It shows: No authentication, API keys, HTTP Auth, OAuth2, OpenID and Cookies.
 
 ## Feature Flags
 Okapi:
-- `derive`: Provides `#[derive(JsonSchema)]` macro from [`Schemars`][Schemars].
+- `impl_json_schema`: Implements [`JsonSchema`](https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html) for [`Schemars`][Schemars] and `Okapi` types themselves.
 - `preserve_order`: Keep the order of struct fields in `Schema` and all parts of the
 `OpenAPI` documentation.
 
@@ -132,7 +132,7 @@ This crate can be reused to create OpenAPI support in other web framework.
 
 `Rocket-Okapi` crate contains all the code for generating the OpenAPI file and serve it once created.
 This code is usually executed using macro's like: [`mount_endpoints_and_merged_docs!{...}`, 
-`openapi_get_routes![...]`, `openapi_get_routes_spec![...]` and `openapi_get_spec![...]`.
+`openapi_get_routes![...]`, `openapi_get_routes_spec![...]` and `openapi_get_spec![...]`
 ](https://docs.rs/rocket_okapi/latest/rocket_okapi/#macros).
 
 When the Rocket server is started (or wherever macro is placed) the OpenAPI file is generated once.

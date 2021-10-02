@@ -1,6 +1,6 @@
 use crate::Map;
 pub use schemars::schema::SchemaObject;
-#[cfg(feature = "derive_json_schema")]
+#[cfg(feature = "impl_json_schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -9,7 +9,7 @@ pub type Object = Map<String, Value>;
 pub type SecurityRequirement = Map<String, Vec<String>>;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(untagged)]
 pub enum RefOr<T> {
     Ref(Ref),
@@ -17,7 +17,7 @@ pub enum RefOr<T> {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 pub struct Ref {
     #[serde(rename = "$ref")]
     pub reference: String,
@@ -43,7 +43,7 @@ impl OpenApi {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct OpenApi {
     pub openapi: String,
@@ -64,7 +64,7 @@ pub struct OpenApi {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Info {
     pub title: String,
@@ -83,7 +83,7 @@ pub struct Info {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Contact {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -97,7 +97,7 @@ pub struct Contact {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct License {
     pub name: String,
@@ -108,7 +108,7 @@ pub struct License {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Server {
     pub url: String,
@@ -121,7 +121,7 @@ pub struct Server {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct ServerVariable {
     #[serde(default, rename = "enum", skip_serializing_if = "Option::is_none")]
@@ -134,7 +134,7 @@ pub struct ServerVariable {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct PathItem {
     #[serde(default, rename = "$ref", skip_serializing_if = "Option::is_none")]
@@ -168,7 +168,7 @@ pub struct PathItem {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Operation {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -199,7 +199,7 @@ pub struct Operation {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Responses {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -211,7 +211,7 @@ pub struct Responses {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Components {
     #[serde(default, skip_serializing_if = "Map::is_empty")]
@@ -237,7 +237,7 @@ pub struct Components {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
     pub description: String,
@@ -252,7 +252,7 @@ pub struct Response {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Parameter {
     pub name: String,
@@ -275,7 +275,7 @@ pub struct Parameter {
 
 // maybe this should just been inlined into Parameter as fields?
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(untagged, rename_all = "camelCase")]
 pub enum ParameterValue {
     Schema {
@@ -297,7 +297,7 @@ pub enum ParameterValue {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub enum ParameterStyle {
     Matrix,
@@ -310,7 +310,7 @@ pub enum ParameterStyle {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Example {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -324,7 +324,7 @@ pub struct Example {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub enum ExampleValue {
     Value(Value),
@@ -332,7 +332,7 @@ pub enum ExampleValue {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct RequestBody {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -345,7 +345,7 @@ pub struct RequestBody {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Header {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -363,7 +363,7 @@ pub struct Header {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct SecurityScheme {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -376,7 +376,7 @@ pub struct SecurityScheme {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(tag = "type", rename_all = "camelCase")]
 #[allow(clippy::large_enum_variant)]
 pub enum SecuritySchemeData {
@@ -399,7 +399,7 @@ pub enum SecuritySchemeData {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub enum OAuthFlows {
     #[serde(rename_all = "camelCase")]
@@ -442,7 +442,7 @@ pub enum OAuthFlows {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Link {
     // TODO operationRef XOR operationId must be specified
@@ -463,7 +463,7 @@ pub struct Link {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Callback {
     #[serde(flatten)]
@@ -473,7 +473,7 @@ pub struct Callback {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct MediaType {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -489,7 +489,7 @@ pub struct MediaType {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct Tag {
     pub name: String,
@@ -502,7 +502,7 @@ pub struct Tag {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(rename_all = "camelCase")]
 pub struct ExternalDocs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -513,7 +513,7 @@ pub struct ExternalDocs {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
-#[cfg_attr(feature = "derive_json_schema", derive(JsonSchema))]
+#[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Encoding {
     #[serde(skip_serializing_if = "Option::is_none")]

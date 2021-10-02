@@ -807,7 +807,7 @@ fn slot_endpoints(slots: &HashMap<String, String>) -> String {
 pub fn make_rapidoc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
     let title = match &config.title {
         Some(title) => title.clone(),
-        None => format!("API Documentation | RapiDoc"),
+        None => "API Documentation | RapiDoc".to_owned(),
     };
     let template_map = hash_map! {
         // General
@@ -890,7 +890,7 @@ pub fn make_rapidoc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
     // Replace custom tags
     for (key, value) in &config.custom_template_tags {
         // Replace `{{KEY}}` with `VALUE`, So `{{ {{ KEY }} }}` => `{ { KEY } }`
-        index_page = index_page.replace(&format!("{{{{{}}}}}", key), &value);
+        index_page = index_page.replace(&format!("{{{{{}}}}}", key), value);
     }
     for (key, value) in template_map {
         // Replace `{{KEY}}` with `VALUE`, So `{{ {{ KEY }} }}` => `{ { KEY } }`

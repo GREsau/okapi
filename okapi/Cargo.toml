@@ -17,7 +17,7 @@ serde_json = "1.0"
 log = "0.4"
 
 [features]
-# Provides `#[derive(JsonSchema)]` macro from `Schemars`.
-derive = ["schemars/derive"]
+# Implements `JsonSchema` for `Schemars` and `Okapi` types themselves.
+impl_json_schema = ["schemars/impl_json_schema"]
 # Preserve the order of items in schema and other part of the OpenAPI documentation.
 preserve_order = ["schemars/preserve_order"]

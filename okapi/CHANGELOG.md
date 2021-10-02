@@ -28,7 +28,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Changed
 - Change `OAuthFlows` to better represent the different flows and allowed values within them.
-- Renamed `derive_json_schema` feature flag to `derive` feature flag.
+- Renamed `derive_json_schema` feature flag to `impl_json_schema` feature flag.
 
 ### Fixed
 - Fixed casing in `SecuritySchemeData`.
