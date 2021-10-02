@@ -46,6 +46,9 @@ macro_rules! hash_map {
 /// A struct containing information about where and how the `openapi.json` files are served.
 #[derive(Debug, Clone, Default)]
 pub struct RapiDocConfig {
+    /// Webpage title. An optional title for the webpage.
+    /// If set to `None` we will create a default title.
+    pub title: Option<String>,
     /// General settings. The `spec_urls` property _must_ be specified by the user.
     pub general: GeneralConfig,
     /// Settings related to the ui and theming.
@@ -64,6 +67,16 @@ pub struct RapiDocConfig {
     /// The templated values will still be replaced. So other settings can still be used.
     /// Use [../rapidoc/index.html](../rapidoc/index.html) as an example.
     pub custom_html: Option<String>,
+    /// A list of custom tags that can be used in combination with `custom_html`.
+    /// This allows for additional custom template tags that will be replaced in the html.
+    /// The key should be the name of the tag without the brackets, `{{key}}`.
+    /// The value will be the text the value will be replaced with.
+    ///
+    /// The custom tags are replaced before all other tags, this allows for more flexibility
+    /// but also means that you can break things. If you want to be sure to not overlap with
+    /// existing tags, prefix your custom tags with `_`, `c_` or `C_`.
+    /// We will never use these prefixes in the provided tags.
+    pub custom_template_tags: HashMap<String, String>,
 }
 
 /// A struct containing information about where and how the `openapi.json` files are served.
@@ -463,6 +476,7 @@ pub struct SlotsConfig {
 
 /// Used to control the sorting mechanism of endpoints in the rapi doc interface.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum SortEndpointsBy {
     /// Sort the endpoints lexicographically by uri.
     Path,
@@ -472,6 +486,7 @@ pub enum SortEndpointsBy {
 
 /// Used to control the theme of the rapi doc interface.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum Theme {
     /// Use a light theme.
     Light,
@@ -481,6 +496,7 @@ pub enum Theme {
 
 /// Used to contol the font size of text in the rapi doc interface.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum FontSize {
     /// Use the browsers default font size.
     Default,
@@ -492,6 +508,7 @@ pub enum FontSize {
 
 /// Used to control the size of the background image in the nav bar.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum NavBgImageSize {
     /// Default value. The background image is displayed in its original size.
     Auto,
@@ -511,6 +528,7 @@ pub enum NavBgImageSize {
 
 /// Used to control the repeating of the background image in the nav bar.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum NavBgImageRepeat {
     /// The background image is repeated both vertically and horizontally.  The last image will be
     /// clipped if it does not fit. This is default.
@@ -529,6 +547,7 @@ pub enum NavBgImageRepeat {
 
 /// Controls navigation item spacing
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum NavItemSpacing {
     /// The standard spacing.
     Default,
@@ -543,6 +562,7 @@ pub enum NavItemSpacing {
 /// attribute is applicable only when the device width is more than 768px and the render-style is
 /// 'view'.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum Layout {
     /// Use a row based layout.
     Row,
@@ -553,6 +573,7 @@ pub enum Layout {
 /// Determines display of api-docs. Currently there are two modes supported. 'read' - more suitable
 /// for reading and 'view' more friendly for quick exploring
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum RenderStyle {
     /// Friendly for quick exploring (expand/collapse the section of your interest).
     View,
@@ -565,6 +586,7 @@ pub enum RenderStyle {
 /// Applies only to focused render-style. It determines the behavior of clicking on a Tag in
 /// navigation bar. It can either expand-collapse the tag or take you to the tag's description page.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum NavTagClick {
     /// Expand collapsed tags when clicked.
     ExpandCollapse,
@@ -588,6 +610,7 @@ impl std::fmt::Display for NavTagClick {
 
 /// Two different ways to display object-schemas in the responses and request bodies.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum SchemaStyle {
     /// Tree based style.
     Tree,
@@ -597,6 +620,7 @@ pub enum SchemaStyle {
 
 /// Read-only fields in request schemas is always hidden but are shown in response.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum SchemaHideReadOnly {
     /// Always hide read-only fields.
     Always,
@@ -641,6 +665,7 @@ impl std::fmt::Display for SchemaHideReadOnly {
 
 /// Read-only fields in request schemas is always hidden but are shown in response.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum SchemaHideWriteOnly {
     /// Always hide read-only fields.
     Always,
@@ -651,6 +676,7 @@ pub enum SchemaHideWriteOnly {
 /// The schemas are displayed in two tabs - Model and Example. This option allows you to pick the
 /// default tab that you would like to be active.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum DefaultSchemaTab {
     /// Display the model by default.
     Model,
@@ -660,6 +686,7 @@ pub enum DefaultSchemaTab {
 
 /// Determines how you want to send the api-key.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum ApiKeyLocation {
     /// Send the Api Key in the header of the request.
     Header,
@@ -670,6 +697,7 @@ pub enum ApiKeyLocation {
 /// A RequestCredentials dictionary value indicating whether the user agent should send cookies
 /// from the other domain in the case of cross-origin requests.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum FetchCredentials {
     /// Never send or receive cookies.
     Omit,
@@ -777,8 +805,13 @@ fn slot_endpoints(slots: &HashMap<String, String>) -> String {
 
 /// Transform the provided `RapiDocConfig` into a list of `Route`s that serve the RapiDoc ui.
 pub fn make_rapidoc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
+    let title = match &config.title {
+        Some(title) => title.clone(),
+        None => format!("API Documentation | RapiDoc"),
+    };
     let template_map = hash_map! {
         // General
+        "TITLE" => title,
         "SPEC_URL" => config.general.spec_urls[0].url.clone(),
         // Can be used for custom html files
         "SPEC_URLS" => serde_json::to_string(&config.general.spec_urls).unwrap_or_default(),
@@ -854,6 +887,11 @@ pub fn make_rapidoc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
         Some(custom_file) => custom_file.clone(),
         None => include_str!("../rapidoc/index.html").to_owned(),
     };
+    // Replace custom tags
+    for (key, value) in &config.custom_template_tags {
+        // Replace `{{KEY}}` with `VALUE`, So `{{ {{ KEY }} }}` => `{ { KEY } }`
+        index_page = index_page.replace(&format!("{{{{{}}}}}", key), &value);
+    }
     for (key, value) in template_map {
         // Replace `{{KEY}}` with `VALUE`, So `{{ {{ KEY }} }}` => `{ { KEY } }`
         index_page = index_page.replace(&format!("{{{{{}}}}}", key), &value);

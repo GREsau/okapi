@@ -32,6 +32,7 @@ pub fn create_server() -> Rocket<Build> {
         .mount(
             "/rapidoc/",
             make_rapidoc(&RapiDocConfig {
+                title: Some("My special documentation | RapiDoc".to_owned()),
                 general: GeneralConfig {
                     spec_urls: vec![UrlObject::new("General", "../v1/openapi.json")],
                     ..Default::default()
