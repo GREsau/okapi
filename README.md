@@ -103,7 +103,8 @@ It shows: No authentication, API keys, HTTP Auth, OAuth2, OpenID and Cookies.
 
 ## Feature Flags
 Okapi:
-- `impl_json_schema`: Implements [`JsonSchema`](https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html) for [`Schemars`][Schemars] and `Okapi` types themselves.
+- `impl_json_schema`: Implements [`JsonSchema`](https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html)
+for [`Schemars`][Schemars] and `Okapi` types themselves.
 - `preserve_order`: Keep the order of struct fields in `Schema` and all parts of the
 `OpenAPI` documentation.
 
@@ -117,6 +118,11 @@ Rocket-Okapi:
 (when same Rocket feature flag is used.)
 - `secrets`: Enable [secrets support for Rocket](https://rocket.rs/v0.5-rc/guide/requests/#secret-key).
 (when same Rocket feature flag is used.)
+
+Note that not all feature flags from [`Schemars`][Schemars] are re-exported or enabled.
+So if you have objects for which the `JsonSchema` trait is not implemented,
+you might need to enable a [feature flag in `Schemars`](https://github.com/GREsau/schemars#optional-dependencies).
+For an example see [the "uuid" example](examples/uuid/Cargo.toml). (Make sure crate versions match)
 
 ## How it works
 This crate automatically generates an OpenAPI file when the Rocket server starts.
