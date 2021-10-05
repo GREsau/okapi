@@ -107,10 +107,12 @@ and [Security Scheme](https://swagger.io/docs/specification/authentication/)
 - Added `OpenApiFromRequest` derive macro.
 - Added feature flag for `preserve_order` to keep the order of struct fields in `Schema`
 all parts of the `OpenAPI` documentation.
+- `Okapi` create is now re-exported and can be found as `rocket_okapi::okapi`.
 
 ### Changed
 - Swagger UI is now only available under the feature `swagger`.
 - Updated Swagger UI to v3.52.0
+- The `preserve_order` feature flag is now enabled by default.
 - `UrlObject` has been moved from `swagger_ui::UrlObject` to `settings::UrlObject`.
 - Replaced manual implementations of `OpenApiFromParam` with generic version.
 So `OpenApiFromParam` is implemented for more types.

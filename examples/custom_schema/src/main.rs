@@ -1,5 +1,5 @@
-use okapi::openapi3::OpenApi;
 use rocket::{Build, Rocket};
+use rocket_okapi::okapi::openapi3::OpenApi;
 use rocket_okapi::settings::UrlObject;
 use rocket_okapi::{mount_endpoints_and_merged_docs, rapidoc::*, swagger_ui::*};
 
@@ -59,7 +59,7 @@ pub fn create_server() -> Rocket<Build> {
 }
 
 fn custom_openapi_spec() -> OpenApi {
-    use okapi::openapi3::*;
+    use rocket_okapi::okapi::openapi3::*;
     OpenApi {
         openapi: OpenApi::default_version(),
         info: Info {

@@ -1,10 +1,13 @@
 //! ------ ApiKey (in http header, query or cookie) ------
-use okapi::openapi3::{Object, Responses, SecurityRequirement, SecurityScheme, SecuritySchemeData};
 use rocket::serde::json::Json;
 use rocket::{
     get,
     http::Status,
     request::{self, FromRequest, Outcome},
+};
+use rocket_okapi::okapi;
+use rocket_okapi::okapi::openapi3::{
+    Object, Responses, SecurityRequirement, SecurityScheme, SecuritySchemeData,
 };
 use rocket_okapi::{
     gen::OpenApiGenerator,
@@ -70,7 +73,7 @@ impl<'a> OpenApiFromRequest<'a> for ApiKey {
     // Optionally add responses
     // Also see `main.rs` part of this.
     fn get_responses(gen: &mut OpenApiGenerator) -> rocket_okapi::Result<Responses> {
-        use okapi::openapi3::RefOr;
+        use rocket_okapi::okapi::openapi3::RefOr;
         // Can switch between to the but both are checked if they compile correctly
         let use_method = "recommended";
         // It can return a "400 BadRequest" and a "401 Unauthorized"

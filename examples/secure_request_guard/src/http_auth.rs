@@ -1,11 +1,13 @@
 //! ------ HTTP `Authorization` header ------
 
-use okapi::openapi3::{Object, SecurityRequirement, SecurityScheme, SecuritySchemeData};
 use rocket::serde::json::Json;
 use rocket::{
     get,
     http::Status,
     request::{self, FromRequest, Outcome},
+};
+use rocket_okapi::okapi::openapi3::{
+    Object, SecurityRequirement, SecurityScheme, SecuritySchemeData,
 };
 use rocket_okapi::{
     gen::OpenApiGenerator,

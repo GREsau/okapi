@@ -6,8 +6,6 @@ edition = "2018"
 
 [dependencies]
 rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json", "secrets"] }
-schemars = { version = "0.8"}
-okapi = { version = "0.7.0-alpha-1", path = "../../okapi" }
 rocket_okapi = { version = "0.8.0-alpha-1", path = "../../rocket-okapi", features = ["rapidoc", "swagger", "secrets"] }
 serde = "1.0"
 tokio = "1.6"

@@ -10,7 +10,7 @@ pub fn parse_routes(routes: TokenStream) -> Result<TokenStream2> {
     let paths = <Punctuated<Path, Comma>>::parse_terminated.parse(routes)?;
     // This returns a function so the spec does not have to be generated multiple times.
     Ok(quote! {
-        |spec_opt: Option<::okapi::openapi3::OpenApi>, settings: &::rocket_okapi::settings::OpenApiSettings|
+        |spec_opt: Option<::rocket_okapi::okapi::openapi3::OpenApi>, settings: &::rocket_okapi::settings::OpenApiSettings|
             -> Vec<::rocket::Route> {
                 let mut routes = ::rocket::routes![#paths];
                 if let Some(spec) = spec_opt {

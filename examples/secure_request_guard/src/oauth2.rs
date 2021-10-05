@@ -1,12 +1,13 @@
 //! ------ OAuth 2.0 flows (authorizationCode, implicit, password, clientCredentials) ------
-use okapi::openapi3::{
-    OAuthFlows, Object, SecurityRequirement, SecurityScheme, SecuritySchemeData,
-};
 use rocket::serde::json::{json, Json};
 use rocket::{
     get,
     http::Status,
     request::{self, FromRequest, Outcome},
+};
+use rocket_okapi::okapi;
+use rocket_okapi::okapi::openapi3::{
+    OAuthFlows, Object, SecurityRequirement, SecurityScheme, SecuritySchemeData,
 };
 use rocket_okapi::{
     gen::OpenApiGenerator,

@@ -42,7 +42,7 @@ pub fn openapi(args: TokenStream, mut input: TokenStream) -> TokenStream {
 /// Generate and return a closure that can be used to generate the routes.
 ///
 /// This closure take 2 arguments:
-/// - `spec_opt`: `Option<::okapi::openapi3::OpenApi>`
+/// - `spec_opt`: `Option<rocket_okapi::okapi::openapi3::OpenApi>`
 /// - `settings`: `rocket_okapi::settings::OpenApiSettings`
 ///
 /// It returns `Vec<::rocket::Route>`.
@@ -69,7 +69,7 @@ pub fn openapi_routes(input: TokenStream) -> TokenStream {
 /// This closure take 1 argument:
 /// - `settings`: `rocket_okapi::settings::OpenApiSettings`
 ///
-/// It returns `okapi::openapi3::OpenApi`.
+/// It returns `rocket_okapi::okapi::openapi3::OpenApi`.
 ///
 /// Example:
 /// ```rust,ignore

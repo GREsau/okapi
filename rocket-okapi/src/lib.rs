@@ -98,6 +98,8 @@ pub mod swagger_ui;
 pub mod util;
 
 pub use error::*;
+/// Re-export Okapi
+pub use okapi;
 pub use rocket_okapi_codegen::*;
 pub use schemars::JsonSchema;
 
@@ -154,14 +156,14 @@ macro_rules! mount_endpoints_and_merged_docs {
      $($path:expr => $route_and_docs:expr),* $(,)*) => {{
         let base_path = $base_path.to_string();
         assert!(!base_path.ends_with("/"), "`base_path` should not end with an `/`.");
-        let mut openapi_list: Vec<(_, okapi::openapi3::OpenApi)> = Vec::new();
+        let mut openapi_list: Vec<(_, rocket_okapi::okapi::openapi3::OpenApi)> = Vec::new();
         $({
             let (routes, openapi) = $route_and_docs;
             $rocket_builder = $rocket_builder.mount(format!("{}{}", base_path, $path), routes);
             openapi_list.push(($path, openapi));
         })*
         // Combine all OpenApi documentation into one struct.
-        let openapi_docs = match okapi::merge::marge_spec_list(&openapi_list){
+        let openapi_docs = match rocket_okapi::okapi::merge::marge_spec_list(&openapi_list){
             Ok(docs) => docs,
             Err(err) => panic!("Could not merge OpenAPI spec: {}", err),
         };

@@ -1,8 +1,10 @@
-use okapi::openapi3::{MediaType, Responses};
 use rocket::config::Config;
 use rocket::Request;
 use rocket::{catch, catchers, response, response::Responder, Response};
 use rocket_okapi::gen::OpenApiGenerator;
+use rocket_okapi::okapi;
+use rocket_okapi::okapi::openapi3::{MediaType, Responses};
+use rocket_okapi::okapi::schemars;
 use rocket_okapi::response::OpenApiResponderInner;
 use rocket_okapi::settings::UrlObject;
 use rocket_okapi::{openapi_get_routes, rapidoc::*, swagger_ui::*, OpenApiError};

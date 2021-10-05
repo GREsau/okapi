@@ -198,7 +198,7 @@ fn create_route_operation_fn(
             // Add responses from Request Guards.
             let request_guard_responses = vec![#(#request_guard_responses),*];
             for request_guard_response in request_guard_responses {
-                okapi::merge::merge_responses(&mut responses, &request_guard_response)?;
+                ::rocket_okapi::okapi::merge::merge_responses(&mut responses, &request_guard_response)?;
             }
 
             let request_body = #request_body;
@@ -207,9 +207,9 @@ fn create_route_operation_fn(
 
             // Combine all parameters from all sources
             // Add all from `path_params` and `path_multi_param`
-            let mut parameters: Vec<::okapi::openapi3::RefOr<::okapi::openapi3::Parameter>> = vec![#(#params),*];
+            let mut parameters: Vec<::rocket_okapi::okapi::openapi3::RefOr<::rocket_okapi::okapi::openapi3::Parameter>> = vec![#(#params),*];
             // Add all from `query_params` and `query_multi_params`
-            let parameters_nested_list: Vec<Vec<::okapi::openapi3::Parameter>> = vec![#(#params_nested_list),*];
+            let parameters_nested_list: Vec<Vec<::rocket_okapi::okapi::openapi3::Parameter>> = vec![#(#params_nested_list),*];
             for inner_list in parameters_nested_list{
                 for item in inner_list{
                     // convert every item from `Parameter` to `RefOr<Parameter>``
@@ -249,7 +249,7 @@ fn create_route_operation_fn(
             gen.add_operation(::rocket_okapi::OperationInfo {
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,
-                operation: ::okapi::openapi3::Operation {
+                operation: ::rocket_okapi::okapi::openapi3::Operation {
                     operation_id: Some(op_id),
                     responses,
                     request_body,
@@ -258,7 +258,7 @@ fn create_route_operation_fn(
                     description: #desc,
                     security,
                     tags: vec![#(#tags),*],
-                    ..::okapi::openapi3::Operation::default()
+                    ..Default::default()
                 },
             });
             Ok(())
