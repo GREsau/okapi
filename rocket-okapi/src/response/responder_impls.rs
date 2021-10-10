@@ -2,9 +2,9 @@ use super::OpenApiResponderInner;
 use crate::{
     gen::OpenApiGenerator,
     util::{
-        add_content_response, add_default_response_code, add_default_response_schema,
-        add_schema_response, ensure_status_code_exists, produce_any_responses, set_content_type,
-        set_status_code,
+        add_content_response, add_default_response_code, add_schema_response,
+        change_all_responses_to_default, ensure_status_code_exists, produce_any_responses,
+        set_content_type, set_status_code,
     },
 };
 use okapi::openapi3::Responses;
@@ -147,11 +147,10 @@ impl<R: OpenApiResponderInner> OpenApiResponderInner for (rocket::http::ContentT
 
 // The Status can be set at runtime, so no way of knowing what the response code is up front.
 // This will add "default" response.
-impl<R: schemars::JsonSchema> OpenApiResponderInner for (rocket::http::Status, R) {
+impl<R: OpenApiResponderInner> OpenApiResponderInner for (rocket::http::Status, R) {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        let schema = gen.json_schema::<R>();
-        add_default_response_schema(&mut responses, "*/*", schema);
+        let mut responses = R::responses(gen)?;
+        change_all_responses_to_default(&mut responses);
         Ok(responses)
     }
 }

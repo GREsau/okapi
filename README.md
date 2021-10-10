@@ -103,11 +103,11 @@ It shows: No authentication, API keys, HTTP Auth, OAuth2, OpenID and Cookies.
 
 ## FAQ
 
-1. **Q: Can I generate code from my OpenAPI file?**<br/>
+- **Q: Can I generate code from my OpenAPI file?**<br/>
 A: No, this crate only allows you to automatically generate the OpenAPI file from your code.
 There are other crates that (attempt to) do this.
 
-1. **Q: My (diesel) database does not implement `OpenApiFromRequest`.**<br/>
+- **Q: My (diesel) database does not implement `OpenApiFromRequest`.**<br/>
 A: This is because the parameter does not show up in the path, query or body.
 So this is considered a [Request Guard](https://rocket.rs/v0.5-rc/guide/requests/#request-guards).
 There is a [derive macro](https://github.com/GREsau/okapi/blob/master/examples/secure_request_guard/src/no_auth.rs)
@@ -136,18 +136,18 @@ impl<'r> OpenApiFromRequest<'r> for MyDB {
 ```
 </details>
 
-1. **Q: ... does not implement `JsonSchema`?**<br/>
+- **Q: ... does not implement `JsonSchema`?**<br/>
 A: The [`JsonSchema`](https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html) implementation
 is handled by [`Schemars`][Schemars], make sure you enabled the right
 [feature flags](https://github.com/GREsau/schemars#optional-dependencies) for it.
 If it is still not implemented open an issue in the `Schemars` repo.
 
-1. **Q: Can I add custom data to my OpenAPI spec?**<br/>
+- **Q: Can I add custom data to my OpenAPI spec?**<br/>
 A: Yes, see the [Custom Schema](examples/custom_schema) example. Okapi also has build in functions
 if you want to merge the [`OpenAPI`](https://docs.rs/okapi/latest/okapi/openapi3/struct.OpenApi.html)
 objects manually.
 
-1. **Q: Can I use this with other web frameworks then Rocket?**<br/>
+- **Q: Can I use this with other web frameworks then Rocket?**<br/>
 A: Yes, but not there are no other implementations right now. But you can use the `Okapi` crate
 independently and use Serde to create the json or yaml file.
 

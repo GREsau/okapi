@@ -30,6 +30,25 @@ pub fn ensure_status_code_exists(responses: &mut Responses, status: u16) -> &mut
         .or_insert_with(|| Response::default().into())
 }
 
+/// Change all responses in the map to "default" response code.
+/// In case of doubles the first items will be reserved.
+pub fn change_all_responses_to_default(responses: &mut Responses) {
+    let mut response_value = None;
+    // Get first response
+    if let Some((_response_code, response)) = responses.responses.iter().next() {
+        response_value = Some(response.clone());
+    }
+    // Remove old responses
+    responses.responses.clear();
+
+    // Add new default response
+    if let Some(response_value) = response_value {
+        responses
+            .responses
+            .insert("default".to_owned(), response_value);
+    }
+}
+
 /// Add `default` response with a Schema, for when status code is defined at runtime.
 /// <https://spec.openapis.org/oas/v3.0.0#fixed-fields-13>
 pub fn add_default_response_schema(
