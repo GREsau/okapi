@@ -155,7 +155,7 @@ macro_rules! mount_endpoints_and_merged_docs {
     ($rocket_builder:ident, $base_path:expr, $openapi_settings:ident,
      $($path:expr => $route_and_docs:expr),* $(,)*) => {{
         let base_path = $base_path.to_string();
-        assert!(!base_path.ends_with("/"), "`base_path` should not end with an `/`.");
+        assert!(base_path == "/" || !base_path.ends_with("/"), "`base_path` should not end with an `/`.");
         let mut openapi_list: Vec<(_, rocket_okapi::okapi::openapi3::OpenApi)> = Vec::new();
         $({
             let (routes, openapi) = $route_and_docs;
