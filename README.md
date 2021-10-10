@@ -106,6 +106,9 @@ It shows: No authentication, API keys, HTTP Auth, OAuth2, OpenID and Cookies.
 - **Q: Can I generate code from my OpenAPI file?**<br/>
 A: No, this crate only allows you to automatically generate the OpenAPI file from your code.
 There are other crates that (attempt to) do this.
+So:
+  - Rust code (Rocket) --> OpenAPI == Okapi
+  - OpenAPI --> Rust code != Okapi
 
 - **Q: My (diesel) database does not implement `OpenApiFromRequest`.**<br/>
 A: This is because the parameter does not show up in the path, query or body.
