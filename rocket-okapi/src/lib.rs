@@ -132,7 +132,7 @@ pub fn get_openapi_route(
 /// - rocket_builder: `Rocket<Build>`,
 /// - base_path: `&str`, `String` or [`Uri`](rocket::http::uri::Uri). (Anything that implements `ToString`)
 /// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0-rc.1/rocket/struct.Rocket.html#method.mount)
-/// - openapi_settings: (optional) `OpenApiSettings`,
+/// - openapi_settings: `OpenApiSettings` (use `OpenApiSettings::default()` if default settings are okay for you),
 /// - List of (0 or more):
 ///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).
 ///   Anything accepted by `mount()` (`base_path` should not be included).
@@ -176,15 +176,6 @@ macro_rules! mount_endpoints_and_merged_docs {
             )],
         );
     }};
-
-    ($rocket_builder:ident, $docs_path:expr,
-     $($path:expr => $route_and_docs:expr),* $(,)*) => {
-        let openapi_settings = rocket_okapi::settings::OpenApiSettings::default();
-        mount_endpoints_and_merged_docs!{
-            $rocket_builder, $docs_path, openapi_settings,
-            $($path:expr => $route_and_docs:expr),*
-        }
-    }
 }
 
 /// A replacement macro for `rocket::routes`. This also takes a optional settings object.
