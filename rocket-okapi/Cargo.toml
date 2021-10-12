@@ -18,10 +18,10 @@ rocket_okapi_codegen = { version = "=0.8.0-rc.1", path = "../rocket-okapi-codege
 serde = "1.0"
 serde_json = "1.0"
 log = "0.4"
-# Rocket dependencie but not re-exposed (update to 0.3 is Rocket master)
+# Rocket dependency but not re-exported
 # See issue: https://github.com/GREsau/schemars/issues/104
 # time = { version = "0.2.27" }
-# Rocket dependencie but not re-exposed
+# Rocket dependency but not re-exported
 either = "1"
 
 [features]
@@ -37,9 +37,12 @@ swagger = []
 rapidoc = []
 # Allow the use of UUIDs
 uuid = ["rocket/uuid", "schemars/uuid"]
-# Re-expost Rocket feature flag
+# Re-export Rocket feature flag
 # https://docs.rs/rocket/0.5.0-rc.1/rocket/serde/msgpack/struct.MsgPack.html
 msgpack = ["rocket/msgpack"]
-# Re-expost Rocket feature flag
+# Re-export Rocket feature flag
 # https://rocket.rs/v0.5-rc/guide/requests/#secret-key
 secrets = ["rocket/secrets"]
+
+[package.metadata.docs.rs]
+features = ["swagger", "rapidoc"]
