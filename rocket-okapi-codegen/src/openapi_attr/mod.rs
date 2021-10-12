@@ -18,6 +18,7 @@ struct OpenApiAttribute {
 
     #[darling(multiple, rename = "tag")]
     pub tags: Vec<String>,
+    pub id: Option<String>,
 }
 
 pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
@@ -36,7 +37,7 @@ pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
     }
 
     match route_attr::parse_attrs(&input.attrs) {
-        Ok(route) => create_route_operation_fn(input, route, okapi_attr.tags),
+        Ok(route) => create_route_operation_fn(input, route, okapi_attr),
         Err(e) => e,
     }
 }
@@ -56,7 +57,7 @@ fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
 fn create_route_operation_fn(
     route_fn: ItemFn,
     route: route_attr::Route,
-    tags: Vec<String>,
+    attr: OpenApiAttribute,
 ) -> TokenStream {
     let arg_types = get_arg_types(route_fn.sig.inputs.into_iter());
     let return_type = match route_fn.sig.output {
@@ -184,10 +185,15 @@ fn create_route_operation_fn(
         None => quote!(None),
     };
 
-    let tags = tags
+    let tags = attr
+        .tags
         .into_iter()
         .map(|tag| quote!(#tag.to_owned()))
         .collect::<Vec<_>>();
+    let op_id = match attr.id {
+        Some(id) => quote! { #id.into() },
+        None => quote! { op_id },
+    };
 
     TokenStream::from(quote! {
         pub fn #fn_name(
@@ -250,7 +256,7 @@ fn create_route_operation_fn(
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,
                 operation: ::rocket_okapi::okapi::openapi3::Operation {
-                    operation_id: Some(op_id),
+                    operation_id: Some(#op_id),
                     responses,
                     request_body,
                     parameters,
