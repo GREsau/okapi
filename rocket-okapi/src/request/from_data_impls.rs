@@ -130,7 +130,7 @@ impl<'r> OpenApiFromData<'r> for &'r rocket::http::RawStr {
 
 impl<'r> OpenApiFromData<'r> for Data<'r> {
     fn request_body(gen: &mut OpenApiGenerator) -> Result {
-        fn_request_body!(gen, String, "application/octet-stream")
+        Vec::<u8>::request_body(gen)
     }
 }
 

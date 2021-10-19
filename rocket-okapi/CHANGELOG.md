@@ -7,6 +7,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ### Added
 
 ### Changed
+- Changed `Data<'r>` from `String` type is binary data (`Vec<u8>`) in `FromData` implementation. (#65)
 
 ### Deprecated
 
