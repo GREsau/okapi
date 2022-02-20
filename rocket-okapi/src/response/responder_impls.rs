@@ -39,14 +39,10 @@ impl OpenApiResponderInner for &[u8] {
 }
 
 impl OpenApiResponderInner for Vec<u8> {
-    fn responses(_: &mut OpenApiGenerator) -> Result {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
-        add_content_response(
-            &mut responses,
-            200,
-            "application/octet-stream",
-            okapi::openapi3::MediaType::default(),
-        )?;
+        let schema = gen.json_schema::<Vec<u8>>();
+        add_schema_response(&mut responses, 200, "application/octet-stream", schema)?;
         Ok(responses)
     }
 }
