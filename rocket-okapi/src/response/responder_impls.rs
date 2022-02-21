@@ -48,28 +48,14 @@ impl OpenApiResponderInner for Vec<u8> {
 }
 
 impl OpenApiResponderInner for std::fs::File {
-    fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        add_content_response(
-            &mut responses,
-            200,
-            "application/octet-stream",
-            okapi::openapi3::MediaType::default(),
-        )?;
-        Ok(responses)
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
     }
 }
 
 impl OpenApiResponderInner for rocket::tokio::fs::File {
-    fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        add_content_response(
-            &mut responses,
-            200,
-            "application/octet-stream",
-            okapi::openapi3::MediaType::default(),
-        )?;
-        Ok(responses)
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
     }
 }
 

@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project follows the [Semantic Versioning standard](https://semver.org/).
 
-## Unreleased (2021-xx-xx)
+## Unreleased (2022-xx-xx)
 
 ### Added
 
@@ -14,6 +14,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ### Removed
 
 ### Fixed
+- Response schema added for `Vec<u8>`, `&[u8]`, `std::fs::File` and other octet-streams. (#72)
 
 ### Security
 
