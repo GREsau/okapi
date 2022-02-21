@@ -277,6 +277,7 @@ pub struct Parameter {
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(untagged, rename_all = "camelCase")]
+#[allow(clippy::large_enum_variant)] // Removing this requires breaking changes to API.
 pub enum ParameterValue {
     Schema {
         #[serde(default, skip_serializing_if = "Option::is_none")]
