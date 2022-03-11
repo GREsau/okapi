@@ -9,7 +9,10 @@ use quote::quote;
 use quote::ToTokens;
 use rocket_http::Method;
 use std::collections::BTreeMap as Map;
-use syn::{parse_macro_input, AttributeArgs, FnArg, Ident, ItemFn, ReturnType, Type, TypeTuple};
+use syn::{
+    parse_macro_input, AttributeArgs, FnArg, GenericArgument, Ident, ItemFn, PathArguments,
+    PathSegment, ReturnType, Type, TypeTuple,
+};
 
 #[derive(Debug, Default, FromMeta)]
 #[darling(default)]
@@ -53,6 +56,56 @@ fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
     })
 }
 
+/// Replace `EventStream<impl SOMETHING>`
+/// with `EventStream`
+fn type_replace_impl_trait(ty: Type) -> Type {
+    if let Type::Path(type_path) = &ty {
+        if let Some(path_segment) = type_path.path.segments.first() {
+            if let PathArguments::AngleBracketed(generic_argument) = &path_segment.arguments {
+                if let Some(generic_argument) = generic_argument.args.first() {
+                    if let Some(result_type) =
+                        _type_replace_impl_trait_generic_argument(generic_argument, path_segment)
+                    {
+                        return result_type;
+                    }
+                }
+            }
+        }
+    }
+    ty
+}
+
+/// Helper function for `type_replace_impl_trait` and should not be called from anywhere else.
+fn _type_replace_impl_trait_generic_argument(
+    gen_arg: &GenericArgument,
+    path_segment: &PathSegment,
+) -> Option<Type> {
+    if let GenericArgument::Type(Type::ImplTrait(_)) = gen_arg {
+        if path_segment.ident == "EventStream" {
+            // Return special type, the type of stream does not matter as long as something is present
+            return Some(Type::Verbatim(quote! {
+                EventStream<rocket::futures::stream::Empty<rocket::response::stream::Event>>
+            }));
+        } else if path_segment.ident == "ByteStream" {
+            // Return special type, the type of stream does not matter as long as something is present
+            return Some(Type::Verbatim(quote! {
+                ByteStream<rocket::futures::stream::Empty<Vec<u8>>>
+            }));
+        } else if path_segment.ident == "ReaderStream" {
+            // Return special type, the type of stream does not matter as long as something is present
+            return Some(Type::Verbatim(quote! {
+                ReaderStream<rocket::futures::stream::Empty<File>>
+            }));
+        } else if path_segment.ident == "TextStream" {
+            // Return special type, the type of stream does not matter as long as something is present
+            return Some(Type::Verbatim(quote! {
+                TextStream<rocket::futures::stream::Empty<String>>
+            }));
+        }
+    }
+    None
+}
+
 fn create_route_operation_fn(
     route_fn: ItemFn,
     route: route_attr::Route,
@@ -60,7 +113,7 @@ fn create_route_operation_fn(
 ) -> TokenStream {
     let arg_types = get_arg_types(route_fn.sig.inputs.into_iter());
     let return_type = match route_fn.sig.output {
-        ReturnType::Type(_, ty) => *ty,
+        ReturnType::Type(_, ty) => type_replace_impl_trait(*ty),
         ReturnType::Default => unit_type(),
     };
 

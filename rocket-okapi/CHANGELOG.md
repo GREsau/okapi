@@ -5,6 +5,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ## Unreleased (2022-xx-xx)
 
 ### Added
+- Add support for `rocket::response::stream::EventStream<S>` (#52)
 
 ### Changed
 - Changed `Data<'r>` from `String` type is binary data (`Vec<u8>`) in `FromData` implementation. (#65)
@@ -15,6 +16,10 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Fixed
 - Response schema added for `Vec<u8>`, `&[u8]`, `std::fs::File` and other octet-streams. (#72)
+- Fix support for Streams: (#68)
+   - `rocket::response::stream::ByteStream<S>`
+   - `rocket::response::stream::ReaderStream<S>`
+   - `rocket::response::stream::TextStream<S>`
 
 ### Security
 

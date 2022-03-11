@@ -300,6 +300,22 @@ where
     }
 }
 
+/// `EventStream` is a (potentially infinite) responder.
+/// The response `Content-Type` is set to `EventStream`.
+/// The body is unsized, and values are sent as soon as they are yielded by the internal iterator.
+impl<S> OpenApiResponderInner for rocket::response::stream::EventStream<S> {
+    fn responses(_gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = Responses::default();
+        add_content_response(
+            &mut responses,
+            200,
+            "text/event-stream; charset=utf-8",
+            okapi::openapi3::MediaType::default(),
+        )?;
+        Ok(responses)
+    }
+}
+
 /// Serializes the wrapped value into JSON. Returns a response with `Content-Type` `JSON` and a
 /// fixed-size body with the serialized value. If serialization fails,
 /// an `Err` of `Status::InternalServerError` is returned.

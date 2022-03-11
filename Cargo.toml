@@ -7,5 +7,6 @@ members = [
     "examples/custom_schema",
     "examples/uuid",
     "examples/special-types",
-    "examples/secure_request_guard"
+    "examples/secure_request_guard",
+    "examples/streams",
 ]
