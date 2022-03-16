@@ -137,7 +137,7 @@ impl<'r> OpenApiFromData<'r> for Data<'r> {
 // `OpenApiFromForm` is correct, not a mistake, as Rocket requires `FromForm`.
 impl<'r, T: JsonSchema + super::OpenApiFromForm<'r>> OpenApiFromData<'r> for rocket::form::Form<T> {
     fn request_body(gen: &mut OpenApiGenerator) -> Result {
-        fn_request_body!(gen, T, "application/octet-stream")
+        fn_request_body!(gen, T, "multipart/form-data")
     }
 }
 
