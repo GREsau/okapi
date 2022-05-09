@@ -2,9 +2,8 @@ use super::OpenApiResponderInner;
 use crate::{
     gen::OpenApiGenerator,
     util::{
-        add_content_response, add_default_response_code, add_schema_response,
-        change_all_responses_to_default, ensure_status_code_exists, produce_any_responses,
-        set_content_type, set_status_code,
+        add_default_response_code, add_schema_response, change_all_responses_to_default,
+        ensure_status_code_exists, produce_any_responses, set_content_type, set_status_code,
     },
 };
 use okapi::openapi3::Responses;

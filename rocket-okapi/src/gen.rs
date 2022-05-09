@@ -11,7 +11,7 @@ use std::collections::HashMap;
 /// A struct that visits all `rocket::Route`s, and aggregates information about them.
 #[derive(Debug, Clone)]
 pub struct OpenApiGenerator {
-    settings: OpenApiSettings,
+    _settings: OpenApiSettings,
     schema_generator: SchemaGenerator,
     security_schemes: Map<String, SecurityScheme>,
     operations: Map<String, HashMap<Method, Operation>>,
@@ -23,7 +23,7 @@ impl OpenApiGenerator {
     pub fn new(settings: &OpenApiSettings) -> Self {
         OpenApiGenerator {
             schema_generator: settings.schema_settings.clone().into_generator(),
-            settings: settings.clone(),
+            _settings: settings.clone(),
             security_schemes: Map::default(),
             operations: Map::default(),
         }

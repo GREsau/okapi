@@ -223,9 +223,9 @@ fn create_route_operation_fn(
         .origin
         .path()
         .as_str()
-        .replace("<", "{")
+        .replace('<', "{")
         .replace("..>", "}")
-        .replace(">", "}");
+        .replace('>', "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
     let (title, desc) = doc_attr::get_title_and_desc_from_doc(&route_fn.attrs);
     let title = match title {
