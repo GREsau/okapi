@@ -288,14 +288,10 @@ impl<S> OpenApiResponderInner for rocket::response::stream::TextStream<S>
 where
     S: Send,
 {
-    fn responses(_gen: &mut OpenApiGenerator) -> Result {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
-        add_content_response(
-            &mut responses,
-            200,
-            "text/plain; charset=utf-8",
-            okapi::openapi3::MediaType::default(),
-        )?;
+        let schema = gen.json_schema::<Vec<u8>>();
+        add_schema_response(&mut responses, 200, "text/plain; charset=utf-8", schema)?;
         Ok(responses)
     }
 }
@@ -304,14 +300,17 @@ where
 /// The response `Content-Type` is set to `EventStream`.
 /// The body is unsized, and values are sent as soon as they are yielded by the internal iterator.
 impl<S> OpenApiResponderInner for rocket::response::stream::EventStream<S> {
-    fn responses(_gen: &mut OpenApiGenerator) -> Result {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
-        add_content_response(
+
+        let schema = gen.json_schema::<Vec<u8>>();
+        add_schema_response(
             &mut responses,
             200,
             "text/event-stream; charset=utf-8",
-            okapi::openapi3::MediaType::default(),
+            schema,
         )?;
+
         Ok(responses)
     }
 }
