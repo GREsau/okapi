@@ -15,7 +15,7 @@ pub type DataResult<'a, T> =
 async fn main() {
     let launch_result = create_server().launch().await;
     match launch_result {
-        Ok(()) => println!("Rocket shut down gracefully."),
+        Ok(_) => println!("Rocket shut down gracefully."),
         Err(err) => println!("Rocket had an error: {}", err),
     };
 }
