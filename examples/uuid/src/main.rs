@@ -1,8 +1,10 @@
-use rocket::{get, post, serde::json::Json, serde::uuid::Uuid};
+use rocket::{get, post, serde::json::Json};
 use rocket_okapi::settings::UrlObject;
 use rocket_okapi::{openapi, openapi_get_routes, rapidoc::*, swagger_ui::*};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+
+mod uuid;
 
 #[derive(Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
@@ -39,7 +41,7 @@ fn get_all_users() -> Json<Vec<User>> {
 /// Returns a single user by ID.
 #[openapi(tag = "Users")]
 #[get("/user/<id>")]
-fn get_user(id: Uuid) -> Option<Json<User>> {
+fn get_user(id: uuid::Uuid) -> Option<Json<User>> {
     Some(Json(User {
         user_id: id,
         username: "bob".to_owned(),
@@ -52,7 +54,7 @@ fn get_user(id: Uuid) -> Option<Json<User>> {
 /// Returns a single user by username.
 #[openapi(tag = "Users")]
 #[get("/user_example?<user_id>&<name>&<email>")]
-fn get_user_by_name(user_id: Uuid, name: String, email: Option<String>) -> Option<Json<User>> {
+fn get_user_by_name(user_id: uuid::Uuid, name: String, email: Option<String>) -> Option<Json<User>> {
     Some(Json(User {
         user_id,
         username: name,
@@ -99,7 +101,7 @@ async fn main() {
         .launch()
         .await;
     match launch_result {
-        Ok(()) => println!("Rocket shut down gracefully."),
+        Ok(_) => println!("Rocket shut down gracefully."),
         Err(err) => println!("Rocket had an error: {}", err),
     };
 }

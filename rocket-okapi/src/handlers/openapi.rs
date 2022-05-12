@@ -1,6 +1,5 @@
 use okapi::openapi3::{OpenApi, Server};
 use rocket::http::{ContentType, Method};
-use rocket::response::content::Custom;
 use rocket::route::{Handler, Outcome};
 use rocket::{Data, Request, Route};
 
@@ -42,6 +41,6 @@ impl Handler for OpenApiHandler {
 
         let json =
             serde_json::to_string_pretty(&spec).expect("Could not serialize content as JSON.");
-        Outcome::from(req, Custom(ContentType::JSON, json))
+        Outcome::from(req, (ContentType::JSON, json))
     }
 }
