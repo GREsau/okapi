@@ -52,45 +52,11 @@ impl rocket_okapi::JsonSchema for Uuid {
     }
 }
 
-// impl<'r> OpenApiFromParam<'r> for Uuid {
-//     fn path_parameter(gen: &mut OpenApiGenerator, name: String) -> Result<Parameter, ParseError> {
-//         let schema = gen.json_schema::<Uuid>();
-//         Ok(Parameter {
-//             name,
-//             location: "path".to_owned(),
-//             description: None,
-//             required: true,
-//             deprecated: false,
-//             allow_empty_value: false,
-//             value: ParameterValue::Schema {
-//                 style: None,
-//                 explode: None,
-//                 allow_reserved: false,
-//                 schema,
-//                 example: None,
-//                 examples: None,
-//             },
-//             extensions: Default::default(),
-//         })
-//     }
-// }
-
 impl FromFormField<'_> for Uuid {
     fn from_value(_field: rocket::form::ValueField<'_>) -> rocket::form::Result<'_, Self> {
         Ok(Uuid::new_v4())
     }
 }
-
-// impl<'v> FromFormValue<'v> for Uuid {
-//     type Error = &'v RawStr;
-
-//     /// A value is successfully parsed if `form_value` is a properly formatted
-//     /// Uuid. Otherwise, the raw form value is returned.
-//     #[inline(always)]
-//     fn from_form_value(form_value: &'v RawStr) -> Result<Uuid, &'v RawStr> {
-//         form_value.parse().map_err(|_| form_value)
-//     }
-// }
 
 impl FromStr for Uuid {
     type Err = uuid_crate::Error;
