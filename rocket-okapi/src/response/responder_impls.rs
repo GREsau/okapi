@@ -195,14 +195,13 @@ macro_rules! response_content_wrapper {
     };
 }
 
-response_content_wrapper!(Css, "text/css");
-response_content_wrapper!(Custom, "*/*");
-response_content_wrapper!(Html, "text/html");
-response_content_wrapper!(JavaScript, "application/javascript");
-response_content_wrapper!(Json, "application/json");
-response_content_wrapper!(MsgPack, "application/msgpack");
-response_content_wrapper!(Plain, "text/plain");
-response_content_wrapper!(Xml, "text/xml");
+response_content_wrapper!(RawCss, "text/css");
+response_content_wrapper!(RawHtml, "text/html");
+response_content_wrapper!(RawJavaScript, "application/javascript");
+response_content_wrapper!(RawJson, "application/json");
+response_content_wrapper!(RawMsgPack, "application/msgpack");
+response_content_wrapper!(RawText, "text/plain");
+response_content_wrapper!(RawXml, "text/xml");
 
 macro_rules! status_responder {
     ($responder: ident, $status: literal) => {
