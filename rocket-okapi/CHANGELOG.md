@@ -24,7 +24,8 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Changed
 - Changed `Data<'r>` from `String` type is binary data (`Vec<u8>`) in `FromData` implementation. (#65)
-- Add `Cookie` header field to requests that use `rocket::http::CookieJar`. 
+- Add `Cookie` header field to requests that use `rocket::http::CookieJar`.
+- Fixed missing of schema for `EventStream` and `TextStream`. (#86)
 
 ### Deprecated
 
