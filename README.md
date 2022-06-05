@@ -19,7 +19,7 @@ visualize the documentation. Rocket-okapi currently includes [RapiDoc][RapiDoc] 
 [Swagger UI][Swagger_UI], but others can be used too.
 
 Supported OpenAPI Spec: [3.0.0][OpenAPI_3.0.0]<br/>
-Supported Rocket version (for `rocket_okapi`): [0.5.0-rc.1](https://crates.io/crates/rocket/0.5.0-rc.1)
+Supported Rocket version (for `rocket_okapi`): [0.5.0-rc.2](https://crates.io/crates/rocket/0.5.0-rc.2)
 
 Example of generated documentation using Okapi:
 - DF Storyteller: [RapiDoc](https://docs.dfstoryteller.com/rapidoc/),
@@ -28,68 +28,7 @@ Example of generated documentation using Okapi:
 
 [^1]: More examples will be added, please open an issue if you have a good example.
 
-## Basic Usage
-
-```rust
-use rocket::{get, post, serde::json::Json};
-use rocket_okapi::{openapi, openapi_get_routes, swagger_ui::*};
-use serde::{Deserialize, Serialize};
-use schemars::JsonSchema;
-
-// Derive JsonSchema for and request/response models
-#[derive(Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
-struct User {
-    user_id: u64,
-    username: String,
-    #[serde(default)]
-    email: Option<String>,
-}
-
-// Add #[openapi] attribute to your routes
-#[openapi]
-#[get("/user/<id>")]
-fn get_user(id: u64) -> Option<Json<User>> {
-    Some(Json(User {
-        user_id: id,
-        username: "bob".to_owned(),
-        email: None,
-    }))
-}
-
-// You can tag your routes to group them together
-#[openapi(tag = "Users")]
-#[post("/user", data = "<user>")]
-fn create_user(user: Json<User>) -> Json<User> {
-    user
-}
-
-// You can skip routes that you don't want to include in the openapi doc
-#[openapi(skip)]
-#[get("/hidden")]
-fn hidden() -> Json<&'static str> {
-    Json("Hidden from swagger!")
-}
-
-pub fn make_rocket() -> rocket::Rocket {
-    rocket::build()
-        // openapi_get_routes![...] will host the openapi document at `openapi.json`
-        .mount(
-            "/",
-            openapi_get_routes![get_user, create_user, hidden],
-        )
-        // You can optionally host swagger-ui too
-        .mount(
-            "/swagger-ui/",
-            make_swagger_ui(&SwaggerUIConfig {
-                url: "../openapi.json".to_owned(),
-                ..Default::default()
-            }),
-        )
-}
-```
-
-## More examples
+## Examples
 - [Json web API](examples/json-web-api): Simple example showing the basics of Okapi.
 - [UUID](examples/uuid): Simple example showing basics, but using UUID's instead of
 normal `u32`/`u64` id's.
@@ -100,6 +39,7 @@ methods into the OpenAPI file.
 It shows: No authentication, API keys, HTTP Auth, OAuth2, OpenID and Cookies.
 - [Special types](examples/special-types): Showing use of some more obscure types and there usage.
 (Still work in progress)
+- [And more](https://github.com/GREsau/okapi/tree/master/examples)
 
 ## FAQ
 
@@ -167,7 +107,7 @@ Rocket-Okapi:
 - `swagger`: Enable [Swagger UI][Swagger_UI] for rendering documentation.
 - `rapidoc`: Enable [RapiDoc][RapiDoc] for rendering documentation.
 - `uuid`: Enable UUID support in Rocket and Schemars.
-- `msgpack`: Enable [msgpack support for Rocket](https://docs.rs/rocket/0.5.0-rc.1/rocket/serde/msgpack/struct.MsgPack.html).
+- `msgpack`: Enable [msgpack support for Rocket](https://docs.rs/rocket/0.5.0-rc.2/rocket/serde/msgpack/struct.MsgPack.html).
 (when same Rocket feature flag is used.)
 - `secrets`: Enable [secrets support for Rocket](https://rocket.rs/v0.5-rc/guide/requests/#secret-key).
 (when same Rocket feature flag is used.)
