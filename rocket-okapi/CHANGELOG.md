@@ -6,9 +6,25 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Added
 - Add support for `rocket::response::stream::EventStream<S>` (#52)
+- Update Rocket from `0.5.0-rc.1` to `0.5.0-rc.2`. (#89)
+- New Rocket feature flags `mtls` re-exposed.
+- Added support for new [`Responder`](https://docs.rs/rocket/0.5.0-rc.2/rocket/response/trait.Responder.html)
+  types (implemented `OpenApiResponderInner`):
+  - `Arc<str>`
+  - `Arc<[u8]>`
+  - `Box<[u8]>`
+  - `Box<str>`
+  - `rocket::response::Redirect` added `500 Internal Server Error` status code.
+  - Some other changes because of renamed types in Rocket.
+- Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0-rc.2/rocket/request/trait.FromRequest.html)
+  types (implemented `OpenApiFromRequest`):
+  - `rocket::http::uri::Host`
+  - `Certificate` (when `mtls` feature is enabled)
+  - `FlashMessage`
 
 ### Changed
 - Changed `Data<'r>` from `String` type is binary data (`Vec<u8>`) in `FromData` implementation. (#65)
+- Add `Cookie` header field to requests that use `rocket::http::CookieJar`. 
 
 ### Deprecated
 
@@ -93,7 +109,7 @@ types (implemented `OpenApiFromData`):
 (Re-exposing Rocket feature flag)
 - Added support for [Request Guards](https://rocket.rs/v0.4/guide/requests/#request-guards)
 and [Security Scheme](https://swagger.io/docs/specification/authentication/)
-(aka Authentication and Authorization) (#47, #9, #8, #56)
+(aka Authentication and Authorization) (#47, #9, #8, #56)
 - Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0-rc.1/rocket/request/trait.FromRequest.html)
   types (implemented `OpenApiFromRequest`):
   - `std::net::IpAddr`

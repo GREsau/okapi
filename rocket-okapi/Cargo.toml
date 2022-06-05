@@ -43,6 +43,9 @@ msgpack = ["rocket/msgpack"]
 # Re-export Rocket feature flag
 # https://rocket.rs/v0.5-rc/guide/requests/#secret-key
 secrets = ["rocket/secrets"]
+# Re-export Rocket feature flag
+# https://rocket.rs/v0.5-rc/guide/configuration/#mutual-tls
+mtls = ["rocket/mtls"]
 
 [package.metadata.docs.rs]
 features = ["swagger", "rapidoc"]
