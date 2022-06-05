@@ -99,7 +99,7 @@ fn custom_openapi_spec() -> OpenApi {
         // Add paths that do not exist in Rocket (or add extra into to existing paths)
         paths: {
             indexmap! {
-                "home".to_owned() => PathItem{
+                "/home".to_owned() => PathItem{
                 get: Some(
                     Operation {
                     tags: vec!["HomePage".to_owned()],
@@ -113,7 +113,7 @@ fn custom_openapi_spec() -> OpenApi {
                                 "text/html".to_owned() => MediaType{
                                 schema: Some(SchemaObject{
                                     instance_type: Some(SingleOrVec::Single(Box::new(
-                                    InstanceType::String
+                                        InstanceType::String
                                     ))),
                                     ..Default::default()
                                 }),
