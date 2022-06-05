@@ -47,6 +47,7 @@ pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
 fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
     TokenStream::from(quote! {
+        #[doc(hidden)]
         pub fn #fn_name(
             _gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             _op_id: String,
@@ -243,6 +244,7 @@ fn create_route_operation_fn(
         .collect::<Vec<_>>();
 
     TokenStream::from(quote! {
+        #[doc(hidden)]
         pub fn #fn_name(
             gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             op_id: String,

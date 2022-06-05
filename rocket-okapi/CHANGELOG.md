@@ -29,6 +29,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 - Changed `Data<'r>` from `String` type is binary data (`Vec<u8>`) in `FromData` implementation. (#65)
 - Add `Cookie` header field to requests that use `rocket::http::CookieJar`.
 - Fixed missing of schema for `EventStream` and `TextStream`. (#86)
+- Generated functions are no longer included in Rust Documentation. (#69)
 
 ### Deprecated
 
