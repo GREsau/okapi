@@ -70,6 +70,47 @@
 //! - `openapi_get_routes_spec![...]`: `(Vec<rocket::Route>, okapi::openapi3::OpenApi)`
 //! - `openapi_get_spec![...]`: `okapi::openapi3::OpenApi`
 //!
+//! ## FAQ
+//!
+//! - **Q: My (diesel) database does not implement `OpenApiFromRequest`.**<br/>
+//! A: This is because the parameter does not show up in the path, query or body.
+//! So this is considered a [Request Guard](https://rocket.rs/v0.5-rc/guide/requests/#request-guards).
+//! There is a [derive macro](https://github.com/GREsau/okapi/blob/master/examples/secure_request_guard/src/no_auth.rs)
+//! for this, but this does not work in combination with the `#[database("...")]` marco.
+//! You can solve this my implementing it manually, like this:
+//!
+//! ```rust
+//! use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
+//! use rocket_okapi::gen::OpenApiGenerator;
+//! use rocket_sync_db_pools::{diesel, database};
+//!
+//! #[database("sqlite_logs")]
+//! pub struct MyDB;
+//!
+//! impl<'r> OpenApiFromRequest<'r> for MyDB {
+//!     fn from_request_input(
+//!         _gen: &mut OpenApiGenerator,
+//!         _name: String,
+//!         _required: bool,
+//!     ) -> rocket_okapi::Result<RequestHeaderInput> {
+//!         Ok(RequestHeaderInput::None)
+//!     }
+//! }
+//! ```
+//! - **Q: ... does not implement `JsonSchema`?**<br/>
+//! A: The [`JsonSchema`](https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html) implementation
+//! is handled by [`Schemars`][Schemars], make sure you enabled the right
+//! [feature flags](https://github.com/GREsau/schemars#optional-dependencies) for it.
+//! If it is still not implemented open an issue in the `Schemars` repo.
+//!
+//!
+//! - **Q: Can I add custom data to my OpenAPI spec?**<br/>
+//! A: Yes, see the [Custom Schema](examples/custom_schema) example. Okapi also has build in functions
+//! if you want to merge the [`OpenAPI`](https://docs.rs/okapi/latest/okapi/openapi3/struct.OpenApi.html)
+//! objects manually.
+//!
+//! - More FAQ questions and answers in [README.md](https://github.com/GREsau/okapi#readme).
+//!
 
 mod error;
 

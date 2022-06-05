@@ -111,6 +111,8 @@ Rocket-Okapi:
 (when same Rocket feature flag is used.)
 - `secrets`: Enable [secrets support for Rocket](https://rocket.rs/v0.5-rc/guide/requests/#secret-key).
 (when same Rocket feature flag is used.)
+- `mtls`: Enable [mutual TSL for Rocket](https://rocket.rs/v0.5-rc/guide/configuration/#mutual-tls).
+(when same Rocket feature flag is used.)
 
 Note that not all feature flags from [`Schemars`][Schemars] are re-exported or enabled.
 So if you have objects for which the `JsonSchema` trait is not implemented,
