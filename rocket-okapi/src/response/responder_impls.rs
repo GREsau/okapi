@@ -371,3 +371,14 @@ impl<T: Serialize + JsonSchema + Send> OpenApiResponderInner
         Ok(responses)
     }
 }
+
+// From: https://api.rocket.rs/v0.5-rc/rocket_dyn_templates/struct.Template.html#impl-Responder%3C%27r%2C%20%27static%3E
+
+/// Response is set to `String` (so `text/plain`) because the actual return type is unknown
+/// at compile time. The content type depends on the file extension, but this can change at runtime.
+#[cfg(feature = "rocket_dyn_templates")]
+impl OpenApiResponderInner for rocket_dyn_templates::Template {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        String::responses(gen)
+    }
+}

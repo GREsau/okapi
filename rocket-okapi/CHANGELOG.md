@@ -15,12 +15,15 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
   - `Box<[u8]>`
   - `Box<str>`
   - `rocket::response::Redirect` added `500 Internal Server Error` status code.
+  - `rocket_dyn_templates::Template` (requires `rocket_dyn_templates` feature)
+    ([See example](../examples/dyn_templates/src/main.rs))
   - Some other changes because of renamed types in Rocket.
 - Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0-rc.2/rocket/request/trait.FromRequest.html)
   types (implemented `OpenApiFromRequest`):
   - `rocket::http::uri::Host`
   - `Certificate` (when `mtls` feature is enabled)
   - `FlashMessage`
+- New example for Rocket's Dynamic Templates.
 
 ### Changed
 - Changed `Data<'r>` from `String` type is binary data (`Vec<u8>`) in `FromData` implementation. (#65)
