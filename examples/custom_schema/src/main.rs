@@ -50,7 +50,7 @@ pub fn create_server() -> Rocket<Build> {
     let custom_route_spec = (vec![], custom_openapi_spec());
     mount_endpoints_and_merged_docs! {
         building_rocket, "/v1".to_owned(), openapi_settings,
-        "/" => custom_route_spec,
+        "/external" => custom_route_spec,
         "/post" => post::get_routes_and_docs(&openapi_settings),
         "/message" => message::get_routes_and_docs(&openapi_settings),
     };
@@ -59,7 +59,9 @@ pub fn create_server() -> Rocket<Build> {
 }
 
 fn custom_openapi_spec() -> OpenApi {
+    use indexmap::indexmap;
     use rocket_okapi::okapi::openapi3::*;
+    use rocket_okapi::okapi::schemars::schema::*;
     OpenApi {
         openapi: OpenApi::default_version(),
         info: Info {
@@ -94,6 +96,43 @@ fn custom_openapi_spec() -> OpenApi {
                 ..Default::default()
             },
         ],
+        // Add paths that do not exist in Rocket (or add extra into to existing paths)
+        paths: {
+            indexmap! {
+                "home".to_owned() => PathItem{
+                get: Some(
+                    Operation {
+                    tags: vec!["HomePage".to_owned()],
+                    summary: Some("This is my homepage".to_owned()),
+                    responses: Responses{
+                        responses: indexmap!{
+                        "200".to_owned() => RefOr::Object(
+                            Response{
+                            description: "Return the page, no error.".to_owned(),
+                            content: indexmap!{
+                                "text/html".to_owned() => MediaType{
+                                schema: Some(SchemaObject{
+                                    instance_type: Some(SingleOrVec::Single(Box::new(
+                                    InstanceType::String
+                                    ))),
+                                    ..Default::default()
+                                }),
+                                ..Default::default()
+                                }
+                            },
+                            ..Default::default()
+                            }
+                        )
+                        },
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                    }
+                ),
+                ..Default::default()
+                }
+            }
+        },
         ..Default::default()
     }
 }
