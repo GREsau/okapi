@@ -5,7 +5,7 @@ authors = ["Kristoffer Ödmark <kristoffer.odmark90@gmail.com>", "Ralph Bisschop
 edition = "2018"
 
 [dependencies]
-rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json", "secrets"] }
+rocket = { version = "0.5.0-rc.2", default-features = false, features = ["json", "secrets"] }
 rocket_okapi = { version = "0.8.0-alpha-1", path = "../../rocket-okapi", features = ["rapidoc", "swagger", "secrets"] }
 serde = "1.0"
 tokio = "1.6"
