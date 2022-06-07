@@ -12,7 +12,7 @@
 //! rocket = { version = "0.5.0-rc.2", default-features = false, features = ["json"] }
 //! schemars = "0.8.10"
 //! okapi = { version = "0.7.0-rc.1" }
-//! rocket_okapi = { version = "0.8.0-rc.1", features = ["swagger"] }
+//! rocket_okapi = { version = "0.8.0-rc.2", features = ["swagger"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
 //! response types of the endpoint must implement `JsonSchema`. Secondly, the function must be
@@ -172,7 +172,7 @@ pub fn get_openapi_route(
 /// The macro expects the following arguments:
 /// - rocket_builder: `Rocket<Build>`,
 /// - base_path: `&str`, `String` or [`Uri`](rocket::http::uri::Uri). (Anything that implements `ToString`)
-/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0-rc.1/rocket/struct.Rocket.html#method.mount)
+/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0-rc.2/rocket/struct.Rocket.html#method.mount)
 /// - openapi_settings: `OpenApiSettings` (use `OpenApiSettings::default()` if default settings are okay for you),
 /// - List of (0 or more):
 ///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).

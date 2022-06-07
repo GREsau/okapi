@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 rocket = { version = "=0.5.0-rc.2", default-features = false, features = ["json"] }
 schemars = { version = "0.8" }
-rocket_okapi = { version = "0.8.0-alpha-1", path = "../../rocket-okapi", features = ["swagger", "rapidoc", "rocket_dyn_templates"] }
+rocket_okapi = { path = "../../rocket-okapi", features = ["swagger", "rapidoc", "rocket_dyn_templates"] }
 serde = "1.0"
 rocket_dyn_templates = {version = "=0.1.0-rc.2", features = ["handlebars"]}
 handlebars = "4.3.0"

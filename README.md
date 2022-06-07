@@ -113,11 +113,12 @@ Rocket-Okapi:
 (when same Rocket feature flag is used.)
 - `mtls`: Enable [mutual TSL for Rocket](https://rocket.rs/v0.5-rc/guide/configuration/#mutual-tls).
 (when same Rocket feature flag is used.)
+- `rocket_dyn_templates`: Enable compatibility with [`rocket_dyn_templates`](https://crates.io/crates/rocket_dyn_templates).
 
 Note that not all feature flags from [`Schemars`][Schemars] are re-exported or enabled.
 So if you have objects for which the `JsonSchema` trait is not implemented,
 you might need to enable a [feature flag in `Schemars`](https://github.com/GREsau/schemars#optional-dependencies).
-For an example see [the "uuid" example](examples/uuid/Cargo.toml). (Make sure crate versions match)
+For an example see [the "uuid1" example](examples/uuid/Cargo.toml). (Make sure crate versions match)
 
 ## How it works
 This crate automatically generates an OpenAPI file when the Rocket server starts.
