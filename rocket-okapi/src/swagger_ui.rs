@@ -136,7 +136,9 @@ pub fn make_swagger_ui(config: &SwaggerUIConfig) -> impl Into<Vec<Route>> {
         config_handler.into_route("/swagger-ui-config.json"),
         // Add other static files
         static_file!("index.html", HTML),
+        static_file!("index.css", CSS),
         static_file!("oauth2-redirect.html", HTML),
+        static_file!("swagger-initializer.js", JavaScript),
         static_file!("swagger-ui-standalone-preset.js", JavaScript),
         static_file!("swagger-ui-bundle.js", JavaScript),
         static_file!("swagger-ui.css", CSS),

@@ -25,6 +25,7 @@ because of incompatibility.
 ### Added
 - Add support for `rocket::response::stream::EventStream<S>` (#52)
 - Update Rocket from `0.5.0-rc.1` to `0.5.0-rc.2`. (#89)
+- Updated Swagger UI to v4.12.0
 - New Rocket feature flags `mtls` re-exposed.
 - Added support for new [`Responder`](https://docs.rs/rocket/0.5.0-rc.2/rocket/response/trait.Responder.html)
   types (implemented `OpenApiResponderInner`):
