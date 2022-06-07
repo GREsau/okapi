@@ -91,25 +91,8 @@ impl<'r> OpenApiFromRequest<'r> for &'r rocket::http::ContentType {
 }
 
 impl<'r> OpenApiFromRequest<'r> for &'r rocket::http::CookieJar<'r> {
-    fn from_request_input(gen: &mut OpenApiGenerator, _name: String, required: bool) -> Result {
-        let schema = gen.json_schema::<String>();
-        Ok(RequestHeaderInput::Parameter(Parameter {
-            name: "Cookie".to_owned(),
-            location: "header".to_owned(),
-            description: None,
-            required,
-            deprecated: false,
-            allow_empty_value: false,
-            value: ParameterValue::Schema {
-                style: None,
-                explode: None,
-                allow_reserved: false,
-                schema,
-                example: None,
-                examples: None,
-            },
-            extensions: Object::default(),
-        }))
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
     }
 }
 

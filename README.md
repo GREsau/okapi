@@ -65,7 +65,7 @@ use rocket_okapi::gen::OpenApiGenerator;
 use rocket_sync_db_pools::{diesel, database};
 
 #[database("sqlite_logs")]
-pub struct MyDB;
+pub struct MyDB(diesel::SqliteConnection);
 
 impl<'r> OpenApiFromRequest<'r> for MyDB {
     fn from_request_input(

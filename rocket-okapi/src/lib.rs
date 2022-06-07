@@ -9,10 +9,10 @@
 //! First, add the following lines to your `Cargo.toml`
 //! ```toml
 //! [dependencies]
-//! rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json"] }
-//! schemars = "0.8"
-//! okapi = { version = "0.6.0-alpha-1" }
-//! rocket_okapi = { version = "0.8.0-alpha-1", features = ["swagger"] }
+//! rocket = { version = "0.5.0-rc.2", default-features = false, features = ["json"] }
+//! schemars = "0.8.10"
+//! okapi = { version = "0.7.0-rc.1" }
+//! rocket_okapi = { version = "0.8.0-rc.1", features = ["swagger"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
 //! response types of the endpoint must implement `JsonSchema`. Secondly, the function must be
@@ -79,13 +79,13 @@
 //! for this, but this does not work in combination with the `#[database("...")]` marco.
 //! You can solve this my implementing it manually, like this:
 //!
-//! ```rust
+//! ```rust, no_run
 //! use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
 //! use rocket_okapi::gen::OpenApiGenerator;
 //! use rocket_sync_db_pools::{diesel, database};
 //!
 //! #[database("sqlite_logs")]
-//! pub struct MyDB;
+//! pub struct MyDB(diesel::SqliteConnection);
 //!
 //! impl<'r> OpenApiFromRequest<'r> for MyDB {
 //!     fn from_request_input(
