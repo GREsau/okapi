@@ -24,6 +24,7 @@ log = "0.4"
 # Rocket dependency but not re-exported
 either = "1"
 rocket_dyn_templates = { version = "=0.1.0-rc.2", optional = true }
+rocket_db_pools = { version = "=0.1.0-rc.2", optional = true }
 
 [dev-dependencies]
 rocket_sync_db_pools = { version = "0.1.0-rc.2", features = ["diesel_sqlite_pool"] }
