@@ -162,13 +162,6 @@ impl<'r, T: Send + Sync + 'static> OpenApiFromRequest<'r> for &'r rocket::State<
     }
 }
 
-#[cfg(feature = "rocket_db_pools")]
-impl<'r, T: rocket_db_pools::Database> OpenApiFromRequest<'r> for rocket_db_pools::Connection<T> {
-    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
-        Ok(RequestHeaderInput::None)
-    }
-}
-
 impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r> for Option<T> {
     fn from_request_input(gen: &mut OpenApiGenerator, name: String, _required: bool) -> Result {
         T::from_request_input(gen, name, false)
@@ -178,5 +171,15 @@ impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r> for Option<T> {
 impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r> for StdResult<T, T::Error> {
     fn from_request_input(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
         T::from_request_input(gen, name, required)
+    }
+}
+
+// ## Implementations for other crates
+// https://docs.rs/rocket_db_pools/0.1.0-rc.2/rocket_db_pools/struct.Connection.html#impl-FromRequest%3C%27r%3E
+
+#[cfg(feature = "rocket_db_pools")]
+impl<'r, D: rocket_db_pools::Database> OpenApiFromRequest<'r> for rocket_db_pools::Connection<D> {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
     }
 }

@@ -114,6 +114,7 @@ Rocket-Okapi:
 - `mtls`: Enable [mutual TSL for Rocket](https://rocket.rs/v0.5-rc/guide/configuration/#mutual-tls).
 (when same Rocket feature flag is used.)
 - `rocket_dyn_templates`: Enable compatibility with [`rocket_dyn_templates`](https://crates.io/crates/rocket_dyn_templates).
+- `rocket_db_pools`: Enable compatibility with [`rocket_db_pools`](https://crates.io/crates/rocket_db_pools).
 
 Note that not all feature flags from [`Schemars`][Schemars] are re-exported or enabled.
 So if you have objects for which the `JsonSchema` trait is not implemented,

@@ -43,8 +43,11 @@ because of incompatibility.
   - `rocket::http::uri::Host`
   - `Certificate` (when `mtls` feature is enabled)
   - `FlashMessage`
+  - `rocket_db_pools::Connection<D>` (when `rocket_db_pools` feature is enabled) (#104)
 - New feature flag `rocket_dyn_templates` for enable compatibility with
 [`rocket_dyn_templates`](https://crates.io/crates/rocket_dyn_templates).
+- New feature flag `rocket_db_pools` for enable compatibility with
+[`rocket_db_pools`](https://crates.io/crates/rocket_db_pools).
 - New example for Rocket's Dynamic Templates.
 
 ### Changed
