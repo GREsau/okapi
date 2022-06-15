@@ -162,6 +162,13 @@ impl<'r, T: Send + Sync + 'static> OpenApiFromRequest<'r> for &'r rocket::State<
     }
 }
 
+#[cfg(feature = "rocket_db_pools")]
+impl<'r, T: rocket_db_pools::Database> OpenApiFromRequest<'r> for rocket_db_pools::Connection<T> {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
 impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r> for Option<T> {
     fn from_request_input(gen: &mut OpenApiGenerator, name: String, _required: bool) -> Result {
         T::from_request_input(gen, name, false)
