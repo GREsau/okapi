@@ -13,6 +13,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ### Removed
 
 ### Fixed
+- `mount_endpoints_and_merged_docs!` does avoid combined paths with double `/`.
 
 ### Security
 

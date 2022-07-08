@@ -2,11 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project follows the [Semantic Versioning standard](https://semver.org/).
 
-## Unreleased (2021-xx-xx)
+## Unreleased (2022-xx-xx)
 
 ### Added
 
 ### Changed
+- `merge_paths` does correctly handle the merging of paths with double `/` in the combined path.
 
 ### Deprecated
 
