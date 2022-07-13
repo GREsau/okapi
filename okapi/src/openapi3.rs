@@ -59,8 +59,7 @@ pub struct OpenApi {
     pub tags: Vec<Tag>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub external_docs: Option<ExternalDocs>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -79,8 +78,7 @@ pub struct Info {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub license: Option<License>,
     pub version: String,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -94,8 +92,7 @@ pub struct Contact {
     pub url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -106,8 +103,7 @@ pub struct License {
     pub name: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -120,8 +116,7 @@ pub struct Server {
     pub description: Option<String>,
     #[serde(default, skip_serializing_if = "Map::is_empty")]
     pub variables: Map<String, ServerVariable>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -134,8 +129,7 @@ pub struct ServerVariable {
     pub default: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -169,8 +163,7 @@ pub struct PathItem {
     pub servers: Option<Vec<Server>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub parameters: Vec<RefOr<Parameter>>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -201,8 +194,7 @@ pub struct Operation {
     pub security: Option<Vec<SecurityRequirement>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub servers: Option<Vec<Server>>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -214,8 +206,7 @@ pub struct Responses {
     pub default: Option<RefOr<Response>>,
     #[serde(flatten)]
     pub responses: Map<String, RefOr<Response>>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -241,8 +232,7 @@ pub struct Components {
     pub links: Map<String, RefOr<Link>>,
     #[serde(default, skip_serializing_if = "Map::is_empty")]
     pub callbacks: Map<String, RefOr<Callback>>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -257,8 +247,7 @@ pub struct Response {
     pub content: Map<String, MediaType>,
     #[serde(default, skip_serializing_if = "Map::is_empty")]
     pub links: Map<String, RefOr<Link>>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -280,8 +269,7 @@ pub struct Parameter {
     pub allow_empty_value: bool,
     #[serde(flatten)]
     pub value: ParameterValue,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -332,8 +320,7 @@ pub struct Example {
     pub description: Option<String>,
     #[serde(flatten)]
     pub value: ExampleValue,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -354,8 +341,7 @@ pub struct RequestBody {
     pub content: Map<String, MediaType>,
     #[serde(default, skip_serializing_if = "is_false")]
     pub required: bool,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -373,8 +359,7 @@ pub struct Header {
     pub allow_empty_value: bool,
     #[serde(flatten)]
     pub value: ParameterValue,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -387,8 +372,7 @@ pub struct SecurityScheme {
     // This also sets `type`
     #[serde(flatten)]
     pub data: SecuritySchemeData,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -425,8 +409,7 @@ pub enum OAuthFlows {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         refresh_url: Option<String>,
         scopes: Map<String, String>,
-        #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+        #[serde(default, with = "schemars::map_serde")]
         extensions: Object,
     },
     #[serde(rename_all = "camelCase")]
@@ -435,8 +418,7 @@ pub enum OAuthFlows {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         refresh_url: Option<String>,
         scopes: Map<String, String>,
-        #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+        #[serde(default, with = "schemars::map_serde")]
         extensions: Object,
     },
     #[serde(rename_all = "camelCase")]
@@ -445,8 +427,7 @@ pub enum OAuthFlows {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         refresh_url: Option<String>,
         scopes: Map<String, String>,
-        #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+        #[serde(default, with = "schemars::map_serde")]
         extensions: Object,
     },
     #[serde(rename_all = "camelCase")]
@@ -456,8 +437,7 @@ pub enum OAuthFlows {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         refresh_url: Option<String>,
         scopes: Map<String, String>,
-        #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+        #[serde(default, with = "schemars::map_serde")]
         extensions: Object,
     },
 }
@@ -479,8 +459,7 @@ pub struct Link {
     pub description: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub server: Option<Server>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -490,8 +469,7 @@ pub struct Link {
 pub struct Callback {
     #[serde(flatten)]
     pub callbacks: Map<String, PathItem>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -507,8 +485,7 @@ pub struct MediaType {
     pub examples: Option<Map<String, Example>>,
     #[serde(skip_serializing_if = "Map::is_empty")]
     pub encoding: Map<String, Encoding>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -521,8 +498,7 @@ pub struct Tag {
     pub description: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub external_docs: Option<ExternalDocs>,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -533,8 +509,7 @@ pub struct ExternalDocs {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     pub url: String,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
@@ -552,8 +527,7 @@ pub struct Encoding {
     pub explode: Option<bool>,
     #[serde(skip_serializing_if = "is_false")]
     pub allow_reserved: bool,
-    #[cfg_attr(feature = "preserve_order", serde(default, with = "indexmap::serde_seq"))]
-    #[cfg_attr(not(feature = "preserve_order"), serde(flatten))]
+    #[serde(default, with = "schemars::map_serde")]
     pub extensions: Object,
 }
 
