@@ -12,7 +12,7 @@ categories = ["web-programming"]
 
 [dependencies]
 rocket = { version = "=0.5.0-rc.2", default-features = false, features = ["json"] }
-schemars = { version = "0.8.10" }
+schemars = { git = "https://github.com/snpschaaf/schemars.git", branch = "feature-aware-serde-for-map" }
 okapi = { version = "0.7.0-rc.1", path = "../okapi" }
 rocket_okapi_codegen = { version = "=0.8.0-rc.2", path = "../rocket-okapi-codegen" }
 serde = "1.0"

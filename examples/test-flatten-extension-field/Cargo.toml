@@ -1,0 +1,13 @@
+[package]
+name = "test-flatten-extension-field"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rocket = { version = "=0.5.0-rc.2", default-features = false, features = ["json"] }
+rocket_okapi = {path = "../../rocket-okapi", features = ["swagger"]}
+
+[dev-dependencies]
+pretty_assertions = "1.2.1"
