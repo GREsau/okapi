@@ -11,7 +11,7 @@ keywords = ["rust", "openapi", "swagger", "rocket"]
 categories = ["web-programming"]
 
 [dependencies]
-rocket = { git = "https://github.com/ranklab-gaming/Rocket", default-features = false, features = ["json"] }
+rocket = { git = "https://github.com/SergioBenitez/Rocket", rev = "6c3d35e7e5bceaf11c329623d48f81c276407030", default-features = false, features = ["json"] }
 schemars = { version = "0.8.10" }
 okapi = { version = "0.7.0-rc.1", path = "../okapi" }
 rocket_okapi_codegen = { version = "=0.8.0-rc.2", path = "../rocket-okapi-codegen" }
@@ -23,10 +23,10 @@ log = "0.4"
 # time = { version = "0.2.27" }
 # Rocket dependency but not re-exported
 either = "1"
-rocket_dyn_templates = { git = "https://github.com/ranklab-gaming/Rocket", optional = true }
+rocket_dyn_templates = { git = "https://github.com/SergioBenitez/Rocket", rev = "6c3d35e7e5bceaf11c329623d48f81c276407030", optional = true }
 
 [dev-dependencies]
-rocket_sync_db_pools = { git = "https://github.com/ranklab-gaming/Rocket", features = ["diesel_sqlite_pool"] }
+rocket_sync_db_pools = { git = "https://github.com/SergioBenitez/Rocket", rev = "6c3d35e7e5bceaf11c329623d48f81c276407030", features = ["diesel_sqlite_pool"] }
 
 [features]
 default = ["preserve_order"]
