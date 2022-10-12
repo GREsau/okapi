@@ -1,50 +1,45 @@
-use rocket::http::Status;
-use rocket::{get, post, serde::json::Json};
+use rocket::request::{self, FromRequest, Outcome, Request};
+use rocket::{get, serde::json::Json};
 use rocket_okapi::okapi::schemars;
 use rocket_okapi::settings::UrlObject;
 use rocket_okapi::{openapi, openapi_get_routes, rapidoc::*, swagger_ui::*};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
-
-/// # Get data
-#[openapi(tag = "Users")]
-#[post("/get_date", data = "<req_body>")]
-fn get_data(req_body: Json<String>) -> Option<Json<()>> {
-    let _ = req_body;
-    Some(Json(()))
-}
-
-#[openapi]
-#[get("/paths/<path..>")]
-fn path_info(path: PathBuf) -> (rocket::http::Status, String) {
-    (rocket::http::Status::ImATeapot, format!("info {:?}", path))
-}
-
-#[openapi(tag = "Users")]
-#[post("/user", data = "<req_body>", format = "application/json")]
-fn create_user(req_body: Json<String>) -> Result<Json<User>, (Status, Json<ErrorMessage>)> {
-    let _ = req_body;
-    Ok(Json(User {
-        name: "bob".to_owned(),
-    }))
-}
 
 #[derive(Serialize, Deserialize, Debug, JsonSchema, Clone)]
 pub struct User {
     name: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, JsonSchema)]
-pub struct ErrorMessage {
-    pub message: String,
-    pub code: u16,
+#[openapi(tag = "Users", ignore = "db")]
+#[get("/users")]
+fn list_users(db: CustomDB) -> Json<Vec<User>> {
+    Json(db.users)
+}
+
+// VERY simple fake read only database
+#[derive(Clone, Default)]
+struct CustomDB {
+    users: Vec<User>,
+}
+
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for CustomDB {
+    type Error = String;
+
+    async fn from_request(_request: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
+        Outcome::Success(CustomDB {
+            users: vec![User {
+                name: "Bob".to_owned(),
+            }],
+        })
+    }
 }
 
 #[rocket::main]
 async fn main() {
     let launch_result = rocket::build()
-        .mount("/", openapi_get_routes![get_data, path_info, create_user])
+        .mount("/", openapi_get_routes![list_users])
         .mount(
             "/swagger-ui/",
             make_swagger_ui(&SwaggerUIConfig {

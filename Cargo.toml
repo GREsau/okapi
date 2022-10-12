@@ -10,4 +10,5 @@ members = [
     "examples/secure_request_guard",
     "examples/streams",
     "examples/dyn_templates",
+    "examples/openapi_attributes",
 ]

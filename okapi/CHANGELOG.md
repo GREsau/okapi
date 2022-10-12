@@ -5,6 +5,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ## Unreleased (2022-xx-xx)
 
 ### Added
+- Added `Eq` trait for various structures.
 
 ### Changed
 - `merge_paths` does correctly handle the merging of paths with double `/` in the combined path.

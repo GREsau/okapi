@@ -17,29 +17,35 @@ use syn::{
 #[derive(Debug, Default, FromMeta)]
 #[darling(default)]
 struct OpenApiAttribute {
+    /// Skip this API entry and do not add it to the documentation.
     pub skip: bool,
 
+    /// Add tags to the entry to group them together.
     #[darling(multiple, rename = "tag")]
     pub tags: Vec<String>,
+
+    /// Ignore certain parameters from the function and do not include them in the documentation.
+    #[darling(multiple)]
+    pub ignore: Vec<String>,
 }
 
 pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
     let attr_args = parse_macro_input!(args as AttributeArgs);
     let input = parse_macro_input!(input as ItemFn);
 
-    let okapi_attr = match OpenApiAttribute::from_list(&attr_args) {
+    let entry_attributes = match OpenApiAttribute::from_list(&attr_args) {
         Ok(v) => v,
         Err(e) => {
             return e.write_errors().into();
         }
     };
 
-    if okapi_attr.skip {
+    if entry_attributes.skip {
         return create_empty_route_operation_fn(input);
     }
 
     match route_attr::parse_attrs(&input.attrs) {
-        Ok(route) => create_route_operation_fn(input, route, okapi_attr.tags),
+        Ok(route) => create_route_operation_fn(input, route, &entry_attributes),
         Err(e) => e,
     }
 }
@@ -110,7 +116,7 @@ fn _type_replace_impl_trait_generic_argument(
 fn create_route_operation_fn(
     route_fn: ItemFn,
     route: route_attr::Route,
-    tags: Vec<String>,
+    entry_attributes: &OpenApiAttribute,
 ) -> TokenStream {
     let arg_types = get_arg_types(route_fn.sig.inputs.into_iter());
     let return_type = match route_fn.sig.output {
@@ -129,12 +135,26 @@ fn create_route_operation_fn(
     // Create a list of all the already used parameters.
     // This is later used to see what parameters are Request Guards. (aka left over)
     let mut params_names_used = Vec::new();
+    // Keep track of ignored arguments so we can give warnings in case the argument does not do anything.
+    let mut ignored_names = Vec::new();
     // Path parameters: `/<id>/<name>`
     for arg in route.path_params() {
+        // Do NOT skip all attributes that are in ignore list, because in this case it will make
+        // the API documentation incorrect.
+        if entry_attributes.ignore.contains(&arg.to_owned()) {
+            // Create compile error
+            return TokenStream::from(quote! {
+                compile_error!(concat!(
+                    "The argument `",
+                    #arg,
+                    "` can not be ignored, because it is a path parameter."
+                ));
+            });
+        }
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
-                compile_error!(concat!("Could not find argument ", #arg, " matching path param."));
+                compile_error!(concat!("Could not find argument `", #arg, "` matching path param."));
             }
             .into(),
         };
@@ -145,24 +165,34 @@ fn create_route_operation_fn(
     }
     // Multi Path parameters: `/<path..>`
     if let Some(arg) = route.path_multi_param() {
-        let ty = match arg_types.get(arg) {
-            Some(ty) => ty,
-            None => return quote! {
-                compile_error!(concat!("Could not find argument ", #arg, " matching multi path param."));
-            }
-            .into(),
-        };
-        params_names_used.push(arg.to_owned());
-        params.push(quote! {
-            <#ty as ::rocket_okapi::request::OpenApiFromSegments>::path_multi_parameter(gen, #arg.to_owned())?.into()
-        })
+        // Skip all attributes that are in ignore list.
+        if entry_attributes.ignore.contains(&arg.to_owned()) {
+            ignored_names.push(arg.to_owned());
+        } else {
+            let ty = match arg_types.get(arg) {
+                Some(ty) => ty,
+                None => return quote! {
+                    compile_error!(concat!("Could not find argument `", #arg, "` matching multi path param."));
+                }
+                .into(),
+            };
+            params_names_used.push(arg.to_owned());
+            params.push(quote! {
+                <#ty as ::rocket_okapi::request::OpenApiFromSegments>::path_multi_parameter(gen, #arg.to_owned())?.into()
+            })
+        }
     }
     // Query parameters: `/?<id>&<name>`
     for arg in route.query_params() {
+        // Skip all attributes that are in ignore list.
+        if entry_attributes.ignore.contains(&arg.to_owned()) {
+            ignored_names.push(arg.to_owned());
+            continue;
+        }
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
-                compile_error!(concat!("Could not find argument ", #arg, " matching query param."));
+                compile_error!(concat!("Could not find argument `", #arg, "` matching query param."));
             }
             .into(),
         };
@@ -173,10 +203,15 @@ fn create_route_operation_fn(
     }
     // Multi Query parameters: `/?<param..>`
     for arg in route.query_multi_params() {
+        // Skip all attributes that are in ignore list.
+        if entry_attributes.ignore.contains(&arg.to_owned()) {
+            ignored_names.push(arg.to_owned());
+            continue;
+        }
         let ty = match arg_types.get(arg) {
             Some(ty) => ty,
             None => return quote! {
-                compile_error!(concat!("Could not find argument ", #arg, " matching multi query param."));
+                compile_error!(concat!("Could not find argument `", #arg, "` matching multi query param."));
             }.into(),
         };
         params_names_used.push(arg.to_owned());
@@ -208,6 +243,11 @@ fn create_route_operation_fn(
     // https://rocket.rs/v0.5-rc/guide/requests/#request-guards
     // Request Guards is every that is not already used and thus not in `params_names_used`.
     for (arg, ty) in &arg_types {
+        // Skip all attributes that are in ignore list.
+        if entry_attributes.ignore.contains(arg) {
+            ignored_names.push(arg.to_owned());
+            continue;
+        }
         if !params_names_used.contains(arg) {
             params_names_used.push(arg.to_owned());
             params_request_guards.push(quote! {
@@ -215,6 +255,20 @@ fn create_route_operation_fn(
             });
             request_guard_responses.push(quote! {
                 <#ty as ::rocket_okapi::request::OpenApiFromRequest>::get_responses(gen)?.into()
+            });
+        }
+    }
+
+    // Check if everything in ignore list is actually found.
+    for ignore_arg in &entry_attributes.ignore {
+        if !ignored_names.contains(ignore_arg) {
+            // Create compile error
+            return TokenStream::from(quote! {
+                compile_error!(concat!(
+                    "The argument `",
+                    #ignore_arg,
+                    "` does not exist and thus can not be ignored."
+                ));
             });
         }
     }
@@ -238,8 +292,9 @@ fn create_route_operation_fn(
         None => quote!(None),
     };
 
-    let tags = tags
-        .into_iter()
+    let tags = entry_attributes
+        .tags
+        .iter()
         .map(|tag| quote!(#tag.to_owned()))
         .collect::<Vec<_>>();
 

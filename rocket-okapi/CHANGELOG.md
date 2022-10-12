@@ -5,6 +5,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ## Unreleased (2022-xx-xx)
 
 ### Added
+- Add `ignore` derive attribute to ignore function arguments from documentation. (#113)
 
 ### Changed
 

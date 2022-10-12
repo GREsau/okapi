@@ -75,7 +75,7 @@ where
     }
 }
 
-impl<'r, 'o, L, R> OpenApiResponderInner for either::Either<L, R>
+impl<L, R> OpenApiResponderInner for either::Either<L, R>
 where
     L: OpenApiResponderInner,
     R: OpenApiResponderInner,
@@ -195,7 +195,7 @@ impl OpenApiResponderInner for rocket::response::Redirect {
     }
 }
 
-impl<'r, 'o, T, E> OpenApiResponderInner for std::result::Result<T, E>
+impl<T, E> OpenApiResponderInner for std::result::Result<T, E>
 where
     T: OpenApiResponderInner,
     E: OpenApiResponderInner,
