@@ -182,9 +182,10 @@ pub fn get_openapi_route(
 ///
 /// Example:
 /// ```rust,ignore
+/// let settings = OpenApiSettings::default();
 /// let custom_route_spec = (vec![], custom_spec());
 /// mount_endpoints_and_merged_docs! {
-///     building_rocket, "/v1".to_owned(),
+///     building_rocket, "/v1".to_owned(), settings,
 ///     "/" => custom_route_spec,
 ///     "/post" => post::get_routes_and_docs(),
 ///     "/message" => message::get_routes_and_docs(),
