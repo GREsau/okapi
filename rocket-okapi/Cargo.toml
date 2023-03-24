@@ -2,7 +2,7 @@
 name = "rocket_okapi"
 description = "OpenAPI (AKA Swagger) document generation for Rocket applications"
 repository = "https://github.com/GREsau/okapi"
-version = "0.8.0-rc.2"
+version = "0.8.0-rc.3"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
 license = "MIT"
@@ -11,7 +11,7 @@ keywords = ["rust", "openapi", "swagger", "rocket"]
 categories = ["web-programming"]
 
 [dependencies]
-rocket = { version = "=0.5.0-rc.2", default-features = false, features = ["json"] }
+rocket = { version = "=0.5.0-rc.3", default-features = false, features = ["json"] }
 schemars = { version = "0.8.10" }
 okapi = { version = "0.7.0-rc.1", path = "../okapi" }
 rocket_okapi_codegen = { version = "=0.8.0-rc.2", path = "../rocket-okapi-codegen" }
@@ -23,11 +23,11 @@ log = "0.4"
 # time = { version = "0.2.27" }
 # Rocket dependency but not re-exported
 either = "1"
-rocket_dyn_templates = { version = "=0.1.0-rc.2", optional = true }
-rocket_db_pools = { version = "=0.1.0-rc.2", optional = true }
+rocket_dyn_templates = { version = "=0.1.0-rc.3", optional = true }
+rocket_db_pools = { version = "=0.1.0-rc.3", optional = true }
 
 [dev-dependencies]
-rocket_sync_db_pools = { version = "0.1.0-rc.2", features = ["diesel_sqlite_pool"] }
+rocket_sync_db_pools = { version = "0.1.0-rc.3", features = ["diesel_sqlite_pool"] }
 
 [features]
 default = ["preserve_order"]
