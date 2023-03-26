@@ -14,7 +14,7 @@ categories = ["web-programming"]
 rocket = { version = "=0.5.0-rc.3", default-features = false, features = ["json"] }
 schemars = { version = "0.8.10" }
 okapi = { version = "0.7.0-rc.1", path = "../okapi" }
-rocket_okapi_codegen = { version = "=0.8.0-rc.2", path = "../rocket-okapi-codegen" }
+rocket_okapi_codegen = { version = "=0.8.0-rc.3", path = "../rocket-okapi-codegen" }
 serde = "1.0"
 serde_json = "1.0"
 log = "0.4"
