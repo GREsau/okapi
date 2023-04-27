@@ -27,6 +27,7 @@ rocket_dyn_templates = { version = "=0.1.0-rc.2", optional = true }
 rocket_db_pools = { version = "=0.1.0-rc.2", optional = true }
 
 [dev-dependencies]
+rocket = { version = "=0.5.0-rc.2", default-features = false, features = ["json"] }
 rocket_sync_db_pools = { version = "0.1.0-rc.2", features = ["diesel_sqlite_pool"] }
 
 [features]

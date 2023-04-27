@@ -27,6 +27,9 @@ struct OpenApiAttribute {
     /// Ignore certain parameters from the function and do not include them in the documentation.
     #[darling(multiple)]
     pub ignore: Vec<String>,
+
+    /// Mark this operation as deprecated in the documentation.
+    pub deprecated: bool,
 }
 
 pub fn parse(args: TokenStream, input: TokenStream) -> TokenStream {
@@ -297,6 +300,7 @@ fn create_route_operation_fn(
         .iter()
         .map(|tag| quote!(#tag.to_owned()))
         .collect::<Vec<_>>();
+    let deprecated = entry_attributes.deprecated;
 
     TokenStream::from(quote! {
         #[doc(hidden)]
@@ -368,6 +372,7 @@ fn create_route_operation_fn(
                     description: #desc,
                     security,
                     tags: vec![#(#tags),*],
+                    deprecated: #deprecated,
                     ..Default::default()
                 },
             });
