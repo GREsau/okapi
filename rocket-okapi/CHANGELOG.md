@@ -2,11 +2,26 @@
 All notable changes to this project will be documented in this file.
 This project follows the [Semantic Versioning standard](https://semver.org/).
 
-## Unreleased (2022-xx-xx)
+## Unreleased (2023-xx-xx)
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## Version 0.8.0-rc.3 (2023-05-29)
 
 ### Added
 - Add `ignore` derive attribute to ignore function arguments from documentation. (#113)
-- `operation_id` can now be overwritten using `#[openapi(operation_id = "my_custom_id")]` but it has to be unique in the API spec. (#63)
+- `operation_id` can now be overwritten using `#[openapi(operation_id = "my_custom_id")]`,
+but it has to be unique in the API spec. (#63)
 - Added support for `#[openapi(deprecated)]` to mark endpoint as deprecated in spec. (#123)
 
 ### Changed
