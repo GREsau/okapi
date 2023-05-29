@@ -27,16 +27,10 @@ but it has to be unique in the API spec. (#63)
 ### Changed
 - `rocket-okapi` and `rocket-okapi-codegen` require `rocket v0.5.0-rc.3`. (#122)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - `mount_endpoints_and_merged_docs!` does avoid combined paths with double `/`.
 - Raw identifiers (`r#type`) can now be used in parameters. (#117)
 - `rocket::form::Form<T>` now set requested data as "multipart/form-data". (#80)
-
-### Security
 
 ## Version 0.8.0-rc.2 (2022-06-07)
 
