@@ -6,8 +6,11 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Added
 - Add `ignore` derive attribute to ignore function arguments from documentation. (#113)
+- `operation_id` can now be overwritten using `#[openapi(operation_id = "my_custom_id")]` but it has to be unique in the API spec. (#63)
+- Added support for `#[openapi(deprecated)]` to mark endpoint as deprecated in spec. (#123)
 
 ### Changed
+- `rocket-okapi` and `rocket-okapi-codegen` require `rocket v0.5.0-rc.3`. (#122)
 
 ### Deprecated
 
@@ -15,6 +18,8 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Fixed
 - `mount_endpoints_and_merged_docs!` does avoid combined paths with double `/`.
+- Raw identifiers (`r#type`) can now be used in parameters. (#117)
+- `rocket::form::Form<T>` now set requested data as "multipart/form-data". (#80)
 
 ### Security
 
