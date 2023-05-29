@@ -23,9 +23,12 @@ struct OpenApiAttribute {
     /// Add tags to the entry to group them together.
     #[darling(multiple, rename = "tag")]
     pub tags: Vec<String>,
-  
+
     /// `operationId` is an optional unique string used to identify an operation.
     /// If provided, these IDs must be unique among all operations described in your API.
+    ///
+    /// `okapi` will always generate an `operation_id` similar to the function name,
+    /// so this should only be used if you want to overwrite this id.
     pub operation_id: Option<String>,
 
     /// Ignore certain parameters from the function and do not include them in the documentation.
@@ -304,11 +307,13 @@ fn create_route_operation_fn(
         .iter()
         .map(|tag| quote!(#tag.to_owned()))
         .collect::<Vec<_>>();
-  
+
     let deprecated = entry_attributes.deprecated;
-  
-    let operation_id = match attr.operation_id {
+
+    // In case the user has set a manual `operation_id` use that, otherwise use generated one.
+    let operation_id = match &entry_attributes.operation_id {
         Some(operation_id) => quote! { #operation_id.into() },
+        // Use value set by the variable set from the function below.
         None => quote! { operation_id },
     };
 
