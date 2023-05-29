@@ -23,6 +23,10 @@ struct OpenApiAttribute {
     /// Add tags to the entry to group them together.
     #[darling(multiple, rename = "tag")]
     pub tags: Vec<String>,
+  
+    /// `operationId` is an optional unique string used to identify an operation.
+    /// If provided, these IDs must be unique among all operations described in your API.
+    pub operation_id: Option<String>,
 
     /// Ignore certain parameters from the function and do not include them in the documentation.
     #[darling(multiple)]
@@ -300,13 +304,19 @@ fn create_route_operation_fn(
         .iter()
         .map(|tag| quote!(#tag.to_owned()))
         .collect::<Vec<_>>();
+  
     let deprecated = entry_attributes.deprecated;
+  
+    let operation_id = match attr.operation_id {
+        Some(operation_id) => quote! { #operation_id.into() },
+        None => quote! { operation_id },
+    };
 
     TokenStream::from(quote! {
         #[doc(hidden)]
         pub fn #fn_name(
             gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
-            op_id: String,
+            operation_id: String,
         ) -> ::rocket_okapi::Result<()> {
             let mut responses = <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?;
             // Add responses from Request Guards.
@@ -364,7 +374,7 @@ fn create_route_operation_fn(
                 path: #path.to_owned(),
                 method: ::rocket::http::Method::#method,
                 operation: ::rocket_okapi::okapi::openapi3::Operation {
-                    operation_id: Some(op_id),
+                    operation_id: Some(#operation_id),
                     responses,
                     request_body,
                     parameters,
