@@ -1,13 +1,13 @@
 use rocket::http::{ContentType, Method};
-use rocket::response::{content::Custom, Responder};
+use rocket::response::Responder;
 use rocket::route::{Handler, Outcome};
 use rocket::{Data, Request, Route};
 
-/// A content handler is a wrapper type around `rocket::response::Content`, which can be turned into
+/// A content handler is a wrapper type around `rocket::response::content`, which can be turned into
 /// a `rocket::Route` that serves the content with correct content-type.
 #[derive(Clone)]
 pub struct ContentHandler<R: AsRef<[u8]> + Clone + Send + Sync> {
-    content: Custom<R>,
+    content: (ContentType, R),
 }
 
 impl ContentHandler<String> {
@@ -16,7 +16,7 @@ impl ContentHandler<String> {
         let json =
             serde_json::to_string_pretty(content).expect("Could not serialize content as JSON.");
         ContentHandler {
-            content: Custom(ContentType::JSON, json),
+            content: (ContentType::JSON, json),
         }
     }
 }
@@ -26,7 +26,7 @@ impl ContentHandler<&'static [u8]> {
     /// `content_type`.
     pub fn bytes(content_type: ContentType, content: &'static [u8]) -> Self {
         ContentHandler {
-            content: Custom(content_type, content),
+            content: (content_type, content),
         }
     }
 }
@@ -36,7 +36,7 @@ impl ContentHandler<Vec<u8>> {
     /// `content_type`.
     pub fn bytes_owned(content_type: ContentType, content: Vec<u8>) -> Self {
         ContentHandler {
-            content: Custom(content_type, content),
+            content: (content_type, content),
         }
     }
 }
@@ -58,8 +58,7 @@ where
         if req.uri().path().ends_with('/') {
             Outcome::forward(data)
         } else {
-            let content: Custom<Vec<u8>> =
-                Custom(self.content.0.clone(), self.content.1.as_ref().into());
+            let content: (_, Vec<u8>) = (self.content.0.clone(), self.content.1.as_ref().into());
             match content.respond_to(req) {
                 Ok(response) => Outcome::Success(response),
                 Err(status) => Outcome::Failure(status),

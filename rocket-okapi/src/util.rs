@@ -108,7 +108,7 @@ pub fn add_media_type(
 /// Replaces the Content-Type for all responses with `content_type`.
 pub fn set_content_type(responses: &mut Responses, content_type: impl ToString) -> Result<()> {
     for ref mut resp_refor in responses.responses.values_mut() {
-        let response = ensure_not_ref(*resp_refor)?;
+        let response = ensure_not_ref(resp_refor)?;
         let content = &mut response.content;
         let mt = if content.values().len() == 1 {
             content.values().next().unwrap().clone()

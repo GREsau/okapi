@@ -1,3 +1,34 @@
+//! ### Example
+//! ```rust,no_run
+//! use rocket_okapi::settings::UrlObject;
+//! use rocket_okapi::rapidoc::{make_rapidoc, RapiDocConfig, GeneralConfig};
+//!
+//! fn get_rapi_docs() -> RapiDocConfig {
+//!     RapiDocConfig {
+//!         general: GeneralConfig {
+//!             spec_urls: get_urls(), // this is the only required field
+//!             ..Default::default()
+//!         },
+//!         ..Default::default()
+//!     }
+//! }
+//!
+//! fn get_urls() -> Vec<UrlObject> {
+//!     vec![
+//!         UrlObject::new("Resource", "/my_resource/openapi.json"),
+//!     ]
+//! }
+//!
+//! #[rocket::main]
+//! async fn main() {
+//!     rocket::build()
+//!         .mount("/rapi-doc", make_rapidoc(&get_rapi_docs()))
+//!         .launch()
+//!         .await
+//!         .unwrap();
+//! }
+//! ```
+
 use crate::handlers::{ContentHandler, RedirectHandler};
 use crate::settings::UrlObject;
 use rocket::http::ContentType;

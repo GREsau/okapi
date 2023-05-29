@@ -2,20 +2,23 @@ use super::OpenApiResponderInner;
 use crate::{
     gen::OpenApiGenerator,
     util::{
-        add_content_response, add_default_response_code, add_schema_response,
-        change_all_responses_to_default, ensure_status_code_exists, produce_any_responses,
-        set_content_type, set_status_code,
+        add_default_response_code, add_schema_response, change_all_responses_to_default,
+        ensure_status_code_exists, produce_any_responses, set_content_type, set_status_code,
     },
 };
 use okapi::openapi3::Responses;
 use rocket::serde::json::{Json, Value};
 use schemars::JsonSchema;
 use serde::Serialize;
+use std::sync::Arc;
 
 type Result = crate::Result<Responses>;
 
+// Implement `OpenApiResponderInner` for everything that implements `Responder`
 // Order is same as on:
-// https://docs.rs/rocket/0.5.0-rc.1/rocket/response/trait.Responder.html#foreign-impls
+// https://docs.rs/rocket/0.5.0-rc.2/rocket/response/trait.Responder.html#foreign-impls
+
+// ## Implementations on Foreign Types
 
 impl OpenApiResponderInner for &str {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
@@ -23,12 +26,9 @@ impl OpenApiResponderInner for &str {
     }
 }
 
-impl OpenApiResponderInner for String {
+impl OpenApiResponderInner for Arc<str> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        let schema = gen.json_schema::<String>();
-        add_schema_response(&mut responses, 200, "text/plain", schema)?;
-        Ok(responses)
+        <String>::responses(gen)
     }
 }
 
@@ -38,42 +38,21 @@ impl OpenApiResponderInner for &[u8] {
     }
 }
 
-impl OpenApiResponderInner for Vec<u8> {
-    fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        add_content_response(
-            &mut responses,
-            200,
-            "application/octet-stream",
-            okapi::openapi3::MediaType::default(),
-        )?;
-        Ok(responses)
+impl OpenApiResponderInner for Arc<[u8]> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
     }
 }
 
 impl OpenApiResponderInner for std::fs::File {
-    fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        add_content_response(
-            &mut responses,
-            200,
-            "application/octet-stream",
-            okapi::openapi3::MediaType::default(),
-        )?;
-        Ok(responses)
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
     }
 }
 
 impl OpenApiResponderInner for rocket::tokio::fs::File {
-    fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        add_content_response(
-            &mut responses,
-            200,
-            "application/octet-stream",
-            okapi::openapi3::MediaType::default(),
-        )?;
-        Ok(responses)
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
     }
 }
 
@@ -96,27 +75,7 @@ where
     }
 }
 
-impl<T: OpenApiResponderInner> OpenApiResponderInner for Option<T> {
-    fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = T::responses(gen)?;
-        ensure_status_code_exists(&mut responses, 404);
-        Ok(responses)
-    }
-}
-
-impl<'r, 'o, T, E> OpenApiResponderInner for std::result::Result<T, E>
-where
-    T: OpenApiResponderInner,
-    E: OpenApiResponderInner,
-{
-    fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let ok_responses = T::responses(gen)?;
-        let err_responses = E::responses(gen)?;
-        produce_any_responses(ok_responses, err_responses)
-    }
-}
-
-impl<'r, 'o, L, R> OpenApiResponderInner for either::Either<L, R>
+impl<L, R> OpenApiResponderInner for either::Either<L, R>
 where
     L: OpenApiResponderInner,
     R: OpenApiResponderInner,
@@ -155,6 +114,8 @@ impl<R: OpenApiResponderInner> OpenApiResponderInner for (rocket::http::Status, 
     }
 }
 
+// ## Implementors
+
 impl OpenApiResponderInner for Value {
     fn responses(_gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
@@ -178,6 +139,36 @@ impl OpenApiResponderInner for rocket::http::Status {
     }
 }
 
+impl OpenApiResponderInner for Box<[u8]> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
+    }
+}
+
+impl OpenApiResponderInner for Box<str> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <String>::responses(gen)
+    }
+}
+
+impl OpenApiResponderInner for String {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = Responses::default();
+        let schema = gen.json_schema::<String>();
+        add_schema_response(&mut responses, 200, "text/plain", schema)?;
+        Ok(responses)
+    }
+}
+
+impl OpenApiResponderInner for Vec<u8> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = Responses::default();
+        let schema = gen.json_schema::<Vec<u8>>();
+        add_schema_response(&mut responses, 200, "application/octet-stream", schema)?;
+        Ok(responses)
+    }
+}
+
 impl OpenApiResponderInner for rocket::response::status::NoContent {
     fn responses(_gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
@@ -195,6 +186,31 @@ impl OpenApiResponderInner for rocket::response::Redirect {
         set_status_code(&mut responses, 303)?; // See Other
         set_status_code(&mut responses, 307)?; // Temporary Redirect
         set_status_code(&mut responses, 308)?; // Permanent Redirect
+
+        // According to Rocket docs:
+        // > If the URI value used to create the `Responder` is an invalid URI,
+        // > an error of `Status::InternalServerError` is returned.
+        set_status_code(&mut responses, 500)?; // Internal Server Error
+        Ok(responses)
+    }
+}
+
+impl<T, E> OpenApiResponderInner for std::result::Result<T, E>
+where
+    T: OpenApiResponderInner,
+    E: OpenApiResponderInner,
+{
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let ok_responses = T::responses(gen)?;
+        let err_responses = E::responses(gen)?;
+        produce_any_responses(ok_responses, err_responses)
+    }
+}
+
+impl<T: OpenApiResponderInner> OpenApiResponderInner for Option<T> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = T::responses(gen)?;
+        ensure_status_code_exists(&mut responses, 404);
         Ok(responses)
     }
 }
@@ -213,14 +229,13 @@ macro_rules! response_content_wrapper {
     };
 }
 
-response_content_wrapper!(Css, "text/css");
-response_content_wrapper!(Custom, "*/*");
-response_content_wrapper!(Html, "text/html");
-response_content_wrapper!(JavaScript, "application/javascript");
-response_content_wrapper!(Json, "application/json");
-response_content_wrapper!(MsgPack, "application/msgpack");
-response_content_wrapper!(Plain, "text/plain");
-response_content_wrapper!(Xml, "text/xml");
+response_content_wrapper!(RawCss, "text/css");
+response_content_wrapper!(RawHtml, "text/html");
+response_content_wrapper!(RawJavaScript, "application/javascript");
+response_content_wrapper!(RawJson, "application/json");
+response_content_wrapper!(RawMsgPack, "application/msgpack");
+response_content_wrapper!(RawText, "text/plain");
+response_content_wrapper!(RawXml, "text/xml");
 
 macro_rules! status_responder {
     ($responder: ident, $status: literal) => {
@@ -306,14 +321,22 @@ impl<S> OpenApiResponderInner for rocket::response::stream::TextStream<S>
 where
     S: Send,
 {
-    fn responses(_gen: &mut OpenApiGenerator) -> Result {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = Responses::default();
-        add_content_response(
-            &mut responses,
-            200,
-            "text/plain; charset=utf-8",
-            okapi::openapi3::MediaType::default(),
-        )?;
+        let schema = gen.json_schema::<&str>();
+        add_schema_response(&mut responses, 200, "text/plain; charset=utf-8", schema)?;
+        Ok(responses)
+    }
+}
+
+/// `EventStream` is a (potentially infinite) responder.
+/// The response `Content-Type` is set to `EventStream`.
+/// The body is unsized, and values are sent as soon as they are yielded by the internal iterator.
+impl<S> OpenApiResponderInner for rocket::response::stream::EventStream<S> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = Responses::default();
+        let schema = gen.json_schema::<Vec<u8>>();
+        add_schema_response(&mut responses, 200, "text/event-stream", schema)?;
         Ok(responses)
     }
 }
@@ -346,5 +369,16 @@ impl<T: Serialize + JsonSchema + Send> OpenApiResponderInner
         // 500 status is not added because an endpoint can handle this, so it might never return
         // this error type.
         Ok(responses)
+    }
+}
+
+// From: https://api.rocket.rs/v0.5-rc/rocket_dyn_templates/struct.Template.html#impl-Responder%3C%27r%2C%20%27static%3E
+
+/// Response is set to `String` (so `text/plain`) because the actual return type is unknown
+/// at compile time. The content type depends on the file extension, but this can change at runtime.
+#[cfg(feature = "rocket_dyn_templates")]
+impl OpenApiResponderInner for rocket_dyn_templates::Template {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        String::responses(gen)
     }
 }

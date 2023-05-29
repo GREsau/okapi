@@ -2,9 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project follows the [Semantic Versioning standard](https://semver.org/).
 
-## Unreleased (2021-xx-xx)
+## Unreleased (2022-xx-xx)
 
 ### Added
+- Add `ignore` derive attribute to ignore function arguments from documentation. (#113)
 
 ### Changed
 
@@ -13,8 +14,55 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ### Removed
 
 ### Fixed
+- `mount_endpoints_and_merged_docs!` does avoid combined paths with double `/`.
 
 ### Security
+
+## Version 0.8.0-rc.2 (2022-06-07)
+
+Note that this update is a minor version update, but still contains breaking changes because the
+Rocket version had a minor update with breaking changes too. This will thus fix previous error
+because of incompatibility.
+
+### Added
+- Add support for `rocket::response::stream::EventStream<S>` (#52)
+- Update Rocket from `0.5.0-rc.1` to `0.5.0-rc.2`. (#89)
+- Updated Swagger UI to `v4.12.0`.
+- Updated RapiDoc to `v9.3.2`.
+- New Rocket feature flags `mtls` re-exposed.
+- Added support for new [`Responder`](https://docs.rs/rocket/0.5.0-rc.2/rocket/response/trait.Responder.html)
+  types (implemented `OpenApiResponderInner`):
+  - `Arc<str>`
+  - `Arc<[u8]>`
+  - `Box<[u8]>`
+  - `Box<str>`
+  - `rocket::response::Redirect` adds `500 Internal Server Error` status code.
+  - `rocket_dyn_templates::Template` (requires `rocket_dyn_templates` feature)
+    ([See example](../examples/dyn_templates/src/main.rs))
+  - Some other changes because of renamed types in Rocket.
+- Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0-rc.2/rocket/request/trait.FromRequest.html)
+  types (implemented `OpenApiFromRequest`):
+  - `rocket::http::uri::Host`
+  - `Certificate` (when `mtls` feature is enabled)
+  - `FlashMessage`
+  - `rocket_db_pools::Connection<D>` (when `rocket_db_pools` feature is enabled) (#104)
+- New feature flag `rocket_dyn_templates` for enable compatibility with
+[`rocket_dyn_templates`](https://crates.io/crates/rocket_dyn_templates).
+- New feature flag `rocket_db_pools` for enable compatibility with
+[`rocket_db_pools`](https://crates.io/crates/rocket_db_pools).
+- New example for Rocket's Dynamic Templates.
+
+### Changed
+- Changed `Data<'r>` from `String` type is binary data (`Vec<u8>`) in `FromData` implementation. (#65)
+- Fixed missing of schema for `EventStream` and `TextStream`. (#86)
+- Generated functions are no longer included in Rust Documentation. (#69)
+
+### Fixed
+- Response schema added for `Vec<u8>`, `&[u8]`, `std::fs::File` and other octet-streams. (#72)
+- Fix support for Streams: (#68)
+   - `rocket::response::stream::ByteStream<S>`
+   - `rocket::response::stream::ReaderStream<S>`
+   - `rocket::response::stream::TextStream<S>`
 
 ## Version 0.8.0-rc.1 (2021-10-02)
 
@@ -86,7 +134,7 @@ types (implemented `OpenApiFromData`):
 (Re-exposing Rocket feature flag)
 - Added support for [Request Guards](https://rocket.rs/v0.4/guide/requests/#request-guards)
 and [Security Scheme](https://swagger.io/docs/specification/authentication/)
-(aka Authentication and Authorization) (#47, #9, #8, #56)
+(aka Authentication and Authorization) (#47, #9, #8, #56)
 - Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0-rc.1/rocket/request/trait.FromRequest.html)
   types (implemented `OpenApiFromRequest`):
   - `std::net::IpAddr`

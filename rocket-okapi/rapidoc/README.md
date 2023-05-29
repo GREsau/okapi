@@ -14,4 +14,7 @@ All files are located in the folder `/RapiDoc-x.x.x/dist/`:
 
 The file `index.html` is custom for `rocket-okapi` and thus should not be replaced.
 
+The `index.html` and `rocket-okapi/src/rapidoc.rs` should be update to support new tags added.
+It should thus be compared with https://rapidocweb.com/api.html
+
 Make sure you also document the update in the changelog.

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::fmt::Display;
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
 pub struct MergeError {
     pub msg: String,
 }
@@ -88,7 +88,15 @@ pub fn merge_paths<S: Display>(
     // (if key does not already exists)
     for (key, value) in s2 {
         let new_key = if key.starts_with('/') {
-            format!("{}{}", path_prefix, key)
+            // Check if both the prefix ends with a `/` and key starts with one.
+            let mut path_prefix = path_prefix.to_string();
+            if path_prefix.ends_with('/') {
+                // Avoid a double `/`
+                path_prefix.pop();
+                format!("{}{}", path_prefix, key)
+            } else {
+                format!("{}{}", path_prefix, key)
+            }
         } else {
             log::error!(
                 "All routes should have a leading '/' but non found in `{}`.",

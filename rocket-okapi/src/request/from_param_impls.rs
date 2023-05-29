@@ -1,3 +1,6 @@
+//! Implement `OpenApiFromParam` for everything that implements `FromParam`
+//! https://docs.rs/rocket/0.5.0-rc.2/rocket/request/trait.FromParam.html#foreign-impls
+
 use super::OpenApiFromParam;
 use crate::gen::OpenApiGenerator;
 use okapi::openapi3::{Object, Parameter, ParameterValue};

@@ -1,50 +1,21 @@
-use rocket::http::Status;
-use rocket::{get, post, serde::json::Json};
-use rocket_okapi::okapi::schemars;
+use rocket::get;
+use rocket_dyn_templates::{context, Template};
 use rocket_okapi::settings::UrlObject;
 use rocket_okapi::{openapi, openapi_get_routes, rapidoc::*, swagger_ui::*};
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
 
-/// # Get data
-#[openapi(tag = "Users")]
-#[post("/get_date", data = "<req_body>")]
-fn get_data(req_body: Json<String>) -> Option<Json<()>> {
-    let _ = req_body;
-    Some(Json(()))
-}
-
-#[openapi]
-#[get("/paths/<path..>")]
-fn path_info(path: PathBuf) -> (rocket::http::Status, String) {
-    (rocket::http::Status::ImATeapot, format!("info {:?}", path))
-}
-
-#[openapi(tag = "Users")]
-#[post("/user", data = "<req_body>", format = "application/json")]
-fn create_user(req_body: Json<String>) -> Result<Json<User>, (Status, Json<ErrorMessage>)> {
-    let _ = req_body;
-    Ok(Json(User {
-        name: "bob".to_owned(),
-    }))
-}
-
-#[derive(Serialize, Deserialize, Debug, JsonSchema, Clone)]
-pub struct User {
-    name: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, JsonSchema)]
-pub struct ErrorMessage {
-    pub message: String,
-    pub code: u16,
+/// # Get Page
+///
+/// Returns a page by ID.
+#[openapi(tag = "Page")]
+#[get("/page?<name>")]
+fn get_page(name: String) -> Template {
+    Template::render("template-1", context! { name: name })
 }
 
 #[rocket::main]
 async fn main() {
     let launch_result = rocket::build()
-        .mount("/", openapi_get_routes![get_data, path_info, create_user])
+        .mount("/", openapi_get_routes![get_page])
         .mount(
             "/swagger-ui/",
             make_swagger_ui(&SwaggerUIConfig {
@@ -67,6 +38,7 @@ async fn main() {
                 ..Default::default()
             }),
         )
+        .attach(Template::fairing())
         .launch()
         .await;
     match launch_result {

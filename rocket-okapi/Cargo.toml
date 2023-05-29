@@ -2,7 +2,7 @@
 name = "rocket_okapi"
 description = "OpenAPI (AKA Swagger) document generation for Rocket applications"
 repository = "https://github.com/GREsau/okapi"
-version = "0.8.0-rc.1"
+version = "0.8.0-rc.3"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
 license = "MIT"
@@ -11,18 +11,23 @@ keywords = ["rust", "openapi", "swagger", "rocket"]
 categories = ["web-programming"]
 
 [dependencies]
-rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json"] }
-schemars = { version = "0.8" }
+rocket = { version = "=0.5.0-rc.3", default-features = false, features = ["json"] }
+schemars = { version = "0.8.10" }
 okapi = { version = "0.7.0-rc.1", path = "../okapi" }
-rocket_okapi_codegen = { version = "=0.8.0-rc.1", path = "../rocket-okapi-codegen" }
+rocket_okapi_codegen = { version = "=0.8.0-rc.3", path = "../rocket-okapi-codegen" }
 serde = "1.0"
 serde_json = "1.0"
 log = "0.4"
-# Rocket dependencie but not re-exposed (update to 0.3 is Rocket master)
+# Rocket dependency but not re-exported
 # See issue: https://github.com/GREsau/schemars/issues/104
 # time = { version = "0.2.27" }
-# Rocket dependencie but not re-exposed
+# Rocket dependency but not re-exported
 either = "1"
+rocket_dyn_templates = { version = "=0.1.0-rc.3", optional = true }
+rocket_db_pools = { version = "=0.1.0-rc.3", optional = true }
+
+[dev-dependencies]
+rocket_sync_db_pools = { version = "0.1.0-rc.3", features = ["diesel_sqlite_pool"] }
 
 [features]
 default = ["preserve_order"]
@@ -37,9 +42,15 @@ swagger = []
 rapidoc = []
 # Allow the use of UUIDs
 uuid = ["rocket/uuid", "schemars/uuid"]
-# Re-expost Rocket feature flag
-# https://docs.rs/rocket/0.5.0-rc.1/rocket/serde/msgpack/struct.MsgPack.html
+# Re-export Rocket feature flag
+# https://docs.rs/rocket/0.5.0-rc.2/rocket/serde/msgpack/struct.MsgPack.html
 msgpack = ["rocket/msgpack"]
-# Re-expost Rocket feature flag
+# Re-export Rocket feature flag
 # https://rocket.rs/v0.5-rc/guide/requests/#secret-key
 secrets = ["rocket/secrets"]
+# Re-export Rocket feature flag
+# https://rocket.rs/v0.5-rc/guide/configuration/#mutual-tls
+mtls = ["rocket/mtls"]
+
+[package.metadata.docs.rs]
+features = ["swagger", "rapidoc"]

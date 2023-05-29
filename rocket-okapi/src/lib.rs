@@ -9,10 +9,10 @@
 //! First, add the following lines to your `Cargo.toml`
 //! ```toml
 //! [dependencies]
-//! rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json"] }
-//! schemars = "0.8"
-//! okapi = { version = "0.6.0-alpha-1" }
-//! rocket_okapi = { version = "0.8.0-alpha-1", features = ["swagger"] }
+//! rocket = { version = "0.5.0-rc.2", default-features = false, features = ["json"] }
+//! schemars = "0.8.10"
+//! okapi = { version = "0.7.0-rc.1" }
+//! rocket_okapi = { version = "0.8.0-rc.2", features = ["swagger"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
 //! response types of the endpoint must implement `JsonSchema`. Secondly, the function must be
@@ -69,6 +69,47 @@
 //! - `openapi_get_routes![...]`: `Vec<rocket::Route>` (adds route for `openapi.json`)
 //! - `openapi_get_routes_spec![...]`: `(Vec<rocket::Route>, okapi::openapi3::OpenApi)`
 //! - `openapi_get_spec![...]`: `okapi::openapi3::OpenApi`
+//!
+//! ## FAQ
+//!
+//! - **Q: My (diesel) database does not implement `OpenApiFromRequest`.**<br/>
+//! A: This is because the parameter does not show up in the path, query or body.
+//! So this is considered a [Request Guard](https://rocket.rs/v0.5-rc/guide/requests/#request-guards).
+//! There is a [derive macro](https://github.com/GREsau/okapi/blob/master/examples/secure_request_guard/src/no_auth.rs)
+//! for this, but this does not work in combination with the `#[database("...")]` marco.
+//! You can solve this my implementing it manually, like this:
+//!
+//! ```rust, no_run
+//! use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
+//! use rocket_okapi::gen::OpenApiGenerator;
+//! use rocket_sync_db_pools::{diesel, database};
+//!
+//! #[database("sqlite_logs")]
+//! pub struct MyDB(diesel::SqliteConnection);
+//!
+//! impl<'r> OpenApiFromRequest<'r> for MyDB {
+//!     fn from_request_input(
+//!         _gen: &mut OpenApiGenerator,
+//!         _name: String,
+//!         _required: bool,
+//!     ) -> rocket_okapi::Result<RequestHeaderInput> {
+//!         Ok(RequestHeaderInput::None)
+//!     }
+//! }
+//! ```
+//! - **Q: ... does not implement `JsonSchema`?**<br/>
+//! A: The [`JsonSchema`](https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html) implementation
+//! is handled by [`Schemars`][Schemars], make sure you enabled the right
+//! [feature flags](https://github.com/GREsau/schemars#optional-dependencies) for it.
+//! If it is still not implemented open an issue in the `Schemars` repo.
+//!
+//!
+//! - **Q: Can I add custom data to my OpenAPI spec?**<br/>
+//! A: Yes, see the [Custom Schema](examples/custom_schema) example. Okapi also has build in functions
+//! if you want to merge the [`OpenAPI`](https://docs.rs/okapi/latest/okapi/openapi3/struct.OpenApi.html)
+//! objects manually.
+//!
+//! - More FAQ questions and answers in [README.md](https://github.com/GREsau/okapi#readme).
 //!
 
 mod error;
@@ -131,7 +172,7 @@ pub fn get_openapi_route(
 /// The macro expects the following arguments:
 /// - rocket_builder: `Rocket<Build>`,
 /// - base_path: `&str`, `String` or [`Uri`](rocket::http::uri::Uri). (Anything that implements `ToString`)
-/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0-rc.1/rocket/struct.Rocket.html#method.mount)
+/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0-rc.2/rocket/struct.Rocket.html#method.mount)
 /// - openapi_settings: `OpenApiSettings` (use `OpenApiSettings::default()` if default settings are okay for you),
 /// - List of (0 or more):
 ///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).
@@ -141,9 +182,10 @@ pub fn get_openapi_route(
 ///
 /// Example:
 /// ```rust,ignore
+/// let settings = OpenApiSettings::default();
 /// let custom_route_spec = (vec![], custom_spec());
 /// mount_endpoints_and_merged_docs! {
-///     building_rocket, "/v1".to_owned(),
+///     building_rocket, "/v1".to_owned(), settings,
 ///     "/" => custom_route_spec,
 ///     "/post" => post::get_routes_and_docs(),
 ///     "/message" => message::get_routes_and_docs(),

@@ -11,6 +11,10 @@ use std::collections::HashMap;
 /// A struct that visits all `rocket::Route`s, and aggregates information about them.
 #[derive(Debug, Clone)]
 pub struct OpenApiGenerator {
+    // TODO: This tag should be removed in the future and settings should be used.
+    // This `allow` is just added in the mean time to make sure alle other test
+    // will be finished correctly.
+    #[allow(dead_code)]
     settings: OpenApiSettings,
     schema_generator: SchemaGenerator,
     security_schemes: Map<String, SecurityScheme>,

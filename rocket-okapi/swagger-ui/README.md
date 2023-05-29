@@ -11,14 +11,16 @@ Download the latest release: https://github.com/swagger-api/swagger-ui/releases/
 Copy the following file from the downloaded archive.
 All files are located in the folder `/swagger-ui-x.xx.x/dist/`:
  - index.html
+ - index.css
  - oauth2-redirect.html
  - swagger-ui-bundle.js
  - swagger-ui-standalone-preset.js
  - swagger-ui.css
+ - swagger-initializer.js
 
-The file `index.html` needs to be update to point to the correct json file:
+The file `swagger-initializer.js` needs to be update to point to the correct json file:
 ```diff
-    const ui = SwaggerUIBundle({
+    window.ui = SwaggerUIBundle({
 +       configUrl: "./swagger-ui-config.json",
 -       url: "https://petstore.swagger.io/v2/swagger.json",
         dom_id: '#swagger-ui',
