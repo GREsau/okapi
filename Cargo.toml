@@ -11,4 +11,5 @@ members = [
     "examples/streams",
     "examples/dyn_templates",
     "examples/openapi_attributes",
+    "examples/raw_identifiers",
 ]

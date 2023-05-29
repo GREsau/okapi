@@ -57,7 +57,7 @@ fn create_add_operations(paths: Punctuated<Path, Comma>) -> TokenStream2 {
 }
 
 fn fn_name_for_add_operation(mut fn_path: Path) -> Path {
-    let mut last_seg = fn_path.segments.last_mut().expect("syn::Path has segments");
+    let last_seg = fn_path.segments.last_mut().expect("syn::Path has segments");
     last_seg.ident = get_add_operation_fn_name(&last_seg.ident);
     fn_path
 }

@@ -9,6 +9,7 @@ use quote::quote;
 use quote::ToTokens;
 use rocket_http::Method;
 use std::collections::BTreeMap as Map;
+use syn::ext::IdentExt;
 use syn::{
     parse_macro_input, AttributeArgs, FnArg, GenericArgument, Ident, ItemFn, PathArguments,
     PathSegment, ReturnType, Type, TypeTuple,
@@ -416,7 +417,9 @@ fn get_arg_types(args: impl Iterator<Item = FnArg>) -> Map<String, Type> {
         if let syn::FnArg::Typed(arg) = arg {
             if let syn::Pat::Ident(ident) = *arg.pat {
                 // Use only identifier name as key, so lookups succeed even if argument is mutable
-                let name = ident.ident.into_token_stream().to_string();
+                // The `unraw()` strips the raw marker r#, if any, from the beginning of an ident.
+                // This fixed https://github.com/GREsau/okapi/issues/117
+                let name = ident.ident.unraw().into_token_stream().to_string();
                 let ty = *arg.ty;
                 result.insert(name, ty);
             }
