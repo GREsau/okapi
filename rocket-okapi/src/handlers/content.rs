@@ -1,4 +1,4 @@
-use rocket::http::{ContentType, Method};
+use rocket::http::{ContentType, Method, Status};
 use rocket::response::Responder;
 use rocket::route::{Handler, Outcome};
 use rocket::{Data, Request, Route};
@@ -56,12 +56,12 @@ where
     async fn handle<'r>(&self, req: &'r Request<'_>, data: Data<'r>) -> Outcome<'r> {
         // match e.g. "/index.html" but not "/index.html/"
         if req.uri().path().ends_with('/') {
-            Outcome::forward(data)
+            Outcome::forward(data, Status::PermanentRedirect)
         } else {
             let content: (_, Vec<u8>) = (self.content.0.clone(), self.content.1.as_ref().into());
             match content.respond_to(req) {
                 Ok(response) => Outcome::Success(response),
-                Err(status) => Outcome::Failure(status),
+                Err(status) => Outcome::Error(status),
             }
         }
     }

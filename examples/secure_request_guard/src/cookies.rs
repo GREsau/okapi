@@ -6,6 +6,7 @@ use rocket::{
     get,
     request::{self, FromRequest},
 };
+use rocket::http::Status;
 use rocket_okapi::okapi::openapi3::{Object, Parameter, ParameterValue};
 use rocket_okapi::{
     gen::OpenApiGenerator,
@@ -27,7 +28,7 @@ impl<'a> FromRequest<'a> for CookieAuth {
             .get_private("user_id") // Requires "secrets" feature flag
             .and_then(|cookie| cookie.value().parse().ok())
             .map(CookieAuth)
-            .or_forward(())
+            .or_forward(Status::Unauthorized)
     }
 }
 
