@@ -1,12 +1,12 @@
 //! ------ Just Cookies (for just 1 route/endpoint) ------
 
+use rocket::http::Status;
 use rocket::outcome::IntoOutcome;
 use rocket::serde::json::Json;
 use rocket::{
     get,
     request::{self, FromRequest},
 };
-use rocket::http::Status;
 use rocket_okapi::okapi::openapi3::{Object, Parameter, ParameterValue};
 use rocket_okapi::{
     gen::OpenApiGenerator,
