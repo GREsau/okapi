@@ -9,7 +9,7 @@ authors = [
 edition = "2018"
 
 [dependencies]
-rocket = { version = "=0.5.0-rc.4", default-features = false, features = ["json", "uuid"] }
+rocket = { version = "=0.5.0", default-features = false, features = ["json", "uuid"] }
 schemars = { version = "0.8", features = ["uuid1"] }
 rocket_okapi = { path = "../../rocket-okapi", features = ["swagger", "rapidoc", "uuid"] }
 serde = "1.0"
