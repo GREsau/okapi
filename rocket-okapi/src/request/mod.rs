@@ -88,7 +88,7 @@ pub use rocket_okapi_codegen::OpenApiFromRequest;
 /// Trait that needs to be implemented for all types that implement
 /// [`FromRequest`](rocket::request::FromRequest).
 /// This trait specifies what headers or other parameters are required for this
-/// [Request Guards](https://rocket.rs/v0.5-rc/guide/requests/#request-guards)
+/// [Request Guards](https://rocket.rs/v0.5/guide/requests/#request-guards)
 /// to be validated successfully.
 ///
 /// If it does not quire any headers or parameters you can use the derive macro:

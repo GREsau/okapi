@@ -35,7 +35,7 @@ macro_rules! fn_request_body {
 
 // Implement `OpenApiFromData` for everything that implements `FromData`
 // Order is same as on:
-// https://docs.rs/rocket/0.5.0-rc.2/rocket/data/trait.FromData.html#foreign-impls
+// https://docs.rs/rocket/0.5.0/rocket/data/trait.FromData.html#foreign-impls
 
 // ## Implementations on Foreign Types
 
@@ -45,41 +45,29 @@ impl<'r> OpenApiFromData<'r> for &'r str {
     }
 }
 
-impl<'r> OpenApiFromData<'r> for Cow<'r, str> {
-    fn request_body(gen: &mut OpenApiGenerator) -> Result {
-        <&'r str>::request_body(gen)
-    }
-}
-
 impl<'r> OpenApiFromData<'r> for &'r [u8] {
     fn request_body(gen: &mut OpenApiGenerator) -> Result {
         Vec::<u8>::request_body(gen)
     }
 }
 
+impl<'r> OpenApiFromData<'r> for Cow<'r, str> {
+    fn request_body(gen: &mut OpenApiGenerator) -> Result {
+        <&'r str>::request_body(gen)
+    }
+}
+
 // ## Implementors
 
-// Waiting for https://github.com/GREsau/schemars/issues/103
-impl<'r> OpenApiFromData<'r> for rocket::fs::TempFile<'r> {
+// See: https://github.com/GREsau/schemars/issues/103
+impl<'r> OpenApiFromData<'r> for &'r rocket::http::RawStr {
     fn request_body(gen: &mut OpenApiGenerator) -> Result {
         Vec::<u8>::request_body(gen)
     }
 }
 
-impl<'r> OpenApiFromData<'r> for rocket::data::Capped<rocket::fs::TempFile<'r>> {
-    fn request_body(gen: &mut OpenApiGenerator) -> Result {
-        rocket::fs::TempFile::request_body(gen)
-    }
-}
-
-impl<'r> OpenApiFromData<'r> for rocket::data::Capped<Cow<'r, str>> {
-    fn request_body(gen: &mut OpenApiGenerator) -> Result {
-        <Cow<'r, str>>::request_body(gen)
-    }
-}
-
-// See: https://github.com/GREsau/schemars/issues/103
-impl<'r> OpenApiFromData<'r> for &'r rocket::http::RawStr {
+// Waiting for https://github.com/GREsau/schemars/issues/103
+impl<'r> OpenApiFromData<'r> for rocket::fs::TempFile<'_> {
     fn request_body(gen: &mut OpenApiGenerator) -> Result {
         Vec::<u8>::request_body(gen)
     }
@@ -113,6 +101,18 @@ impl<'r> OpenApiFromData<'r> for rocket::data::Capped<&'r rocket::http::RawStr> 
 impl<'r> OpenApiFromData<'r> for rocket::data::Capped<&'r [u8]> {
     fn request_body(gen: &mut OpenApiGenerator) -> Result {
         <&'r [u8]>::request_body(gen)
+    }
+}
+
+impl<'r> OpenApiFromData<'r> for rocket::data::Capped<rocket::fs::TempFile<'_>> {
+    fn request_body(gen: &mut OpenApiGenerator) -> Result {
+        rocket::fs::TempFile::request_body(gen)
+    }
+}
+
+impl<'r> OpenApiFromData<'r> for rocket::data::Capped<Cow<'_, str>> {
+    fn request_body(gen: &mut OpenApiGenerator) -> Result {
+        <Cow<'r, str>>::request_body(gen)
     }
 }
 

@@ -35,7 +35,7 @@ impl<'a> FromRequest<'a> for HttpAuth {
             }
             None => Outcome::Error((Status::BadRequest, "Missing `Authorization` header.")),
         }
-        // For more info see: https://rocket.rs/v0.5-rc/guide/state/#within-guards
+        // For more info see: https://rocket.rs/v0.5/guide/state/#within-guards
     }
 }
 

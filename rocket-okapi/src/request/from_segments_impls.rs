@@ -1,5 +1,5 @@
 //! Implement `OpenApiFromSegments` for everything that implements `FromSegments`
-//! https://docs.rs/rocket/0.5.0-rc.2/rocket/request/trait.FromSegments.html#foreign-impls
+//! <https://docs.rs/rocket/0.5.0/rocket/request/trait.FromSegments.html#foreign-impls>
 
 use super::OpenApiFromSegments;
 use crate::gen::OpenApiGenerator;

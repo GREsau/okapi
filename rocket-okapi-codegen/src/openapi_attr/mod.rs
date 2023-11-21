@@ -138,7 +138,7 @@ fn create_route_operation_fn(
     // ----- Check route info -----
 
     // -- Parse Query Strings --
-    // https://rocket.rs/v0.5-rc/guide/requests/#query-strings
+    // https://rocket.rs/v0.5/guide/requests/#query-strings
     let mut params = Vec::new();
     let mut params_nested_list = Vec::new();
     let mut params_request_guards = Vec::new();
@@ -232,7 +232,7 @@ fn create_route_operation_fn(
     }
 
     // -- Body Data --
-    // https://rocket.rs/v0.5-rc/guide/requests/#body-data
+    // https://rocket.rs/v0.5/guide/requests/#body-data
     let request_body = match &route.data_param {
         Some(data_param) => {
             let ty = match arg_types.get(data_param) {
@@ -251,7 +251,7 @@ fn create_route_operation_fn(
     };
 
     // -- Request Guards --
-    // https://rocket.rs/v0.5-rc/guide/requests/#request-guards
+    // https://rocket.rs/v0.5/guide/requests/#request-guards
     // Request Guards is every that is not already used and thus not in `params_names_used`.
     for (arg, ty) in &arg_types {
         // Skip all attributes that are in ignore list.

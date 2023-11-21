@@ -5,7 +5,7 @@ use std::result::Result as StdResult;
 
 // Implement `OpenApiFromRequest` for everything that implements `FromRequest`
 // Order is same as on:
-// https://docs.rs/rocket/0.5.0-rc.2/rocket/request/trait.FromRequest.html#foreign-impls
+// https://docs.rs/rocket/0.5.0/rocket/request/trait.FromRequest.html#foreign-impls
 
 type Result = crate::Result<RequestHeaderInput>;
 
@@ -174,8 +174,16 @@ impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r> for StdResult<T, T::E
     }
 }
 
+impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r>
+    for rocket::request::Outcome<T, T::Error>
+{
+    fn from_request_input(gen: &mut OpenApiGenerator, name: String, required: bool) -> Result {
+        T::from_request_input(gen, name, required)
+    }
+}
+
 // ## Implementations for other crates
-// https://docs.rs/rocket_db_pools/0.1.0-rc.2/rocket_db_pools/struct.Connection.html#impl-FromRequest%3C%27r%3E
+// https://docs.rs/rocket_db_pools/0.1.0/rocket_db_pools/struct.Connection.html#impl-FromRequest%3C%27r%3E
 
 #[cfg(feature = "rocket_db_pools")]
 impl<'r, D: rocket_db_pools::Database> OpenApiFromRequest<'r> for rocket_db_pools::Connection<D> {

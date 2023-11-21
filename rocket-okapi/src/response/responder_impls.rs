@@ -16,25 +16,21 @@ type Result = crate::Result<Responses>;
 
 // Implement `OpenApiResponderInner` for everything that implements `Responder`
 // Order is same as on:
-// https://docs.rs/rocket/0.5.0-rc.2/rocket/response/trait.Responder.html#foreign-impls
+// https://docs.rs/rocket/0.5.0/rocket/response/trait.Responder.html#foreign-impls
 
 // ## Implementations on Foreign Types
 
-impl OpenApiResponderInner for &str {
-    fn responses(gen: &mut OpenApiGenerator) -> Result {
-        <String>::responses(gen)
+impl OpenApiResponderInner for () {
+    fn responses(_: &mut OpenApiGenerator) -> Result {
+        let mut responses = Responses::default();
+        ensure_status_code_exists(&mut responses, 200);
+        Ok(responses)
     }
 }
 
 impl OpenApiResponderInner for Arc<str> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         <String>::responses(gen)
-    }
-}
-
-impl OpenApiResponderInner for &[u8] {
-    fn responses(gen: &mut OpenApiGenerator) -> Result {
-        <Vec<u8>>::responses(gen)
     }
 }
 
@@ -50,28 +46,29 @@ impl OpenApiResponderInner for std::fs::File {
     }
 }
 
+impl OpenApiResponderInner for std::io::Error {
+    fn responses(_gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = Responses::default();
+        ensure_status_code_exists(&mut responses, 500);
+        Ok(responses)
+    }
+}
+
 impl OpenApiResponderInner for rocket::tokio::fs::File {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         <Vec<u8>>::responses(gen)
     }
 }
 
-impl OpenApiResponderInner for () {
-    fn responses(_: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        ensure_status_code_exists(&mut responses, 200);
-        Ok(responses)
+impl OpenApiResponderInner for &str {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <String>::responses(gen)
     }
 }
 
-impl<'r, 'o: 'r, T> OpenApiResponderInner for std::borrow::Cow<'o, T>
-where
-    T: OpenApiResponderInner + Clone,
-{
+impl OpenApiResponderInner for &[u8] {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = T::responses(gen)?;
-        ensure_status_code_exists(&mut responses, 200);
-        Ok(responses)
+        <Vec<u8>>::responses(gen)
     }
 }
 
@@ -84,14 +81,6 @@ where
         let left_responses = L::responses(gen)?;
         let right_responses = R::responses(gen)?;
         produce_any_responses(left_responses, right_responses)
-    }
-}
-
-impl OpenApiResponderInner for std::io::Error {
-    fn responses(_gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = Responses::default();
-        ensure_status_code_exists(&mut responses, 500);
-        Ok(responses)
     }
 }
 
@@ -110,6 +99,17 @@ impl<R: OpenApiResponderInner> OpenApiResponderInner for (rocket::http::Status, 
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         let mut responses = R::responses(gen)?;
         change_all_responses_to_default(&mut responses);
+        Ok(responses)
+    }
+}
+
+impl<'r, 'o: 'r, T> OpenApiResponderInner for std::borrow::Cow<'o, T>
+where
+    T: OpenApiResponderInner + Clone,
+{
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        let mut responses = T::responses(gen)?;
+        ensure_status_code_exists(&mut responses, 200);
         Ok(responses)
     }
 }
@@ -139,15 +139,15 @@ impl OpenApiResponderInner for rocket::http::Status {
     }
 }
 
-impl OpenApiResponderInner for Box<[u8]> {
-    fn responses(gen: &mut OpenApiGenerator) -> Result {
-        <Vec<u8>>::responses(gen)
-    }
-}
-
 impl OpenApiResponderInner for Box<str> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         <String>::responses(gen)
+    }
+}
+
+impl OpenApiResponderInner for Box<[u8]> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        <Vec<u8>>::responses(gen)
     }
 }
 
@@ -207,9 +207,9 @@ where
     }
 }
 
-impl<T: OpenApiResponderInner> OpenApiResponderInner for Option<T> {
+impl<R: OpenApiResponderInner> OpenApiResponderInner for Option<R> {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
-        let mut responses = T::responses(gen)?;
+        let mut responses = R::responses(gen)?;
         ensure_status_code_exists(&mut responses, 404);
         Ok(responses)
     }
@@ -217,11 +217,11 @@ impl<T: OpenApiResponderInner> OpenApiResponderInner for Option<T> {
 
 macro_rules! response_content_wrapper {
     ($responder: ident, $mime: literal) => {
-        impl<T: OpenApiResponderInner> OpenApiResponderInner
-            for rocket::response::content::$responder<T>
+        impl<R: OpenApiResponderInner> OpenApiResponderInner
+            for rocket::response::content::$responder<R>
         {
             fn responses(gen: &mut OpenApiGenerator) -> Result {
-                let mut responses = T::responses(gen)?;
+                let mut responses = R::responses(gen)?;
                 set_content_type(&mut responses, $mime)?;
                 Ok(responses)
             }
@@ -239,12 +239,12 @@ response_content_wrapper!(RawXml, "text/xml");
 
 macro_rules! status_responder {
     ($responder: ident, $status: literal) => {
-        impl<T> OpenApiResponderInner for rocket::response::status::$responder<T>
+        impl<R> OpenApiResponderInner for rocket::response::status::$responder<R>
         where
-            T: OpenApiResponderInner + Send,
+            R: OpenApiResponderInner + Send,
         {
             fn responses(gen: &mut OpenApiGenerator) -> Result {
-                let mut responses = T::responses(gen)?;
+                let mut responses = R::responses(gen)?;
                 set_status_code(&mut responses, $status)?;
                 Ok(responses)
             }
@@ -270,12 +270,21 @@ where
     }
 }
 
-impl<R> OpenApiResponderInner for rocket::data::Capped<R>
+impl<T> OpenApiResponderInner for std::boxed::Box<T>
 where
-    R: OpenApiResponderInner,
+    T: OpenApiResponderInner,
 {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
-        R::responses(gen)
+        T::responses(gen)
+    }
+}
+
+impl<T> OpenApiResponderInner for rocket::data::Capped<T>
+where
+    T: OpenApiResponderInner,
+{
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        T::responses(gen)
     }
 }
 
@@ -372,7 +381,7 @@ impl<T: Serialize + JsonSchema + Send> OpenApiResponderInner
     }
 }
 
-// From: https://api.rocket.rs/v0.5-rc/rocket_dyn_templates/struct.Template.html#impl-Responder%3C%27r%2C%20%27static%3E
+// From: https://docs.rs/rocket_dyn_templates/latest/rocket_dyn_templates/struct.Template.html#impl-Responder%3C'r,+'static%3E-for-Template
 
 /// Response is set to `String` (so `text/plain`) because the actual return type is unknown
 /// at compile time. The content type depends on the file extension, but this can change at runtime.

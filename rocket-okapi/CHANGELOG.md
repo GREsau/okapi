@@ -5,8 +5,15 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ## Unreleased (2023-xx-xx)
 
 ### Added
+- Added support for new [`Responder`](https://docs.rs/rocket/0.5.0/rocket/response/trait.Responder.html)
+  types (implemented `OpenApiResponderInner`):
+  - `Box<T>`
+- Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0/rocket/request/trait.FromRequest.html)
+  types (implemented `OpenApiFromRequest`):
+  - `rocket::request::Outcome<T, T::Error>`
 
 ### Changed
+- `rocket-okapi` and `rocket-okapi-codegen` require `rocket v0.5.0`. (#132)
 
 ### Deprecated
 

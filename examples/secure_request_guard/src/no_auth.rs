@@ -23,7 +23,7 @@ impl<'a> FromRequest<'a> for NoSpecialAuthentication {
 /// # No special authentication
 /// This is most often used then you have something that it not related to authentication.
 /// For example database connections, or other managed (static) data.
-/// <https://rocket.rs/v0.5-rc/guide/state/>
+/// <https://rocket.rs/v0.5/guide/state/>
 #[openapi]
 #[get("/no_auth")]
 pub fn no_special_auth(something: NoSpecialAuthentication) -> Json<&'static str> {

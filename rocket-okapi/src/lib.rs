@@ -9,10 +9,10 @@
 //! First, add the following lines to your `Cargo.toml`
 //! ```toml
 //! [dependencies]
-//! rocket = { version = "0.5.0-rc.2", default-features = false, features = ["json"] }
-//! schemars = "0.8.10"
+//! rocket = { version = "0.5.0", default-features = false, features = ["json"] }
+//! schemars = "0.8.16"
 //! okapi = { version = "0.7.0-rc.1" }
-//! rocket_okapi = { version = "0.8.0-rc.2", features = ["swagger"] }
+//! rocket_okapi = { version = "0.8.0", features = ["swagger"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
 //! response types of the endpoint must implement `JsonSchema`. Secondly, the function must be
@@ -74,7 +74,7 @@
 //!
 //! - **Q: My (diesel) database does not implement `OpenApiFromRequest`.**<br/>
 //! A: This is because the parameter does not show up in the path, query or body.
-//! So this is considered a [Request Guard](https://rocket.rs/v0.5-rc/guide/requests/#request-guards).
+//! So this is considered a [Request Guard](https://rocket.rs/v0.5/guide/requests/#request-guards).
 //! There is a [derive macro](https://github.com/GREsau/okapi/blob/master/examples/secure_request_guard/src/no_auth.rs)
 //! for this, but this does not work in combination with the `#[database("...")]` marco.
 //! You can solve this my implementing it manually, like this:
@@ -111,6 +111,7 @@
 //!
 //! - More FAQ questions and answers in [README.md](https://github.com/GREsau/okapi#readme).
 //!
+//! [Schemars]: https://github.com/GREsau/schemars
 
 mod error;
 
@@ -172,7 +173,7 @@ pub fn get_openapi_route(
 /// The macro expects the following arguments:
 /// - rocket_builder: `Rocket<Build>`,
 /// - base_path: `&str`, `String` or [`Uri`](rocket::http::uri::Uri). (Anything that implements `ToString`)
-/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0-rc.2/rocket/struct.Rocket.html#method.mount)
+/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0/rocket/struct.Rocket.html#method.mount)
 /// - openapi_settings: `OpenApiSettings` (use `OpenApiSettings::default()` if default settings are okay for you),
 /// - List of (0 or more):
 ///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).

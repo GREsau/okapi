@@ -47,12 +47,12 @@ It shows: No authentication, API keys, HTTP Auth, OAuth2, OpenID and Cookies.
 A: No, this crate only allows you to automatically generate the OpenAPI file from your code.
 There are other crates that (attempt to) do this.
 So:
-  - Rust code (Rocket) --> OpenAPI == Okapi
-  - OpenAPI --> Rust code != Okapi
+  - (Rust code (Rocket) --> OpenAPI) == Okapi
+  - (OpenAPI --> Rust code) != Okapi
 
 - **Q: My (diesel) database does not implement `OpenApiFromRequest`.**<br/>
 A: This is because the parameter does not show up in the path, query or body.
-So this is considered a [Request Guard](https://rocket.rs/v0.5-rc/guide/requests/#request-guards).
+So this is considered a [Request Guard](https://rocket.rs/v0.5/guide/requests/#request-guards).
 There is a [derive macro](https://github.com/GREsau/okapi/blob/master/examples/secure_request_guard/src/no_auth.rs)
 for this, but this does not work in combination with the `#[database("...")]` marco.
 You can solve this my implementing it manually, like this:
@@ -107,11 +107,11 @@ Rocket-Okapi:
 - `swagger`: Enable [Swagger UI][Swagger_UI] for rendering documentation.
 - `rapidoc`: Enable [RapiDoc][RapiDoc] for rendering documentation.
 - `uuid`: Enable UUID support in Rocket and Schemars.
-- `msgpack`: Enable [msgpack support for Rocket](https://docs.rs/rocket/0.5.0-rc.2/rocket/serde/msgpack/struct.MsgPack.html).
+- `msgpack`: Enable [msgpack support for Rocket](https://docs.rs/rocket/latest/rocket/serde/msgpack/struct.MsgPack.html).
 (when same Rocket feature flag is used.)
-- `secrets`: Enable [secrets support for Rocket](https://rocket.rs/v0.5-rc/guide/requests/#secret-key).
+- `secrets`: Enable [secrets support for Rocket](https://rocket.rs/v0.5/guide/requests/#secret-key).
 (when same Rocket feature flag is used.)
-- `mtls`: Enable [mutual TSL for Rocket](https://rocket.rs/v0.5-rc/guide/configuration/#mutual-tls).
+- `mtls`: Enable [mutual TSL for Rocket](https://rocket.rs/v0.5/guide/configuration/#mutual-tls).
 (when same Rocket feature flag is used.)
 - `rocket_dyn_templates`: Enable compatibility with [`rocket_dyn_templates`](https://crates.io/crates/rocket_dyn_templates).
 - `rocket_db_pools`: Enable compatibility with [`rocket_db_pools`](https://crates.io/crates/rocket_db_pools).

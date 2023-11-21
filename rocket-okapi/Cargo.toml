@@ -2,7 +2,7 @@
 name = "rocket_okapi"
 description = "OpenAPI (AKA Swagger) document generation for Rocket applications"
 repository = "https://github.com/GREsau/okapi"
-version = "0.8.0-rc.3"
+version = "0.8.0"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2018"
 license = "MIT"
@@ -12,9 +12,9 @@ categories = ["web-programming"]
 
 [dependencies]
 rocket = { version = "=0.5.0", default-features = false, features = ["json"] }
-schemars = { version = "0.8.10" }
+schemars = { version = "0.8.16" }
 okapi = { version = "0.7.0-rc.1", path = "../okapi" }
-rocket_okapi_codegen = { version = "=0.8.0-rc.3", path = "../rocket-okapi-codegen" }
+rocket_okapi_codegen = { version = "=0.8.0", path = "../rocket-okapi-codegen" }
 serde = "1.0"
 serde_json = "1.0"
 log = "0.4"
@@ -27,7 +27,7 @@ rocket_dyn_templates = { version = "=0.1.0", optional = true }
 rocket_db_pools = { version = "=0.1.0", optional = true }
 
 [dev-dependencies]
-rocket_sync_db_pools = { version = "0.1.0-rc.3", features = ["diesel_sqlite_pool"] }
+rocket_sync_db_pools = { version = "0.1.0", features = ["diesel_sqlite_pool"] }
 
 [features]
 default = ["preserve_order"]
@@ -43,13 +43,13 @@ rapidoc = []
 # Allow the use of UUIDs
 uuid = ["rocket/uuid", "schemars/uuid"]
 # Re-export Rocket feature flag
-# https://docs.rs/rocket/0.5.0-rc.2/rocket/serde/msgpack/struct.MsgPack.html
+# https://docs.rs/rocket/latest/rocket/serde/msgpack/struct.MsgPack.html
 msgpack = ["rocket/msgpack"]
 # Re-export Rocket feature flag
-# https://rocket.rs/v0.5-rc/guide/requests/#secret-key
+# https://rocket.rs/v0.5/guide/requests/#secret-key
 secrets = ["rocket/secrets"]
 # Re-export Rocket feature flag
-# https://rocket.rs/v0.5-rc/guide/configuration/#mutual-tls
+# https://rocket.rs/v0.5/guide/configuration/#mutual-tls
 mtls = ["rocket/mtls"]
 
 [package.metadata.docs.rs]

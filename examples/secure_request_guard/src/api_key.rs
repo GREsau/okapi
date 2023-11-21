@@ -35,7 +35,7 @@ impl<'a> FromRequest<'a> for ApiKey {
             }
             None => Outcome::Error((Status::BadRequest, "Missing `x-api-key` header.")),
         }
-        // For more info see: https://rocket.rs/v0.5-rc/guide/state/#within-guards
+        // For more info see: https://rocket.rs/v0.5/guide/state/#within-guards
     }
 }
 
