@@ -31,10 +31,10 @@ impl<'a> FromRequest<'a> for OAuth2AuthCode {
                 if jwt.starts_with("Bearer ") {
                     Outcome::Success(OAuth2AuthCode)
                 } else {
-                    Outcome::Failure((Status::Unauthorized, "JWT is invalid."))
+                    Outcome::Error((Status::Unauthorized, "JWT is invalid."))
                 }
             }
-            None => Outcome::Failure((Status::BadRequest, "Missing `Authorization` header.")),
+            None => Outcome::Error((Status::BadRequest, "Missing `Authorization` header.")),
         }
     }
 }

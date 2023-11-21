@@ -30,10 +30,10 @@ impl<'a> FromRequest<'a> for HttpAuth {
                 if token == "Bearer mytoken" {
                     Outcome::Success(HttpAuth(token.to_owned()))
                 } else {
-                    Outcome::Failure((Status::Unauthorized, "Auth is invalid."))
+                    Outcome::Error((Status::Unauthorized, "Auth is invalid."))
                 }
             }
-            None => Outcome::Failure((Status::BadRequest, "Missing `Authorization` header.")),
+            None => Outcome::Error((Status::BadRequest, "Missing `Authorization` header.")),
         }
         // For more info see: https://rocket.rs/v0.5-rc/guide/state/#within-guards
     }

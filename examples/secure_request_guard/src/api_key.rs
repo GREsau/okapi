@@ -30,10 +30,10 @@ impl<'a> FromRequest<'a> for ApiKey {
                 if key == "mykey" {
                     Outcome::Success(ApiKey(key.to_owned()))
                 } else {
-                    Outcome::Failure((Status::Unauthorized, "Api key is invalid."))
+                    Outcome::Error((Status::Unauthorized, "Api key is invalid."))
                 }
             }
-            None => Outcome::Failure((Status::BadRequest, "Missing `x-api-key` header.")),
+            None => Outcome::Error((Status::BadRequest, "Missing `x-api-key` header.")),
         }
         // For more info see: https://rocket.rs/v0.5-rc/guide/state/#within-guards
     }
