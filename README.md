@@ -43,14 +43,14 @@ It shows: No authentication, API keys, HTTP Auth, OAuth2, OpenID and Cookies.
 
 ## FAQ
 
-- **Q: Can I generate code from my OpenAPI file?**<br/>
+### Q: Can I generate code from my OpenAPI file?
 A: No, this crate only allows you to automatically generate the OpenAPI file from your code.
 There are other crates that (attempt to) do this.
 So:
   - (Rust code (Rocket) --> OpenAPI) == Okapi
   - (OpenAPI --> Rust code) != Okapi
 
-- **Q: How do I document my endpoints?**<br/>
+### Q: How do I document my endpoints?
 A: Okapi automatically uses the [Rust Doc Comments](https://doc.rust-lang.org/rustdoc/how-to-write-documentation.html)
 from most places, this includes:
     - Endpoint functions.
@@ -77,7 +77,7 @@ This will can then be merged into the final OpenAPI file.
 [For more info see this example](https://github.com/GREsau/okapi/blob/master/examples/custom_schema/src/main.rs#L61).
 Use this method only if really necessary! (As it might overwrite other generated objects.)
 
-- **Q: My (diesel) database does not implement `OpenApiFromRequest`.**<br/>
+### Q: My (diesel) database does not implement `OpenApiFromRequest`.
 A: This is because the parameter does not show up in the path, query or body.
 So this is considered a [Request Guard](https://rocket.rs/v0.5/guide/requests/#request-guards).
 There is a [derive macro](https://github.com/GREsau/okapi/blob/master/examples/secure_request_guard/src/no_auth.rs)
@@ -106,18 +106,18 @@ impl<'r> OpenApiFromRequest<'r> for MyDB {
 ```
 </details>
 
-- **Q: ... does not implement `JsonSchema`?**<br/>
+### Q: ... does not implement `JsonSchema`?
 A: The [`JsonSchema`](https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html) implementation
 is handled by [`Schemars`][Schemars], make sure you enabled the right
 [feature flags](https://github.com/GREsau/schemars#optional-dependencies) for it.
 If it is still not implemented open an issue in the `Schemars` repo.
 
-- **Q: Can I add custom data to my OpenAPI spec?**<br/>
+### Q: Can I add custom data to my OpenAPI spec?
 A: Yes, see the [Custom Schema](examples/custom_schema) example. Okapi also has build in functions
 if you want to merge the [`OpenAPI`](https://docs.rs/okapi/latest/okapi/openapi3/struct.OpenApi.html)
 objects manually.
 
-- **Q: Can I use this with other web frameworks then Rocket?**<br/>
+### Q: Can I use this with other web frameworks then Rocket?
 A: Yes, but not there are no other implementations right now. But you can use the `Okapi` crate
 independently and use Serde to create the json or yaml file.
 
