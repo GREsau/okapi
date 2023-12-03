@@ -5,6 +5,20 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ## Unreleased (2023-xx-xx)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## Unreleased Version 0.8.0 (2023-xx-xx)
+
+### Added
 - Added support for new [`Responder`](https://docs.rs/rocket/0.5.0/rocket/response/trait.Responder.html)
   types (implemented `OpenApiResponderInner`):
   - `Box<T>`
@@ -14,6 +28,18 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Changed
 - `rocket-okapi` and `rocket-okapi-codegen` require `rocket v0.5.0`. (#132)
+- Updated RapiDoc to `v9.3.4` and updated settings, including changed defaults in RapiDocs.
+    - Schema settings moved to `SchemaConfig`.
+    - `GeneralConfig` added: `update_route`, `route_prefix` and `persist_auth`.
+    - `UiConfig` added: `css_file` and `css_classes`.
+    - `NavConfig` added: `show_method_in_nav_bar`, `nav_accent_text_color`, `nav_active_item_marker`
+      and `on_nav_tag_click`.
+    - `NavConfig` removed: `nav_bg_image`, `nav_bg_image_size` and `nav_bg_image_repeat`.
+    - `HideShowConfig` added: `allow_spec_file_download`, `allow_advanced_search` and `show_curl_before_try`.
+    - `ApiConfig` changed: `api_key_name`, `api_key_location` and `fetch_credentials`.
+    - `SlotsConfig` added: `operations_top`.
+    - Note: The default `RenderStyle` changed from `View` to `Read`.
+    - Note: `schema_hide_read_only` and `schema_hide_write_only` changed behavior.
 
 ### Deprecated
 
@@ -22,6 +48,10 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ### Fixed
 
 ### Security
+
+
+This version also includes all the changes from `0.8.0-rc.1`, `0.8.0-rc.2` and `0.8.0-rc.3`.
+See below for more info on the changes made in these versions.
 
 ## Version 0.8.0-rc.3 (2023-05-29)
 

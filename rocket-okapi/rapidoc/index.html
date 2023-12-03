@@ -13,11 +13,14 @@
       id="rapidoc"
       
       spec-url="{{SPEC_URL}}"
+      update-route="{{UPDATE_ROUTE}}"
+      route-prefix="{{ROUTE_PREFIX}}"
       sort-tags="{{SORT_TAGS}}"
       sort-endpoints-by="{{SORT_ENDPOINTS_BY}}"
       heading-text="{{HEADING_TEXT}}"
       goto-path="{{GOTO_PATH}}"
       fill-request-fields-with-example="{{REQUEST_EXAMPLE_FIELDS}}"
+      persist-auth="{{PERSIST_AUTH}}"
 
       theme="{{THEME}}"
       bg-color="{{BG_COLOR}}"
@@ -28,26 +31,23 @@
       regular-font="{{REGULAR_FONT}}"
       mono-font="{{MONO_FONT}}"
       font-size="{{FONT_SIZE}}"
+      css-file="{{CSS_FILE}}"
+      css-classes="{{CSS_CLASSES}}"
 
+      show-method-in-nav-bar="{{SHOW_METHOD_IN_NAV_BAR}}"
       use-path-in-nav-bar="{{USE_PATH_IN_NAV_BAR}}"
       nav-bg-color="{{NAV_BG_COLOR}}"
-      nav-bg-image="{{NAV_BG_IMAGE}}"
-      nav-bg-image-repeat="{{NAV_BG_IMAGE_REPEAT}}"
       nav-text-color="{{NAV_TEXT_COLOR}}"
       nav-hover-bg-color="{{NAV_HOVER_BG_COLOR}}"
       nav-hover-text-color="{{NAV_HOVER_TEXT_COLOR}}"
       nav-accent-color="{{NAV_ACCENT_COLOR}}"
+      nav-accent-text-color="{{NAV_ACCENT_TEXT_COLOR}}"
+      nav-active-item-marker="{{NAV_ACCENT_ITEM_MARKER}}"
       nav-item-spacing="{{NAV_ITEM_SPACING}}"
+      on-nav-tag-click="{{ON_NAV_TAG_CLICK}}"
 
       layout="{{LAYOUT}}"
       render-style="{{RENDER_STYLE}}"
-      on-nav-tag-click="{{ON_NAV_TAG_CLICK}}"
-      schema-style="{{SCHEMA_STYLE}}"
-      schema-expand-level="{{SCHEMA_EXPAND_LEVEL}}"
-      schema-description-expanded="{{SCHEMA_DESCRIPTION_EXPANDED}}"
-      schema-hide-read-only="{{SCHEMA_HIDE_READ_ONLY}}"
-      schema-hide-write-only="{{SCHEMA_HIDE_WRITE_ONLY}}"
-      default-schema-tab="{{DEFAULT_SCHEMA_TAB}}"
       response-area-height="{{RESPONSE_AREA_HEIGHT}}"
 
       show-info="{{SHOW_INFO}}"
@@ -57,10 +57,19 @@
       allow-authentication="{{ALLOW_AUTHENTICATION}}"
       allow-spec-url-load="{{ALLOW_SPEC_URL_LOAD}}"
       allow-spec-file-load="{{ALLOW_SPEC_FILE_LOAD}}"
+      allow-spec-file-download="{{ALLOW_SPEC_FILE_DOWNLOAD}}"
       allow-search="{{ALLOW_SEARCH}}"
       allow-try="{{ALLOW_TRY}}"
+      show-curl-before-try="{{SHOW_CURL_BEFORE_TRY}}"
       allow-server-selection="{{ALLOW_SERVER_SELECTION}}"
       allow-schema-description-expand-toggle="{{ALLOW_SCHEMA_DESC_EXPAND_TOGGLE}}"
+
+      schema-style="{{SCHEMA_STYLE}}"
+      schema-expand-level="{{SCHEMA_EXPAND_LEVEL}}"
+      schema-description-expanded="{{SCHEMA_DESCRIPTION_EXPANDED}}"
+      schema-hide-read-only="{{SCHEMA_HIDE_READ_ONLY}}"
+      schema-hide-write-only="{{SCHEMA_HIDE_WRITE_ONLY}}"
+      default-schema-tab="{{DEFAULT_SCHEMA_TAB}}"
 
       server-url="{{SERVER_URL}}"
       default-api-server="{{DEFAULT_API_SERVER}}"
@@ -77,6 +86,7 @@
         {{OVERVIEW}}
         {{SERVERS}}
         {{AUTH}}
+        {{OPERATIONS_TOP}}
         {{TAGS}}
         {{ENDPOINTS}}
     </rapi-doc>

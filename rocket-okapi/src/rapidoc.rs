@@ -90,6 +90,8 @@ pub struct RapiDocConfig {
     pub layout: LayoutConfig,
     /// Settings used to control what features should or should not be displayed.
     pub hide_show: HideShowConfig,
+    /// Settings around the Schema view.
+    pub schema: SchemaConfig,
     /// Settings used to configure access to the api.
     pub api: ApiConfig,
     /// Settings to configure the Rapi Doc "slots".
@@ -117,7 +119,17 @@ pub struct GeneralConfig {
     ///
     /// This field _must_ be manually filled with at least one element.
     /// More then one element is currently not supported yet, but can be used with custom HTML.
+    // This is different as the default spec on https://rapidocweb.com/api.html
+    // That is by design. This does not have to be changed.
     pub spec_urls: Vec<UrlObject>,
+    /// Setting true will update the url on browser's location whenever a new section
+    /// is visited either by scrolling or clicking.
+    pub update_route: bool,
+    /// routes for each operation/api is generated based on the api path.
+    /// however you may add a custom prefix to these routes to support third party routing needs.
+    ///
+    /// The default is "#".
+    pub route_prefix: String,
     /// To list tags in alphabetic order, otherwise tags will be ordered based on how it is
     /// specified under the tags section in the spec.
     ///
@@ -125,7 +137,7 @@ pub struct GeneralConfig {
     pub sort_tags: bool,
     /// Sort endpoints within each tags by path or method.
     ///
-    /// The default is `SortEndpointsBy::Path`.
+    /// The default is [`SortEndpointsBy::Path`].
     pub sort_endpoints_by: SortEndpointsBy,
     /// Heading Text on top-left corner.
     pub heading_text: String,
@@ -137,17 +149,24 @@ pub struct GeneralConfig {
     ///
     /// The default is `true`.
     pub fill_request_fields_with_example: bool,
+    /// Authentication will be persisted to localStorage.
+    ///
+    /// The default is `false`.
+    pub persist_auth: bool,
 }
 
 impl Default for GeneralConfig {
     fn default() -> Self {
         Self {
             spec_urls: vec![],
+            update_route: true,
+            route_prefix: "#".to_owned(),
             sort_tags: false,
             sort_endpoints_by: SortEndpointsBy::Path,
             heading_text: "".to_owned(),
             goto_path: "".to_owned(),
             fill_request_fields_with_example: true,
+            persist_auth: false,
         }
     }
 }
@@ -158,7 +177,7 @@ pub struct UiConfig {
     /// Is the base theme, which is used for calculating colors for various UI components. 'theme',
     /// 'bg-color' and 'text-color' are the base attributes for generating a custom theme.
     ///
-    /// The default is `Theme::Light`.
+    /// The default is [`Theme::Light`].
     pub theme: Theme,
     /// Hex color code for main background.
     pub bg_color: String,
@@ -178,8 +197,17 @@ pub struct UiConfig {
     pub mono_font: String,
     /// Sets the relative font sizes for the entire document.
     ///
-    /// The default is `FontSize::Default`.
+    /// The default is [`FontSize::Default`].
     pub font_size: FontSize,
+    /// Create a CSS file that will be `<link>`ed in the HTML file.
+    ///
+    /// Used together with [`UiConfig::css_classes`]
+    pub css_file: Option<String>,
+    /// Provide names of all the CSS class names that you would like to apply to RapiDoc Element.
+    /// Note: Space (` `) character is not allowed, this is used as a separator.
+    ///
+    /// Used together with [`UiConfig::css_file`]
+    pub css_classes: Vec<String>,
 }
 
 impl Default for UiConfig {
@@ -194,56 +222,73 @@ impl Default for UiConfig {
             regular_font: "".to_owned(),
             mono_font: "".to_owned(),
             font_size: FontSize::Default,
+            css_file: None,
+            css_classes: Vec::new(),
         }
     }
 }
 
 /// A struct containing information about where and how the `openapi.json` files are served.
+///
+/// Only applicable if [`LayoutConfig::render_style`] is set to [`RenderStyle::Read`] or
+/// [`RenderStyle::Focused`].
 #[derive(Debug, Clone)]
 pub struct NavConfig {
+    /// shows API Method names in the navigation bar
+    /// (if you customized nav-background make sure there is a proper contrast).
+    ///
+    /// Example: <https://rapidocweb.com/examples/nav-item-with-method.html>
+    pub show_method_in_nav_bar: ShowMethodInNavBar,
     /// Set true to show API paths in the navigation bar instead of summary/description.
     ///
     /// The default is `false`.
+    /// Example: <https://rapidocweb.com/examples/nav-item-as-path.html>
     pub use_path_in_nav_bar: bool,
     /// Navigation bar's background color.
+    ///
+    /// Example: <https://rapidocweb.com/examples/nav-bg-color.html>
     pub nav_bg_color: String,
-    /// URL of navigation bar's background image.
-    pub nav_bg_image: String,
-    /// Navigation bar's background image size (same as css background-size property).
-    ///
-    /// The default is `NavBgImageSize::Auto`.
-    pub nav_bg_image_size: NavBgImageSize,
-    /// Navigation bar's background image repeat (same as css background-repeat property).
-    ///
-    /// The default is `NavBgImageSize::Repeat`.
-    pub nav_bg_image_repeat: NavBgImageRepeat,
     /// Navigation bar's Text color.
     pub nav_text_color: String,
     /// Background color of the navigation item on mouse-over.
     pub nav_hover_bg_color: String,
     /// Text color of the navigation item on mouse-over.
     pub nav_hover_text_color: String,
-    /// Current selected item indicator.
+    /// Accent color used in navigation Bar (such as background of active navigation item).
     pub nav_accent_color: String,
+    /// Text color used in navigation bar selected items.
+    pub nav_accent_text_color: String,
+    /// Navigation active item indicator styles.
+    ///
+    /// The default is [`NavActiveItemMarker::LeftBar`].
+    pub nav_active_item_marker: NavActiveItemMarker,
     /// Controls navigation item spacing.
     ///
-    /// The default is `NavItemSpacing::Default`.
+    /// The default is [`NavItemSpacing::Default`].
+    /// Example: <https://rapidocweb.com/examples/navbar-spacing.html>
     pub nav_item_spacing: NavItemSpacing,
+    /// Applies only to focused render-style. It determines the behavior of clicking on a
+    /// Tag in navigation bar. It can either expand-collapse the tag or take you to the tag's
+    /// description page.
+    ///
+    /// The default is [`NavTagClick::ExpandCollapse`].
+    pub on_nav_tag_click: NavTagClick,
 }
 
 impl Default for NavConfig {
     fn default() -> Self {
         Self {
+            show_method_in_nav_bar: ShowMethodInNavBar::None,
             use_path_in_nav_bar: false,
             nav_bg_color: "".to_owned(),
-            nav_bg_image: "".to_owned(),
-            nav_bg_image_size: NavBgImageSize::Auto,
-            nav_bg_image_repeat: NavBgImageRepeat::Repeat,
             nav_text_color: "".to_owned(),
             nav_hover_bg_color: "".to_owned(),
             nav_hover_text_color: "".to_owned(),
             nav_accent_color: "".to_owned(),
+            nav_accent_text_color: "".to_owned(),
+            nav_active_item_marker: NavActiveItemMarker::LeftBar,
             nav_item_spacing: NavItemSpacing::Default,
+            on_nav_tag_click: NavTagClick::ExpandCollapse,
         }
     }
 }
@@ -266,46 +311,8 @@ pub struct LayoutConfig {
     ///
     /// `read` is more suitable for reading, `view` is more friendly for quick exploring.
     ///
-    /// The default is `RenderStyle::View`.
+    /// The default is [`RenderStyle::Read`].
     pub render_style: RenderStyle,
-    /// Applies only to focused render-style. It determines the behavior of clicking on a
-    /// Tag in navigation bar. It can either expand-collapse the tag or take you to the tag's
-    /// description page.
-    ///
-    /// The default is `NavTagClick::ExpandCollapse`.
-    pub on_nav_tag_click: NavTagClick,
-    /// Two different ways to display object-schemas in the responses and request bodies.
-    ///
-    /// The default is `SchemaStyle::Tree`.
-    pub schema_style: SchemaStyle,
-    /// Schemas are expanded by default, use this attribute to control how many levels in the schema
-    /// should be expanded.
-    ///
-    /// The default is `999`.
-    pub schema_expand_level: u16,
-    /// Constraint and descriptions information of fields in the schema are collapsed to show only
-    /// the first line. Set it to true if you want them to fully expanded.
-    ///
-    /// The default is `false`.
-    pub schema_description_expanded: bool,
-    /// Read-only fields in request schemas is always hidden but are shown in response.
-    /// If you do not want to hide read-only fields or hide them based on action you can configure
-    /// this setting to 'never' or any combination of post | put | patch to indicate where to hide
-    /// Schemas in response section is not affected by this setting.
-    ///
-    /// The default is `SchemaHideReadOnly::Always`.
-    pub schema_hide_read_only: SchemaHideReadOnly,
-    /// Write-only fields in response schemas is always hidden but are shown in request.
-    /// If you do not want to hide write-only fields then set to 'never'
-    /// Schemas in request section is not affected by this setting.
-    ///
-    /// The default is `SchemaHideWriteOnly::Always`.
-    pub schema_hide_write_only: SchemaHideWriteOnly,
-    /// The schemas are displayed in two tabs - Model and Example. This option allows you to pick
-    /// the default tab that you would like to be active.
-    ///
-    /// The default is `DefaultSchemaTab::Model`.
-    pub default_schema_tab: DefaultSchemaTab,
     /// Use this value to control the height of response textarea.
     ///
     /// Allowed: valid css height value such as `400px`, `50%`, `60vh`, etc.
@@ -317,14 +324,7 @@ impl Default for LayoutConfig {
     fn default() -> Self {
         Self {
             layout: Layout::Row,
-            render_style: RenderStyle::View,
-            on_nav_tag_click: NavTagClick::ExpandCollapse,
-            schema_style: SchemaStyle::Tree,
-            schema_expand_level: 999,
-            schema_description_expanded: false,
-            schema_hide_read_only: SchemaHideReadOnly::Always,
-            schema_hide_write_only: SchemaHideWriteOnly::Always,
-            default_schema_tab: DefaultSchemaTab::Model,
+            render_style: RenderStyle::Read,
             response_area_height: "300px".to_owned(),
         }
     }
@@ -381,16 +381,30 @@ pub struct HideShowConfig {
     ///
     /// The default is `true`.
     pub allow_spec_file_load: bool,
+    /// If set to 'true', it provide buttons in the overview section to download the spec
+    /// or open it in a new tab.
+    pub allow_spec_file_download: bool,
     /// If set to `false`, user will not be able to search APIs.
     ///
     /// The default is `true`.
     pub allow_search: bool,
+    /// Provides advanced search functionality, to search through API-paths, API-description,
+    /// API-parameters and API-Responses.
+    ///
+    /// Example: <https://rapidocweb.com/examples/search-by-params.html>
+    pub allow_advanced_search: bool,
     /// 'TRY' feature allows you to make REST calls to the API server. To disable this feature set
     /// it to false
     /// Setting it to false will also hide API-Servers if specified in the spec.
     ///
     /// The default is `true`.
+    /// Example: <https://rapidocweb.com/examples/try.html>
     pub allow_try: bool,
+    /// If set to 'true', the cURL snippet is displayed between the request and the response
+    /// without clicking on TRY.
+    ///
+    /// Example: <https://rapidocweb.com/examples/show-curl-before-try.html>
+    pub show_curl_before_try: bool,
     /// If set to 'false', user will not be able to see or select API server (Server List will be
     /// hidden, however users will be able to see the server url near the 'TRY' button, to know in
     /// advance where the TRY will send the request). The URL specified in the server-url attribute
@@ -414,10 +428,65 @@ impl Default for HideShowConfig {
             allow_authentication: true,
             allow_spec_url_load: true,
             allow_spec_file_load: true,
+            allow_spec_file_download: false,
             allow_search: true,
+            allow_advanced_search: true,
             allow_try: true,
+            show_curl_before_try: false,
             allow_server_selection: true,
             allow_schema_description_expand_toggle: true,
+        }
+    }
+}
+
+/// Settings around the Schema view.
+#[derive(Debug, Clone)]
+pub struct SchemaConfig {
+    /// Two different ways to display object-schemas in the responses and request bodies.
+    ///
+    /// The default is [`SchemaStyle::Tree`].
+    pub schema_style: SchemaStyle,
+    /// Schemas are expanded by default, use this attribute to control how many levels in the schema
+    /// should be expanded.
+    ///
+    /// The default is `999`.
+    pub schema_expand_level: u16,
+    /// Constraint and descriptions information of fields in the schema are collapsed to show only
+    /// the first line. Set it to true if you want them to fully expanded.
+    ///
+    /// The default is `false`.
+    pub schema_description_expanded: bool,
+    /// Read-only fields in request schemas is always hidden but are shown in response.
+    /// If you do not want to hide read-only fields or hide them based on action you can configure
+    /// this setting to 'never' or any combination of post | put | patch to indicate where to hide
+    /// Schemas in response section is not affected by this setting.
+    ///
+    /// The default is [`SchemaHideReadOnly::Always`].
+    /// TODO: This seems to have changed, further changed might be needed.
+    pub schema_hide_read_only: SchemaHideReadOnly,
+    /// Write-only fields in response schemas is always hidden but are shown in request.
+    /// If you do not want to hide write-only fields then set to 'never'
+    /// Schemas in request section is not affected by this setting.
+    ///
+    /// The default is [`SchemaHideWriteOnly::Always`].
+    /// TODO: This seems to have changed, further changed might be needed.
+    pub schema_hide_write_only: SchemaHideWriteOnly,
+    /// The schemas are displayed in two tabs - Model and Example. This option allows you to pick
+    /// the default tab that you would like to be active.
+    ///
+    /// The default is [`DefaultSchemaTab::Model`].
+    pub default_schema_tab: DefaultSchemaTab,
+}
+
+impl Default for SchemaConfig {
+    fn default() -> Self {
+        Self {
+            schema_style: SchemaStyle::Tree,
+            schema_expand_level: 999,
+            schema_description_expanded: false,
+            schema_hide_read_only: SchemaHideReadOnly::Always,
+            schema_hide_write_only: SchemaHideWriteOnly::Always,
+            default_schema_tab: DefaultSchemaTab::Model,
         }
     }
 }
@@ -437,20 +506,20 @@ pub struct ApiConfig {
     pub default_api_server: String,
     /// Name of the API key that will be send while trying out the APIs.
     ///
-    /// The default is "Authorization".
+    /// The default is "".
     pub api_key_name: String,
     /// Determines how you want to send the api-key.
     ///
-    /// The default is `ApiKeyLocation::Header`.
-    pub api_key_location: ApiKeyLocation,
+    /// The default is `None`.
+    pub api_key_location: Option<ApiKeyLocation>,
     /// Value of the API key that will be send while trying out the APIs. This can also be
     /// provided/overwritten from UI.
     pub api_key_value: String,
     /// Enables passing credentials/cookies in cross domain calls,
     /// as defined in the Fetch standard, in CORS requests that are sent by the browser.
     ///
-    /// The default is `FetchCredentials::SameOrigin`.
-    pub fetch_credentials: FetchCredentials,
+    /// The default is `None`.
+    pub fetch_credentials: Option<FetchCredentials>,
 }
 
 impl Default for ApiConfig {
@@ -459,9 +528,9 @@ impl Default for ApiConfig {
             server_url: "".to_owned(),
             default_api_server: "".to_owned(),
             api_key_name: "".to_owned(),
-            api_key_location: ApiKeyLocation::Header,
+            api_key_location: None,
             api_key_value: "".to_owned(),
-            fetch_credentials: FetchCredentials::SameOrigin,
+            fetch_credentials: None,
         }
     }
 }
@@ -487,11 +556,18 @@ pub struct SlotsConfig {
     /// The contents appear at side navigation bar (only available in read-mode).
     pub nav_logo: Option<String>,
     /// The contents appear at overview section.
+    /// You can link to this section using `#overview`.
     pub overview: Option<String>,
     /// The contents appear at server section.
+    /// You can link to this section using `#servers`.
     pub servers: Option<String>,
     /// The contents appear at authentication section.
+    /// You can link to this section using `#auth`.
     pub auth: Option<String>,
+    /// contents appear at the top of all the operations but below overview > servers > auth section.
+    /// Use this section to provide content that applies to all the operations.
+    /// You can link this section using `#operations-top`.
+    pub operations_top: Option<String>,
     /// Each tag is identified by a name, this slot can be used to insert HTML content under
     /// various tags.
     ///
@@ -537,43 +613,30 @@ pub enum FontSize {
     Largest,
 }
 
-/// Used to control the size of the background image in the nav bar.
+/// Shows API Method names in the navigation bar (`GET`, `POST`, ...)
+/// (if you customized nav-background make sure there is a proper contrast).
 #[derive(Debug, Clone)]
 #[non_exhaustive]
-pub enum NavBgImageSize {
-    /// Default value. The background image is displayed in its original size.
-    Auto,
-    /// Sets the width and height of the background image. The first value sets the width, the
-    /// second value sets the height. If only one value is given, the second is set to "auto".
-    Length,
-    /// Resize the background image to cover the entire container, even if it has to stretch the
-    /// image or cut a little bit off one of the edges.
-    Cover,
-    /// Resize the background image to make sure the image is fully visible.
-    Contain,
-    /// Sets this property to its default value.
-    Initial,
-    /// Inherits this property from its parent element.
-    Inherit,
+pub enum ShowMethodInNavBar {
+    // `false` in RapiDocs
+    /// Do not show the API Method.
+    None,
+    /// Show API Method as plain text.
+    AsPlainText,
+    /// Show API Method as colored text.
+    AsColoredText,
+    /// Show API Method as colored block.
+    AsColoredBlock,
 }
 
-/// Used to control the repeating of the background image in the nav bar.
+/// Navigation active item indicator styles.
 #[derive(Debug, Clone)]
 #[non_exhaustive]
-pub enum NavBgImageRepeat {
-    /// The background image is repeated both vertically and horizontally.  The last image will be
-    /// clipped if it does not fit. This is default.
-    Repeat,
-    /// The background image is repeated only horizontally.
-    RepeatX,
-    /// The background image is repeated only vertically.
-    RepeatY,
-    /// The background-image is not repeated. The image will only be shown once.
-    NoRepeat,
-    /// Sets this property to its default value.
-    Initial,
-    /// Inherits this property from its parent element.
-    Inherit,
+pub enum NavActiveItemMarker {
+    /// Show bar on left side of active item.
+    LeftBar,
+    /// Highlight whole block of active item.
+    ColoredBlock,
 }
 
 /// Controls navigation item spacing
@@ -768,7 +831,8 @@ macro_rules! impl_display {
 impl_display!(SortEndpointsBy);
 impl_display!(Theme);
 impl_display!(FontSize);
-impl_display!(NavBgImageRepeat);
+impl_display!(ShowMethodInNavBar);
+impl_display!(NavActiveItemMarker);
 impl_display!(NavItemSpacing);
 impl_display!(Layout);
 impl_display!(RenderStyle);
@@ -846,11 +910,14 @@ pub fn make_rapidoc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
         "SPEC_URL" => config.general.spec_urls[0].url.clone(),
         // Can be used for custom html files
         "SPEC_URLS" => serde_json::to_string(&config.general.spec_urls).unwrap_or_default(),
+        "UPDATE_ROUTE" => config.general.update_route.to_string(),
+        "ROUTE_PREFIX" => config.general.route_prefix.clone(),
         "SORT_TAGS" => config.general.sort_tags.to_string(),
         "SORT_ENDPOINTS_BY" => config.general.sort_endpoints_by.to_string(),
         "HEADING_TEXT" => config.general.heading_text.clone(),
         "GOTO_PATH" => config.general.goto_path.clone(),
         "REQUEST_EXAMPLE_FIELDS" => config.general.fill_request_fields_with_example.to_string(),
+        "PERSIST_AUTH" => config.general.persist_auth.to_string(),
         // UI Colors and Fonts
         "THEME" => config.ui.theme.to_string(),
         "BG_COLOR" => config.ui.bg_color.clone(),
@@ -861,26 +928,23 @@ pub fn make_rapidoc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
         "REGULAR_FONT" => config.ui.regular_font.clone(),
         "MONO_FONT" => config.ui.mono_font.clone(),
         "FONT_SIZE" => config.ui.font_size.to_string(),
+        "CSS_FILE" => config.ui.css_file.clone().unwrap_or_default(),
+        "CSS_CLASSES" => config.ui.css_classes.join(" ").to_string(),
         // Navigation bar settings
+        "SHOW_METHOD_IN_NAV_BAR" => config.nav.show_method_in_nav_bar.to_string(),
         "USE_PATH_IN_NAV_BAR" => config.nav.use_path_in_nav_bar.to_string(),
         "NAV_BG_COLOR" => config.nav.nav_bg_color.clone(),
-        "NAV_BG_IMAGE" => config.nav.nav_bg_image.clone(),
-        "NAV_BG_IMAGE_REPEAT" => config.nav.nav_bg_image_repeat.to_string(),
         "NAV_TEXT_COLOR" => config.nav.nav_text_color.clone(),
         "NAV_HOVER_BG_COLOR" => config.nav.nav_hover_bg_color.clone(),
         "NAV_HOVER_TEXT_COLOR" => config.nav.nav_hover_text_color.clone(),
         "NAV_ACCENT_COLOR" => config.nav.nav_accent_color.clone(),
+        "NAV_ACCENT_TEXT_COLOR" => config.nav.nav_accent_text_color.clone(),
+        "NAV_ACCENT_ITEM_MARKER" => config.nav.nav_active_item_marker.to_string(),
         "NAV_ITEM_SPACING" => config.nav.nav_item_spacing.to_string(),
+        "ON_NAV_TAG_CLICK" => config.nav.on_nav_tag_click.to_string(),
         // UI Layout & Placement
         "LAYOUT" => config.layout.layout.to_string(),
         "RENDER_STYLE" => config.layout.render_style.to_string(),
-        "ON_NAV_TAG_CLICK" => config.layout.on_nav_tag_click.to_string(),
-        "SCHEMA_STYLE" => config.layout.schema_style.to_string(),
-        "SCHEMA_EXPAND_LEVEL" => config.layout.schema_expand_level.to_string(),
-        "SCHEMA_DESCRIPTION_EXPANDED" => config.layout.schema_description_expanded.to_string(),
-        "SCHEMA_HIDE_READ_ONLY" => config.layout.schema_hide_read_only.to_string(),
-        "SCHEMA_HIDE_WRITE_ONLY" => config.layout.schema_hide_write_only.to_string(),
-        "DEFAULT_SCHEMA_TAB" => config.layout.default_schema_tab.to_string(),
         "RESPONSE_AREA_HEIGHT" => config.layout.response_area_height.clone(),
         // Hide/Show Sections
         "SHOW_INFO" => config.hide_show.show_info.to_string(),
@@ -890,17 +954,27 @@ pub fn make_rapidoc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
         "ALLOW_AUTHENTICATION" => config.hide_show.allow_authentication.to_string(),
         "ALLOW_SPEC_URL_LOAD" => config.hide_show.allow_spec_url_load.to_string(),
         "ALLOW_SPEC_FILE_LOAD" => config.hide_show.allow_spec_file_load.to_string(),
+        "ALLOW_SPEC_FILE_DOWNLOAD" => config.hide_show.allow_spec_file_download.to_string(),
         "ALLOW_SEARCH" => config.hide_show.allow_search.to_string(),
+        "ALLOW_ADVANCED_SEARCH" => config.hide_show.allow_advanced_search.to_string(),
         "ALLOW_TRY" => config.hide_show.allow_try.to_string(),
+        "SHOW_CURL_BEFORE_TRY" => config.hide_show.show_curl_before_try.to_string(),
         "ALLOW_SERVER_SELECTION" => config.hide_show.allow_server_selection.to_string(),
         "ALLOW_SCHEMA_DESC_EXPAND_TOGGLE" => config.hide_show.allow_schema_description_expand_toggle.to_string(),
+        // Schema Sections
+        "SCHEMA_STYLE" => config.schema.schema_style.to_string(),
+        "SCHEMA_EXPAND_LEVEL" => config.schema.schema_expand_level.to_string(),
+        "SCHEMA_DESCRIPTION_EXPANDED" => config.schema.schema_description_expanded.to_string(),
+        "SCHEMA_HIDE_READ_ONLY" => config.schema.schema_hide_read_only.to_string(),
+        "SCHEMA_HIDE_WRITE_ONLY" => config.schema.schema_hide_write_only.to_string(),
+        "DEFAULT_SCHEMA_TAB" => config.schema.default_schema_tab.to_string(),
         // API Server & calls
         "SERVER_URL" => config.api.server_url.clone(),
         "DEFAULT_API_SERVER" => config.api.default_api_server.clone(),
         "API_KEY_NAME" => config.api.api_key_name.clone(),
-        "API_KEY_LOCATION" => config.api.api_key_location.to_string(),
+        "API_KEY_LOCATION" => config.api.api_key_location.as_ref().map_or_else(|| "".to_owned(), |v| v.to_string()),
         "API_KEY_VALUE" => config.api.api_key_value.clone(),
-        "FETCH_CREDENTIALS" => config.api.fetch_credentials.to_string(),
+        "FETCH_CREDENTIALS" => config.api.fetch_credentials.as_ref().map_or_else(|| "".to_owned(), |v| v.to_string()),
         // Slots
         "DEFAULT" => slot_list(&config.slots.default),
         "LOGO" => slot_logo(&config.slots.logo),
@@ -910,6 +984,7 @@ pub fn make_rapidoc(config: &RapiDocConfig) -> impl Into<Vec<Route>> {
         "OVERVIEW" => slot_opt(&config.slots.overview, "overview"),
         "SERVERS" => slot_opt(&config.slots.servers, "servers"),
         "AUTH" => slot_opt(&config.slots.auth, "auth"),
+        "OPERATIONS_TOP" => slot_opt(&config.slots.operations_top, "operations-top"),
         "TAGS" => slot_tags(&config.slots.tags),
         "ENDPOINTS" => slot_endpoints(&config.slots.tags),
     };
