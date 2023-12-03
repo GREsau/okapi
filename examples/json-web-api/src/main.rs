@@ -9,7 +9,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 struct User {
+    /// A unique user identifier.
     user_id: u64,
+    /// The current username of the user.
     username: String,
     #[schemars(example = "example_email")]
     email: Option<String>,

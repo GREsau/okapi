@@ -50,6 +50,33 @@ So:
   - (Rust code (Rocket) --> OpenAPI) == Okapi
   - (OpenAPI --> Rust code) != Okapi
 
+- **Q: How do I document my endpoints?**<br/>
+A: Okapi automatically uses the [Rust Doc Comments](https://doc.rust-lang.org/rustdoc/how-to-write-documentation.html)
+from most places, this includes:
+    - Endpoint functions.
+    - Endpoint function arguments, using [Schemars][Schemars]. Adding documentation for `String`
+    and other default types is not possible unless used in an other `struct`. See
+    [this issue for more info](https://github.com/GREsau/okapi/issues/102#issuecomment-1152918141).
+    - Endpoint function return type, using [Schemars][Schemars]. Same rules apply as arguments.
+    In case of `Result<T, E>`, the error codes can be documented,
+    [see this example](https://github.com/GREsau/okapi/blob/master/examples/custom_schema/src/error.rs).
+
+Some more info can be provided using the `#[openapi(...)]` derive macro, for more info see:
+[OpenApiAttribute](https://github.com/GREsau/okapi/blob/master/rocket-okapi-codegen/src/openapi_attr/mod.rs#L20).
+
+[Schemars][Schemars] also can be used to provide more info for objects that implement
+`#[derive(JsonSchema)]` using the `#[schemars(...)]` and `#[serde(...)]` syntax.
+[For more info see `Attrs`](https://github.com/GREsau/schemars/blob/master/schemars_derive/src/attr/mod.rs#L22)
+
+Documentation can be enhanced in most other places too, but might require custom implementations.
+[See our examples for more info](https://github.com/GREsau/okapi/tree/master/examples).
+
+If the above is not sufficient, you can always create your custom
+[`OpenAPI`](https://docs.rs/okapi/latest/okapi/openapi3/struct.OpenApi.html) objects.
+This will can then be merged into the final OpenAPI file.
+[For more info see this example](https://github.com/GREsau/okapi/blob/master/examples/custom_schema/src/main.rs#L61).
+Use this method only if really necessary! (As it might overwrite other generated objects.)
+
 - **Q: My (diesel) database does not implement `OpenApiFromRequest`.**<br/>
 A: This is because the parameter does not show up in the path, query or body.
 So this is considered a [Request Guard](https://rocket.rs/v0.5/guide/requests/#request-guards).
