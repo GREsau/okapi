@@ -66,7 +66,7 @@ fn custom_openapi_spec() -> OpenApi {
         openapi: OpenApi::default_version(),
         info: Info {
             title: "The best API ever".to_owned(),
-            description: Some("This is the best API every, please use me!".to_owned()),
+            description: Some("This is the best API ever, please use me!".to_owned()),
             terms_of_service: Some(
                 "https://github.com/GREsau/okapi/blob/master/LICENSE".to_owned(),
             ),
@@ -96,7 +96,7 @@ fn custom_openapi_spec() -> OpenApi {
                 ..Default::default()
             },
         ],
-        // Add paths that do not exist in Rocket (or add extra into to existing paths)
+        // Add paths that do not exist in Rocket (or add extra info to existing paths)
         paths: {
             indexmap! {
                 "/home".to_owned() => PathItem{
