@@ -2,7 +2,21 @@
 All notable changes to this project will be documented in this file.
 This project follows the [Semantic Versioning standard](https://semver.org/).
 
-## Unreleased (2022-xx-xx)
+## Unreleased (2024-xx-xx)
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## Unreleased Version 0.7.0 (2023-xx-xx)
 
 ### Added
 - Added `Eq` trait for various structures.

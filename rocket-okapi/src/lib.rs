@@ -11,7 +11,7 @@
 //! [dependencies]
 //! rocket = { version = "0.5.0", default-features = false, features = ["json"] }
 //! schemars = "0.8.16"
-//! okapi = { version = "0.7.0-rc.1" }
+//! okapi = { version = "0.7.0" }
 //! rocket_okapi = { version = "0.8.0", features = ["swagger"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
