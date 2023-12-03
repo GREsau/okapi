@@ -40,6 +40,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
     - `SlotsConfig` added: `operations_top`.
     - Note: The default `RenderStyle` changed from `View` to `Read`.
     - Note: `schema_hide_read_only` and `schema_hide_write_only` changed behavior.
+- Updated all crates to Rust 2021 edition.
 
 ### Deprecated
 

@@ -23,6 +23,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Changed
 - `merge_paths` does correctly handle the merging of paths with double `/` in the combined path.
+- Updated to Rust 2021 edition.
 
 ### Deprecated
 

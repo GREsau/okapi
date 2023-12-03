@@ -13,3 +13,4 @@ members = [
     "examples/openapi_attributes",
     "examples/raw_identifiers",
 ]
+resolver = "2"

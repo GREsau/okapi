@@ -2,7 +2,7 @@
 name = "json_web_api"
 version = "0.1.0"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 rocket = { version = "=0.5.0", default-features = false, features = ["json"] }
