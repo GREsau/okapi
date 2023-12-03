@@ -62,7 +62,7 @@ from most places, this includes:
     [see this example](https://github.com/GREsau/okapi/blob/master/examples/custom_schema/src/error.rs).
 
 Some more info can be provided using the `#[openapi(...)]` derive macro, for more info see:
-[OpenApiAttribute](https://github.com/GREsau/okapi/blob/master/rocket-okapi-codegen/src/openapi_attr/mod.rs#L20).
+[OpenApiAttribute](https://github.com/GREsau/okapi/blob/master/rocket-okapi-codegen/src/openapi_attr/mod.rs#L22).
 
 [Schemars][Schemars] also can be used to provide more info for objects that implement
 `#[derive(JsonSchema)]` using the `#[schemars(...)]` and `#[serde(...)]` syntax.

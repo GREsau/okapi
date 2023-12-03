@@ -15,6 +15,8 @@ use syn::{
     PathSegment, ReturnType, Type, TypeTuple,
 };
 
+/// This structure documents all the properties that can be used in
+/// the `#[openapi]` derive macro. for example: `#[openapi(tag = "Users")]`
 #[derive(Debug, Default, FromMeta)]
 #[darling(default)]
 struct OpenApiAttribute {
