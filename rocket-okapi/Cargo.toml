@@ -51,4 +51,4 @@ secrets = ["rocket/secrets"]
 mtls = ["rocket/mtls"]
 
 [package.metadata.docs.rs]
-features = ["swagger", "rapidoc"]
+all-features = true
