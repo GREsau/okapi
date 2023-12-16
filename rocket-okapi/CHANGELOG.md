@@ -41,6 +41,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
     - Note: The default `RenderStyle` changed from `View` to `Read`.
     - Note: `schema_hide_read_only` and `schema_hide_write_only` changed behavior.
 - Updated all crates to Rust 2021 edition.
+- Renamed `uuid` example to `uuid_usage`, so it does not collide with `uuid` crate.
 
 ### Deprecated
 
