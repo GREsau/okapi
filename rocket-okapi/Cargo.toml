@@ -21,8 +21,6 @@ log = "0.4"
 # Rocket dependency but not re-exported
 # See issue: https://github.com/GREsau/schemars/issues/104
 # time = { version = "0.2.27" }
-# Rocket dependency but not re-exported
-either = "1"
 rocket_dyn_templates = { version = "=0.1.0", optional = true }
 rocket_db_pools = { version = "=0.1.0", optional = true }
 
