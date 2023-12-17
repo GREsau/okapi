@@ -3,8 +3,8 @@ use rocket_okapi::okapi::openapi3::OpenApi;
 use rocket_okapi::settings::UrlObject;
 use rocket_okapi::{mount_endpoints_and_merged_docs, rapidoc::*};
 
-mod error;
 mod api;
+mod error;
 
 pub type Result<T> = std::result::Result<rocket::serde::json::Json<T>, error::Error>;
 pub type DataResult<'a, T> =
@@ -20,23 +20,22 @@ async fn main() {
 }
 
 pub fn create_server() -> Rocket<Build> {
-    let mut building_rocket = rocket::build()
-        .mount(
-            "/rapidoc/",
-            make_rapidoc(&RapiDocConfig {
-                title: Some("My special documentation | RapiDoc".to_owned()),
-                general: GeneralConfig {
-                    spec_urls: vec![UrlObject::new("General", "../v1/openapi.json")],
-                    ..Default::default()
-                },
-                hide_show: HideShowConfig {
-                    allow_spec_url_load: false,
-                    allow_spec_file_load: false,
-                    ..Default::default()
-                },
+    let mut building_rocket = rocket::build().mount(
+        "/rapidoc/",
+        make_rapidoc(&RapiDocConfig {
+            title: Some("My special documentation | RapiDoc".to_owned()),
+            general: GeneralConfig {
+                spec_urls: vec![UrlObject::new("General", "../v1/openapi.json")],
                 ..Default::default()
-            }),
-        );
+            },
+            hide_show: HideShowConfig {
+                allow_spec_url_load: false,
+                allow_spec_file_load: false,
+                ..Default::default()
+            },
+            ..Default::default()
+        }),
+    );
 
     let openapi_settings = rocket_okapi::settings::OpenApiSettings::default();
     let custom_route_spec = (vec![], custom_openapi_spec());

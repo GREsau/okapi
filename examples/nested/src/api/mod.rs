@@ -1,5 +1,5 @@
-mod post;
 mod message;
+mod post;
 
 use rocket_okapi::{
     get_nested_endpoints_and_docs, okapi::openapi3::OpenApi, settings::OpenApiSettings,

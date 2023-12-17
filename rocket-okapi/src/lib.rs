@@ -182,11 +182,9 @@ macro_rules! mount_endpoints_and_merged_docs {
     }};
 }
 
-
-
 /// Get and merge nested endpoints and OpenAPI documentation.
 ///
-/// This macro enables to split endpoints definition in smaller pieces to make code look 
+/// This macro enables to split endpoints definition in smaller pieces to make code look
 /// cleaner and improves readability for bigger codebases.
 ///
 /// The macro expects the following arguments:
@@ -205,7 +203,7 @@ macro_rules! mount_endpoints_and_merged_docs {
 ///     "/" => custom_route_spec,
 ///     "/api" => api::get_routes_and_docs(),
 /// };
-/// 
+///
 /// mod api {
 ///     pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
 ///         get_nested_endpoints_and_docs! {
