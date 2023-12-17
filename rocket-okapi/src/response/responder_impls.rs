@@ -381,13 +381,29 @@ impl<T: Serialize + JsonSchema + Send> OpenApiResponderInner
     }
 }
 
-// From: https://docs.rs/rocket_dyn_templates/latest/rocket_dyn_templates/struct.Template.html#impl-Responder%3C'r,+'static%3E-for-Template
-
 /// Response is set to `String` (so `text/plain`) because the actual return type is unknown
 /// at compile time. The content type depends on the file extension, but this can change at runtime.
 #[cfg(feature = "rocket_dyn_templates")]
 impl OpenApiResponderInner for rocket_dyn_templates::Template {
     fn responses(gen: &mut OpenApiGenerator) -> Result {
         String::responses(gen)
+    }
+}
+
+/// A streaming channel, returned by [`rocket_ws::WebSocket::channel()`].
+#[cfg(feature = "rocket_ws")]
+impl<'r, 'o: 'r> OpenApiResponderInner for rocket_ws::Channel<'o> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        // Response type is unknown at compile time.
+        <Vec<u8>>::responses(gen)
+    }
+}
+
+/// A `Stream` of `Messages``, returned by [`rocket_ws::WebSocket::stream()`], used via `Stream!`.
+#[cfg(feature = "rocket_ws")]
+impl<'r, 'o: 'r, S> OpenApiResponderInner for rocket_ws::stream::MessageStream<'o, S> {
+    fn responses(gen: &mut OpenApiGenerator) -> Result {
+        // Response type is unknown at compile time.
+        <Vec<u8>>::responses(gen)
     }
 }

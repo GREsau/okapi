@@ -336,6 +336,7 @@ fn create_route_operation_fn(
             let request_body = #request_body;
             // Add the security scheme that are quired for all the routes.
             let mut security_requirements = Vec::new();
+            let mut server_requirements = Vec::new();
 
             // Combine all parameters from all sources
             // Add all from `path_params` and `path_multi_param`
@@ -366,6 +367,15 @@ fn create_route_operation_fn(
                         // Add the security scheme that are quired for all the route.
                         security_requirements.push(requirement);
                     }
+                    // Add Server to this request.
+                    RequestHeaderInput::Server(url, description, variables) => {
+                        server_requirements.push(::rocket_okapi::okapi::openapi3::Server{
+                            url,
+                            description,
+                            variables,
+                            ..Default::default()
+                        });
+                    }
                     _ => {
                     }
                 }
@@ -376,6 +386,12 @@ fn create_route_operation_fn(
                 None
             } else {
                 Some(security_requirements)
+            };
+            // Add `servers` section if list is not empty
+            let servers = if server_requirements.is_empty() {
+                None
+            } else {
+                Some(server_requirements)
             };
             // Add route/endpoint to OpenApi object.
             gen.add_operation(::rocket_okapi::OperationInfo {
@@ -389,6 +405,7 @@ fn create_route_operation_fn(
                     summary: #title,
                     description: #desc,
                     security,
+                    servers,
                     tags: vec![#(#tags),*],
                     deprecated: #deprecated,
                     ..Default::default()

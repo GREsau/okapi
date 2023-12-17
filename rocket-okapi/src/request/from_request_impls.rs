@@ -6,6 +6,7 @@ use std::result::Result as StdResult;
 // Implement `OpenApiFromRequest` for everything that implements `FromRequest`
 // Order is same as on:
 // https://docs.rs/rocket/0.5.0/rocket/request/trait.FromRequest.html#foreign-impls
+// https://api.rocket.rs/v0.5/rocket/request/trait.FromRequest.html#foreign-impls
 
 type Result = crate::Result<RequestHeaderInput>;
 
@@ -189,5 +190,39 @@ impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r>
 impl<'r, D: rocket_db_pools::Database> OpenApiFromRequest<'r> for rocket_db_pools::Connection<D> {
     fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
         Ok(RequestHeaderInput::None)
+    }
+}
+
+#[cfg(feature = "rocket_dyn_templates")]
+impl<'r> OpenApiFromRequest<'r> for rocket_dyn_templates::Metadata<'r> {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+#[cfg(feature = "rocket_sync_db_pools")]
+impl<'r> OpenApiFromRequest<'r> for rocket_sync_db_pools::example::ExampleDb {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::None)
+    }
+}
+
+#[cfg(feature = "rocket_ws")]
+impl<'r> OpenApiFromRequest<'r> for rocket_ws::WebSocket {
+    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
+        Ok(RequestHeaderInput::Server(
+            "ws://{server}/{base_path}".to_owned(),
+            Some("WebSocket connection".to_owned()),
+            okapi::map! {
+                "server".to_owned() => okapi::openapi3::ServerVariable {
+                    default: "127.0.0.1:8000".to_owned(),
+                    ..Default::default()
+                },
+                "base_path".to_owned() => okapi::openapi3::ServerVariable {
+                    default: "".to_owned(),
+                    ..Default::default()
+                },
+            },
+        ))
     }
 }

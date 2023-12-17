@@ -25,6 +25,19 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 - Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0/rocket/request/trait.FromRequest.html)
   types (implemented `OpenApiFromRequest`):
   - `rocket::request::Outcome<T, T::Error>`
+- New feature flag `rocket_sync_db_pools` for compatibility with
+  [`rocket_sync_db_pools`](https://crates.io/crates/rocket_sync_db_pools).
+- New feature flag `rocket_ws` for compatibility with [`rocket_ws`](https://crates.io/crates/rocket_ws).
+- Added new example for WebSockets.
+- Added support for new [`Responder`](https://docs.rs/rocket/0.5.0/rocket/response/trait.Responder.html)
+  types (implemented `OpenApiResponderInner`):
+  - `rocket_ws::Channel<'o>` (when `rocket_ws` feature is enabled)
+  - `rocket_ws::stream::MessageStream<'o, S>` (when `rocket_ws` feature is enabled)
+- Added support for new [`FromRequest`](https://docs.rs/rocket/0.5.0/rocket/request/trait.FromRequest.html)
+  types (implemented `OpenApiFromRequest`):
+  - `rocket_dyn_templates::Metadata<'r>` (when `rocket_dyn_templates` feature is enabled)
+  - `rocket_sync_db_pools::example::ExampleDb` (when `rocket_sync_db_pools` feature is enabled)
+  - `rocket_ws::WebSocket` (when `rocket_ws` feature is enabled)
 
 ### Changed
 - `rocket-okapi` and `rocket-okapi-codegen` require `rocket v0.5.0`. (#132)

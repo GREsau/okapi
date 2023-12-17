@@ -12,5 +12,6 @@ members = [
     "examples/dyn_templates",
     "examples/openapi_attributes",
     "examples/raw_identifiers",
+    "examples/websocket",
 ]
 resolver = "2"

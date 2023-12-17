@@ -1,0 +1,15 @@
+[package]
+name = "websocket"
+version = "0.1.0"
+authors = ["Ralph Bisschops <ralph.bisschops.dev@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+rocket = { version = "=0.5.0", default-features = false, features = ["json"] }
+rocket_ws = "0.1.0"
+rocket_okapi = { path = "../../rocket-okapi", features = [
+    "swagger",
+    "rapidoc",
+    "rocket_ws",
+] }
+serde = "1.0"

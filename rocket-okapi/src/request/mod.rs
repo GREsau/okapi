@@ -80,6 +80,18 @@ pub enum RequestHeaderInput {
     /// - [`SecurityScheme`] is global definition of the authentication (per OpenApi spec).
     /// - [`SecurityRequirement`] is the requirements for the route.
     Security(String, SecurityScheme, SecurityRequirement),
+    /// A server this resources is allocated on.
+    ///
+    /// Parameters:
+    /// - The url
+    /// - The description
+    /// - Variable mapping: A map between a variable name and its value.
+    /// The value is used for substitution in the server’s URL template.
+    Server(
+        String,
+        Option<String>,
+        okapi::Map<String, okapi::openapi3::ServerVariable>,
+    ),
 }
 
 // Re-export derive trait here for convenience.
