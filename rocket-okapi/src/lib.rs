@@ -237,7 +237,7 @@ macro_rules! get_nested_endpoints_and_docs {
             // Prepend the path prefix to all routes
             let new_routes = new_routes
                 .into_iter()
-                .map(|r: Route| r.map_base(|base| format!("{}{}", $path_prefix, base)).unwrap())
+                .map(|r: rocket::Route| r.map_base(|base| format!("{}{}", $path_prefix, base)).unwrap())
                 .collect::<Vec<_>>();
             routes.extend(new_routes);
             // Merge OpenAPI specs
