@@ -16,7 +16,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Security
 
-## Unreleased Version 0.7.0 (2023-xx-xx)
+## Unreleased Version 0.7.0 (2024-01-14)
 
 ### Added
 - Added `Eq` trait for various structures.
@@ -24,14 +24,6 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ### Changed
 - `merge_paths` does correctly handle the merging of paths with double `/` in the combined path.
 - Updated to Rust 2021 edition.
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## Version 0.7.0-rc.1 (2021-10-02)
 

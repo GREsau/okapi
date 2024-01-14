@@ -16,7 +16,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Security
 
-## Unreleased Version 0.8.0 (2024-xx-xx)
+## Unreleased Version 0.8.0 (2024-01-14)
 
 ### Added
 - Added support for new [`Responder`](https://docs.rs/rocket/0.5.0/rocket/response/trait.Responder.html)
@@ -57,15 +57,6 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 - Updated Swagger UI to `v5.11.0`.
 - Updated all crates to Rust 2021 edition.
 - Renamed `uuid` example to `uuid_usage`, so it does not collide with `uuid` crate.
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
-
 
 This version also includes all the changes from `0.8.0-rc.1`, `0.8.0-rc.2` and `0.8.0-rc.3`.
 See below for more info on the changes made in these versions.
