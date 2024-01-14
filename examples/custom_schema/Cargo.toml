@@ -1,12 +1,11 @@
 [package]
 name = "custom_schema"
 version = "0.1.0"
-authors = ["Ralph Bisschops <ralph.bisschops.dev@gmail.com>"]
+authors = [ "Ralph Bisschops <ralph.bisschops.dev@gmail.com>" ]
 edition = "2021"
 
 [dependencies]
-rocket = { version = "=0.5.0", default-features = false, features = ["json"] }
-rocket_okapi = { path = "../../rocket-okapi", features = ["swagger", "rapidoc"] }
+rocket = { version = "=0.5.0", default-features = false, features = [ "json" ] }
+rocket_okapi = { path = "../../rocket-okapi", features = [ "swagger", "rapidoc" ] }
 serde = "1.0"
 serde_json = "1.0"
-indexmap = "1.8.2"

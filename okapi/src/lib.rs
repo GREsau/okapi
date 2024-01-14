@@ -33,7 +33,7 @@ pub use schemars;
 macro_rules! map {
     ($($key:expr => $val:expr),* $(,)*) => ({
         #[allow(unused_mut)]
-        let mut map = okapi::Map::new();
+        let mut map = $crate::Map::new();
         $( map.insert($key, $val); )*
         map
     });

@@ -59,7 +59,7 @@ pub fn create_server() -> Rocket<Build> {
 }
 
 fn custom_openapi_spec() -> OpenApi {
-    use indexmap::indexmap;
+    use rocket_okapi::okapi::map;
     use rocket_okapi::okapi::openapi3::*;
     use rocket_okapi::okapi::schemars::schema::*;
     OpenApi {
@@ -98,18 +98,18 @@ fn custom_openapi_spec() -> OpenApi {
         ],
         // Add paths that do not exist in Rocket (or add extra info to existing paths)
         paths: {
-            indexmap! {
+            map! {
                 "/home".to_owned() => PathItem{
                 get: Some(
                     Operation {
                     tags: vec!["HomePage".to_owned()],
                     summary: Some("This is my homepage".to_owned()),
                     responses: Responses{
-                        responses: indexmap!{
+                        responses: map!{
                         "200".to_owned() => RefOr::Object(
                             Response{
                             description: "Return the page, no error.".to_owned(),
-                            content: indexmap!{
+                            content: map!{
                                 "text/html".to_owned() => MediaType{
                                 schema: Some(SchemaObject{
                                     instance_type: Some(SingleOrVec::Single(Box::new(
