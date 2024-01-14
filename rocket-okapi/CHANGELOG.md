@@ -16,7 +16,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Security
 
-## Unreleased Version 0.8.0 (2024-01-14)
+## Version 0.8.0 (2024-01-14)
 
 ### Added
 - Added support for new [`Responder`](https://docs.rs/rocket/0.5.0/rocket/response/trait.Responder.html)

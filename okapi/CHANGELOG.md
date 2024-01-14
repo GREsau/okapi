@@ -16,7 +16,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Security
 
-## Unreleased Version 0.7.0 (2024-01-14)
+## Version 0.7.0 (2024-01-14)
 
 ### Added
 - Added `Eq` trait for various structures.
