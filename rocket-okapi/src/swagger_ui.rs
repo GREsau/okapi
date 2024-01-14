@@ -14,6 +14,9 @@ macro_rules! static_file {
     };
 }
 
+// To update this structures use;
+// https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md
+
 /// Used to control the way models are displayed by default.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]

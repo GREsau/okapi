@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project follows the [Semantic Versioning standard](https://semver.org/).
 
-## Unreleased (2023-xx-xx)
+## Unreleased (2024-xx-xx)
 
 ### Added
 
@@ -16,7 +16,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Security
 
-## Unreleased Version 0.8.0 (2023-xx-xx)
+## Unreleased Version 0.8.0 (2024-xx-xx)
 
 ### Added
 - Added support for new [`Responder`](https://docs.rs/rocket/0.5.0/rocket/response/trait.Responder.html)
@@ -38,6 +38,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
   - `rocket_dyn_templates::Metadata<'r>` (when `rocket_dyn_templates` feature is enabled)
   - `rocket_sync_db_pools::example::ExampleDb` (when `rocket_sync_db_pools` feature is enabled)
   - `rocket_ws::WebSocket` (when `rocket_ws` feature is enabled)
+- Added `get_nested_endpoints_and_docs` to support more module based APIs. (#137, #138)
 
 ### Changed
 - `rocket-okapi` and `rocket-okapi-codegen` require `rocket v0.5.0`. (#132)
@@ -53,6 +54,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
     - `SlotsConfig` added: `operations_top`.
     - Note: The default `RenderStyle` changed from `View` to `Read`.
     - Note: `schema_hide_read_only` and `schema_hide_write_only` changed behavior.
+- Updated Swagger UI to `v5.11.0`.
 - Updated all crates to Rust 2021 edition.
 - Renamed `uuid` example to `uuid_usage`, so it does not collide with `uuid` crate.
 
