@@ -30,7 +30,7 @@ Example of generated documentation using Okapi:
 
 ## Examples
 - [Json web API](examples/json-web-api): Simple example showing the basics of Okapi.
-- [UUID](examples/uuid): Simple example showing basics, but using UUID's instead of
+- [UUID](examples/uuid_usage): Simple example showing basics, but using UUID's instead of
 normal `u32`/`u64` id's.
 - [Custom Schema](examples/custom_schema): Shows how to add more/custom info to OpenAPI file
 and merge multiple modules into one OpenAPI file.
