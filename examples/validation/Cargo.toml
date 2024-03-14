@@ -8,6 +8,6 @@ edition = "2021"
 rocket = { version = "=0.5.0", default-features = false, features = [ "json" ] }
 rocket-validation = "0.2.0"
 validator= {version = "0.16.1", features = ["derive"]}
-rocket_okapi = { path = "../../rocket-okapi", features = [ "swagger", "rapidoc", "rocket_ws" ] }
+rocket_okapi = { path = "../../rocket-okapi", features = [ "swagger", "rapidoc", "validation" ] }
 serde = "1.0"
 schemars = "0.8.16"

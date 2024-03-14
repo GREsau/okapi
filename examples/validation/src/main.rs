@@ -1,6 +1,6 @@
 
 use rocket::serde::json::Json;
-use rocket::{post, FromForm};
+use rocket::{catchers, post, FromForm};
 use rocket_okapi::settings::UrlObject;
 use rocket_okapi::{openapi, openapi_get_routes, rapidoc::*, swagger_ui::*};
 use schemars::JsonSchema;
@@ -11,13 +11,18 @@ use rocket_validation::{Validate, Validated};
 #[serde(rename_all="camelCase")]
 #[serde(crate = "rocket::serde")]
 pub struct SampleForm {
-    #[validate(length(min = 2, max = 25))]
-    pub name: String,
-    #[validate(range(min = 1, max = 200))]
+    
+    #[validate(required(message = "Name is required"))]
+    #[validate(length(min = 2, max = 25, message = "Invalid name"))]
+    pub name: Option<String>,
+    
+    #[validate(range(min = 1, max = 200, message = "Invalid age"))]
     pub age: u8,
-    #[validate(email)]
+    
+    #[validate(email(message = "Invalid email"))]
     pub email: String,
-    #[validate(url)]
+    
+    #[validate(url(message = "Invalid URL"))]
     pub website: String,
     pub phone: String,
 }
@@ -55,6 +60,12 @@ async fn main() {
                 },
                 ..Default::default()
             }),
+        )
+        .register(
+            "/",
+            catchers![
+                rocket_validation::validation_catcher
+            ],
         )
         .launch()
         .await;
