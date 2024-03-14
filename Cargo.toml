@@ -14,5 +14,6 @@ members = [
     "examples/openapi_attributes",
     "examples/raw_identifiers",
     "examples/websocket",
+    "examples/validation",
 ]
 resolver = "2"

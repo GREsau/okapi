@@ -170,3 +170,14 @@ impl<'r, T: OpenApiFromData<'r>> OpenApiFromData<'r> for Option<T> {
         })
     }
 }
+
+
+// implementation for rocket-validation issue #142
+#[cfg(feature = "validation")]
+impl<'r, D: rocket_validation::Validate + JsonSchema  + rocket::serde::Deserialize<'r>> OpenApiFromData<'r> 
+    for  rocket_validation::Validated<Json<D>>{
+        fn request_body(gen: &mut OpenApiGenerator) -> Result {
+            fn_request_body!(gen, D, "application/json")
+        }
+}
+
