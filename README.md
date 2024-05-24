@@ -19,7 +19,7 @@ visualize the documentation. Rocket-okapi currently includes [RapiDoc][RapiDoc] 
 [Swagger UI][Swagger_UI], but others can be used too.
 
 Supported OpenAPI Spec: [3.0.0][OpenAPI_3.0.0]<br/>
-Supported Rocket version (for `rocket_okapi`): [0.5.0](https://crates.io/crates/rocket/0.5.0)
+Supported Rocket version (for `rocket_okapi`): [0.5.1](https://crates.io/crates/rocket/0.5.1)
 
 Example of generated documentation using Okapi:
 - DF Storyteller: [RapiDoc](https://docs.dfstoryteller.com/rapidoc/),

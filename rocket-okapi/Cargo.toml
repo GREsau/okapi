@@ -11,7 +11,7 @@ keywords = [ "rust", "openapi", "swagger", "rocket" ]
 categories = [ "web-programming" ]
 
 [dependencies]
-rocket = { version = "=0.5.0", default-features = false, features = [ "json" ] }
+rocket = { version = "=0.5.1", default-features = false, features = [ "json" ] }
 schemars = { version = "0.8.16" }
 okapi = { version = "0.7.0", path = "../okapi" }
 rocket_okapi_codegen = { version = "=0.8.0", path = "../rocket-okapi-codegen" }

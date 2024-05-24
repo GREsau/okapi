@@ -9,7 +9,7 @@
 //! First, add the following lines to your `Cargo.toml`
 //! ```toml
 //! [dependencies]
-//! rocket = { version = "0.5.0", default-features = false, features = ["json"] }
+//! rocket = { version = "0.5.1", default-features = false, features = ["json"] }
 //! schemars = "0.8.16"
 //! okapi = { version = "0.7.0" }
 //! rocket_okapi = { version = "0.8.0", features = ["swagger"] }
@@ -134,7 +134,7 @@ pub fn get_openapi_route(
 /// The macro expects the following arguments:
 /// - rocket_builder: `Rocket<Build>`,
 /// - base_path: `&str`, `String` or [`Uri`](rocket::http::uri::Uri). (Anything that implements `ToString`)
-/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0/rocket/struct.Rocket.html#method.mount)
+/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.1/rocket/struct.Rocket.html#method.mount)
 /// - openapi_settings: `OpenApiSettings` (use `OpenApiSettings::default()` if default settings are okay for you),
 /// - List of (0 or more):
 ///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).

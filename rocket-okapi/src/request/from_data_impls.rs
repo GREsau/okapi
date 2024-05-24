@@ -35,7 +35,7 @@ macro_rules! fn_request_body {
 
 // Implement `OpenApiFromData` for everything that implements `FromData`
 // Order is same as on:
-// https://docs.rs/rocket/0.5.0/rocket/data/trait.FromData.html#foreign-impls
+// https://docs.rs/rocket/0.5.1/rocket/data/trait.FromData.html#foreign-impls
 
 // ## Implementations on Foreign Types
 

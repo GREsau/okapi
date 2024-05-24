@@ -1,5 +1,5 @@
 //! Implement `OpenApiFromForm` for everything that implements `FromForm`
-//! <https://docs.rs/rocket/0.5.0/rocket/form/trait.FromForm.html#foreign-impls>
+//! <https://docs.rs/rocket/0.5.1/rocket/form/trait.FromForm.html#foreign-impls>
 
 use super::{get_nested_form_parameters, OpenApiFromForm, OpenApiFromFormField};
 use crate::gen::OpenApiGenerator;
