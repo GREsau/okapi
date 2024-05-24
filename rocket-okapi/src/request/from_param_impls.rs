@@ -1,5 +1,5 @@
 //! Implement `OpenApiFromParam` for everything that implements `FromParam`
-//! <https://docs.rs/rocket/0.5.0/rocket/request/trait.FromParam.html#foreign-impls>
+//! <https://docs.rs/rocket/0.5.1/rocket/request/trait.FromParam.html#foreign-impls>
 
 use super::OpenApiFromParam;
 use crate::gen::OpenApiGenerator;

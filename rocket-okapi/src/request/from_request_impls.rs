@@ -5,7 +5,7 @@ use std::result::Result as StdResult;
 
 // Implement `OpenApiFromRequest` for everything that implements `FromRequest`
 // Order is same as on:
-// https://docs.rs/rocket/0.5.0/rocket/request/trait.FromRequest.html#foreign-impls
+// https://docs.rs/rocket/0.5.1/rocket/request/trait.FromRequest.html#foreign-impls
 // https://api.rocket.rs/v0.5/rocket/request/trait.FromRequest.html#foreign-impls
 
 type Result = crate::Result<RequestHeaderInput>;
