@@ -15,6 +15,7 @@ use rocket_okapi::{
     request::{OpenApiFromRequest, RequestHeaderInput},
 };
 
+#[allow(dead_code)]
 pub struct ApiKey(String);
 
 // Implement the actual checks for the authentication

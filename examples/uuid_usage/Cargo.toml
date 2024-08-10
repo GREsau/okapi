@@ -9,8 +9,8 @@ authors = [
 edition = "2021"
 
 [dependencies]
-rocket = { version = "=0.5.0", default-features = false, features = [ "json", "uuid" ] }
-schemars = { version = "0.8", features = [ "uuid1" ] }
+rocket = { workspace = true, features = [ "json", "uuid" ] }
+schemars = { workspace = true, features = [ "uuid1" ] }
 rocket_okapi = { path = "../../rocket-okapi", features = [ "swagger", "rapidoc", "uuid" ] }
-serde = "1.0"
+serde = { workspace = true }
 uuid = { version = "1.1.1", features = [ "v4" ] }
