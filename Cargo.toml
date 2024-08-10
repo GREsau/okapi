@@ -19,10 +19,10 @@ resolver = "2"
 
 [workspace.dependencies]
 log = "0.4"
-rocket = { version = "=0.5.0", default-features = false, features = [ "json" ] }
-rocket_ws = "0.1.0"
-rocket_http = "=0.5.0"
-rocket_dyn_templates = "=0.1.0"
+rocket = { version = "=0.5.1", default-features = false, features = [ "json" ] }
+rocket_ws = "0.1.1"
+rocket_http = "=0.5.1"
+rocket_dyn_templates = "=0.2.0"
 rocket_db_pools = "=0.1.0"
 rocket_sync_db_pools = "=0.1.0"
 schemars = "0.8"
