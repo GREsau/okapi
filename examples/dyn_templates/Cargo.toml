@@ -1,13 +1,17 @@
 [package]
 name = "dyn_templates"
 version = "0.1.0"
-authors = [ "Ralph Bisschops <ralph.bisschops.dev@gmail.com>" ]
+authors = ["Ralph Bisschops <ralph.bisschops.dev@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-rocket = { version = "=0.5.0", default-features = false, features = [ "json" ] }
+rocket = { version = "0.5.1", default-features = false, features = ["json"] }
 schemars = { version = "0.8" }
-rocket_okapi = { path = "../../rocket-okapi", features = [ "swagger", "rapidoc", "rocket_dyn_templates" ] }
+rocket_okapi = { path = "../../rocket-okapi", features = [
+    "swagger",
+    "rapidoc",
+    "rocket_dyn_templates",
+] }
 serde = "1.0"
-rocket_dyn_templates = { version = "=0.1.0", features = [ "handlebars" ] }
+rocket_dyn_templates = { version = "=0.1.0", features = ["handlebars"] }
 handlebars = "5.0.0"

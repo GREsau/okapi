@@ -287,6 +287,7 @@ fn create_route_operation_fn(
     }
 
     let fn_name = get_add_operation_fn_name(&route_fn.sig.ident);
+    let generics = route_fn.sig.generics;
     let path = route
         .origin
         .path()
@@ -322,7 +323,7 @@ fn create_route_operation_fn(
 
     TokenStream::from(quote! {
         #[doc(hidden)]
-        pub fn #fn_name(
+        pub fn #fn_name #generics(
             gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             operation_id: String,
         ) -> ::rocket_okapi::Result<()> {

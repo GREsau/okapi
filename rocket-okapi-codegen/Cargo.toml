@@ -3,18 +3,18 @@ name = "rocket_okapi_codegen"
 description = "Macros supporting rocket_okapi"
 repository = "https://github.com/GREsau/okapi"
 version = "0.8.0"
-authors = [ "Graham Esau <gesau@hotmail.co.uk>" ]
+authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2021"
 license = "MIT"
 readme = "../README.md"
-keywords = [ "rust", "openapi", "swagger", "rocket" ]
-categories = [ "web-programming" ]
+keywords = ["rust", "openapi", "swagger", "rocket"]
+categories = ["web-programming"]
 
 [lib]
 proc-macro = true
 
 [dependencies]
-rocket_http = { version = "=0.5.0" }
+rocket_http = { version = "0.5.1" }
 darling = "0.13"
 syn = "1.0"
 proc-macro2 = "1.0"

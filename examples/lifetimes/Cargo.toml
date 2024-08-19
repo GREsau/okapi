@@ -1,7 +1,6 @@
 [package]
-name = "raw_identifiers"
+name = "lifetimes"
 version = "0.1.0"
-authors = ["Alex Payne <apayne@esri.com>"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -9,6 +8,6 @@ edition = "2021"
 [dependencies]
 rocket = { version = "0.5.1", default-features = false, features = ["json"] }
 rocket_okapi = { path = "../../rocket-okapi", features = [
-    "rapidoc",
     "swagger",
+    "rapidoc",
 ] }
