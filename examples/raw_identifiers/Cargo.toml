@@ -1,11 +1,16 @@
 [package]
 name = "raw_identifiers"
 version = "0.1.0"
-authors = [ "Alex Payne <apayne@esri.com>" ]
+authors = ["Alex Payne <apayne@esri.com>"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rocket = { version = "=0.5.1", default-features = false, features = [ "json" ] }
-rocket_okapi = { path = "../../rocket-okapi", features = [ "rapidoc", "swagger" ] }
+rocket = { git = "https://github.com/rwf2/Rocket.git", rev = "8b9d906cc4923fdf6f2b860e0da2ab00f1993796", default-features = false, features = [
+	"json",
+] }
+rocket_okapi = { path = "../../rocket-okapi", features = [
+	"rapidoc",
+	"swagger",
+] }

@@ -1,11 +1,13 @@
 [package]
 name = "dyn_templates"
 version = "0.1.0"
-authors = [ "Ralph Bisschops <ralph.bisschops.dev@gmail.com>" ]
+authors = ["Ralph Bisschops <ralph.bisschops.dev@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-rocket = { version = "=0.5.1", default-features = false, features = ["json"] }
+rocket = { git = "https://github.com/rwf2/Rocket.git", rev = "8b9d906cc4923fdf6f2b860e0da2ab00f1993796", default-features = false, features = [
+	"json",
+] }
 schemars = { version = "0.8" }
 rocket_okapi = { path = "../../rocket-okapi", features = [
 	"swagger",
@@ -13,5 +15,7 @@ rocket_okapi = { path = "../../rocket-okapi", features = [
 	"rocket_dyn_templates",
 ] }
 serde = "1.0"
-rocket_dyn_templates = { version = "=0.2.0", features = ["handlebars"] }
+rocket_dyn_templates = { git = "https://github.com/rwf2/Rocket.git", rev = "8b9d906cc4923fdf6f2b860e0da2ab00f1993796", features = [
+	"handlebars",
+] }
 handlebars = "6.0.0"

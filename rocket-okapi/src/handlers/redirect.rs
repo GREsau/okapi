@@ -27,7 +27,14 @@ impl RedirectHandler {
 #[rocket::async_trait]
 impl Handler for RedirectHandler {
     async fn handle<'r>(&self, req: &'r Request<'_>, _: Data<'r>) -> Outcome<'r> {
-        let path = req.route().unwrap().uri.base().trim_end_matches('/');
+        let path = req
+            .route()
+            .unwrap()
+            .uri
+            .base()
+            .to_string()
+            .trim_end_matches('/')
+            .to_string();
         Outcome::from(req, Redirect::to(format!("{}/{}", path, self.dest)))
     }
 }

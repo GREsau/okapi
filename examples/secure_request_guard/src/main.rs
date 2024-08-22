@@ -34,7 +34,7 @@ mod open_id;
 
 mod cookies;
 
-#[tokio::main]
+#[rocket::main]
 async fn main() {
     let figment = Config::figment()
         // Set a dummy secret

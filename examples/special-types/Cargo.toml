@@ -1,10 +1,15 @@
 [package]
 name = "special-types"
 version = "0.1.0"
-authors = [ "Ralph Bisschops <ralph.bisschops.dev@gmail.com>" ]
+authors = ["Ralph Bisschops <ralph.bisschops.dev@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-rocket = { version = "=0.5.1", default-features = false, features = [ "json" ] }
-rocket_okapi = { path = "../../rocket-okapi", features = [ "swagger", "rapidoc" ] }
+rocket = { git = "https://github.com/rwf2/Rocket.git", rev = "8b9d906cc4923fdf6f2b860e0da2ab00f1993796", default-features = false, features = [
+	"json",
+] }
+rocket_okapi = { path = "../../rocket-okapi", features = [
+	"swagger",
+	"rapidoc",
+] }
 serde = "1.0"
