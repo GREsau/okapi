@@ -8,8 +8,8 @@ authors = [
 edition = "2021"
 
 [dependencies]
-rocket = { workspace = true, features = [ "json", "secrets" ] }
-rocket_okapi = { path = "../../rocket-okapi", features = [ "rapidoc", "swagger", "secrets" ] }
+rocket = { workspace = true, features = ["json", "secrets"] }
+rocket_okapi = { path = "../../rocket-okapi", features = ["rapidoc", "swagger", "secrets"] }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = "1.6"

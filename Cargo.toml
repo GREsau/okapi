@@ -13,13 +13,13 @@ members = [
     "examples/dyn_templates",
     "examples/openapi_attributes",
     "examples/raw_identifiers",
-    "examples/websocket",
+    "examples/websocket_usage",
 ]
 resolver = "2"
 
 [workspace.dependencies]
 log = "0.4"
-rocket = { version = "=0.5.1", default-features = false, features = [ "json" ] }
+rocket = { version = "=0.5.1", default-features = false, features = ["json"] }
 rocket_ws = "0.1.1"
 rocket_http = "=0.5.1"
 rocket_dyn_templates = "=0.2.0"

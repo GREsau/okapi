@@ -1,10 +1,11 @@
 [package]
-name = "streams"
+name = "websocket_usage"
 version = "0.1.0"
 authors = ["Ralph Bisschops <ralph.bisschops.dev@gmail.com>"]
 edition = "2021"
 
 [dependencies]
 rocket = { workspace = true }
-rocket_okapi = { path = "../../rocket-okapi", features = ["swagger", "rapidoc"] }
+rocket_ws = { workspace = true }
+rocket_okapi = { path = "../../rocket-okapi", features = ["swagger", "rapidoc", "rocket_ws"] }
 serde = { workspace = true }
