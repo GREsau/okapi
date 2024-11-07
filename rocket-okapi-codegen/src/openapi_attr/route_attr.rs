@@ -10,6 +10,7 @@ use syn::{Attribute, Meta, MetaList, NestedMeta};
 pub struct Route {
     pub method: Method,
     pub origin: Origin<'static>,
+    #[allow(dead_code)]
     pub media_type: Option<MediaType>,
     pub data_param: Option<String>,
 }

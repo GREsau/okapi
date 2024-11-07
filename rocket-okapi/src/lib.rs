@@ -134,11 +134,11 @@ pub fn get_openapi_route(
 /// The macro expects the following arguments:
 /// - rocket_builder: `Rocket<Build>`,
 /// - base_path: `&str`, `String` or [`Uri`](rocket::http::uri::Uri). (Anything that implements `ToString`)
-/// Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0/rocket/struct.Rocket.html#method.mount)
+///   Anything accepted by [`mount()`](https://docs.rs/rocket/0.5.0/rocket/struct.Rocket.html#method.mount)
 /// - openapi_settings: `OpenApiSettings` (use `OpenApiSettings::default()` if default settings are okay for you),
 /// - List of (0 or more):
 ///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).
-///   Anything accepted by `mount()` (`base_path` should not be included).
+///     Anything accepted by `mount()` (`base_path` should not be included).
 ///   - `=>`: divider
 ///   - route_and_docs: `(Vec<rocket::Route>, OpenApi)`
 ///
@@ -190,7 +190,7 @@ macro_rules! mount_endpoints_and_merged_docs {
 /// The macro expects the following arguments:
 /// - List of (0 or more):
 ///   - path:  `&str`, `String` or [`Uri`](rocket::http::uri::Uri).
-///   Anything accepted by `mount()` (`base_path` should not be included).
+///     Anything accepted by `mount()` (`base_path` should not be included).
 ///   - `=>`: divider
 ///   - route_and_docs: `(Vec<rocket::Route>, OpenApi)`
 ///

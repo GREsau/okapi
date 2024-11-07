@@ -86,7 +86,7 @@ pub enum RequestHeaderInput {
     /// - The url
     /// - The description
     /// - Variable mapping: A map between a variable name and its value.
-    /// The value is used for substitution in the server’s URL template.
+    ///   The value is used for substitution in the server’s URL template.
     Server(
         String,
         Option<String>,

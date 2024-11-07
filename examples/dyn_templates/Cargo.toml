@@ -5,9 +5,9 @@ authors = [ "Ralph Bisschops <ralph.bisschops.dev@gmail.com>" ]
 edition = "2021"
 
 [dependencies]
-rocket = { version = "=0.5.0", default-features = false, features = [ "json" ] }
-schemars = { version = "0.8" }
+rocket = { workspace = true }
+schemars = { workspace = true }
 rocket_okapi = { path = "../../rocket-okapi", features = [ "swagger", "rapidoc", "rocket_dyn_templates" ] }
-serde = "1.0"
-rocket_dyn_templates = { version = "=0.1.0", features = [ "handlebars" ] }
+serde = { workspace = true }
+rocket_dyn_templates = { workspace = true, features = [ "handlebars" ] }
 handlebars = "5.0.0"
