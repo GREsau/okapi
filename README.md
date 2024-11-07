@@ -19,7 +19,7 @@ visualize the documentation. Rocket-okapi currently includes [RapiDoc][RapiDoc] 
 [Swagger UI][Swagger_UI], but others can be used too.
 
 Supported OpenAPI Spec: [3.0.0][OpenAPI_3.0.0]<br/>
-Supported Rocket version (for `rocket_okapi`): [0.5.0](https://crates.io/crates/rocket/0.5.0)
+Supported Rocket version (for `rocket_okapi`): [0.5.1](https://crates.io/crates/rocket/0.5.1)
 
 Example of generated documentation using Okapi:
 - DF Storyteller: [RapiDoc](https://docs.dfstoryteller.com/rapidoc/),
@@ -163,7 +163,7 @@ two [`OpenAPI`](https://docs.rs/okapi/latest/okapi/openapi3/struct.OpenApi.html)
 This crate can be reused to create OpenAPI support in other web framework.
 
 `Rocket-Okapi` crate contains all the code for generating the OpenAPI file and serve it once created.
-This code is usually executed using macro's like: [`mount_endpoints_and_merged_docs!{...}`, 
+This code is usually executed using macro's like: [`mount_endpoints_and_merged_docs!{...}`,
 `openapi_get_routes![...]`, `openapi_get_routes_spec![...]` and `openapi_get_spec![...]`
 ](https://docs.rs/rocket_okapi/latest/rocket_okapi/#macros).
 
@@ -171,7 +171,7 @@ When the Rocket server is started (or wherever macro is placed) the OpenAPI file
 This file/structure is then stored in memory and will be served when requested.
 
 The `Rocket-Okapi-codegen` crate contains code for
-[derive macros](https://doc.rust-lang.org/book/ch19-06-macros.html). 
+[derive macros](https://doc.rust-lang.org/book/ch19-06-macros.html).
 `#[openapi]`, `rocket_okapi::openapi_spec![...]`, `rocket_okapi::openapi_routes![...]`
 and `#[derive(OpenApiFromRequest)]` in our case.
 This needs to be in a separate crate because of Rust restrictions.

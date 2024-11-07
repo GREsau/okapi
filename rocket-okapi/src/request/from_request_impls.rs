@@ -5,7 +5,7 @@ use std::result::Result as StdResult;
 
 // Implement `OpenApiFromRequest` for everything that implements `FromRequest`
 // Order is same as on:
-// https://docs.rs/rocket/0.5.0/rocket/request/trait.FromRequest.html#foreign-impls
+// https://docs.rs/rocket/0.5.1/rocket/request/trait.FromRequest.html#foreign-impls
 // https://api.rocket.rs/v0.5/rocket/request/trait.FromRequest.html#foreign-impls
 
 type Result = crate::Result<RequestHeaderInput>;
@@ -184,7 +184,7 @@ impl<'r, T: OpenApiFromRequest<'r>> OpenApiFromRequest<'r>
 }
 
 // ## Implementations for other crates
-// https://docs.rs/rocket_db_pools/0.1.0/rocket_db_pools/struct.Connection.html#impl-FromRequest%3C%27r%3E
+// https://docs.rs/rocket_db_pools/latest/rocket_db_pools/struct.Connection.html#impl-FromRequest%3C'r%3E-for-Connection%3CD%3E
 
 #[cfg(feature = "rocket_db_pools")]
 impl<'r, D: rocket_db_pools::Database> OpenApiFromRequest<'r> for rocket_db_pools::Connection<D> {
@@ -193,6 +193,8 @@ impl<'r, D: rocket_db_pools::Database> OpenApiFromRequest<'r> for rocket_db_pool
     }
 }
 
+// https://docs.rs/rocket_dyn_templates/latest/rocket_dyn_templates/struct.Metadata.html#impl-FromRequest%3C'r%3E-for-Metadata%3C'r%3E
+
 #[cfg(feature = "rocket_dyn_templates")]
 impl<'r> OpenApiFromRequest<'r> for rocket_dyn_templates::Metadata<'r> {
     fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
@@ -200,12 +202,16 @@ impl<'r> OpenApiFromRequest<'r> for rocket_dyn_templates::Metadata<'r> {
     }
 }
 
+// https://docs.rs/rocket_sync_db_pools/latest/rocket_sync_db_pools/example/struct.ExampleDb.html#impl-FromRequest%3C'r%3E-for-ExampleDb
+
 #[cfg(feature = "rocket_sync_db_pools")]
 impl<'r> OpenApiFromRequest<'r> for rocket_sync_db_pools::example::ExampleDb {
     fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
         Ok(RequestHeaderInput::None)
     }
 }
+
+// https://docs.rs/rocket_ws/latest/rocket_ws/struct.WebSocket.html#impl-FromRequest%3C'r%3E-for-WebSocket
 
 #[cfg(feature = "rocket_ws")]
 impl<'r> OpenApiFromRequest<'r> for rocket_ws::WebSocket {
