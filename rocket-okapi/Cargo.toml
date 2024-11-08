@@ -2,7 +2,7 @@
 name = "rocket_okapi"
 description = "OpenAPI (AKA Swagger) document generation for Rocket applications"
 repository = "https://github.com/GREsau/okapi"
-version = "0.8.0"
+version = "0.9.0"
 authors = ["Graham Esau <gesau@hotmail.co.uk>"]
 edition = "2021"
 license = "MIT"
@@ -14,7 +14,7 @@ categories = ["web-programming"]
 rocket = { workspace = true }
 schemars = { workspace = true }
 okapi = { version = "0.7.0", path = "../okapi" }
-rocket_okapi_codegen = { version = "=0.8.0", path = "../rocket-okapi-codegen" }
+rocket_okapi_codegen = { version = "=0.9.0", path = "../rocket-okapi-codegen" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 log = { workspace = true }
@@ -54,3 +54,4 @@ mtls = ["rocket/mtls"]
 
 [package.metadata.docs.rs]
 all-features = true
+features = ["rocket_dyn_templates/handlebars", "rocket_dyn_templates/tera"]

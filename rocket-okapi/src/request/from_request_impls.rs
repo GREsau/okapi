@@ -204,12 +204,9 @@ impl<'r> OpenApiFromRequest<'r> for rocket_dyn_templates::Metadata<'r> {
 
 // https://docs.rs/rocket_sync_db_pools/latest/rocket_sync_db_pools/example/struct.ExampleDb.html#impl-FromRequest%3C'r%3E-for-ExampleDb
 
-#[cfg(feature = "rocket_sync_db_pools")]
-impl<'r> OpenApiFromRequest<'r> for rocket_sync_db_pools::example::ExampleDb {
-    fn from_request_input(_gen: &mut OpenApiGenerator, _name: String, _required: bool) -> Result {
-        Ok(RequestHeaderInput::None)
-    }
-}
+// `rocket_sync_db_pools::example::ExampleDb` is hidden behind very specific feature flags.
+// So it can be assumed that this is never actually used apart from documentation.
+// https://docs.rs/rocket_sync_db_pools/latest/src/rocket_sync_db_pools/lib.rs.html#392
 
 // https://docs.rs/rocket_ws/latest/rocket_ws/struct.WebSocket.html#impl-FromRequest%3C'r%3E-for-WebSocket
 

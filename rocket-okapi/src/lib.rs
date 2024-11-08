@@ -12,7 +12,7 @@
 //! rocket = { version = "0.5.1", default-features = false, features = ["json"] }
 //! schemars = "0.8.16"
 //! okapi = { version = "0.7.0" }
-//! rocket_okapi = { version = "0.8.0", features = ["swagger"] }
+//! rocket_okapi = { version = "0.9.0", features = ["swagger"] }
 //! ```
 //! To add documentation to a set of endpoints, a couple of steps are required. The request and
 //! response types of the endpoint must implement `JsonSchema`. Secondly, the function must be

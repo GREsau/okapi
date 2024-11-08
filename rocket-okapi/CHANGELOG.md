@@ -16,6 +16,18 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Security
 
+## Version 0.9.0 (2024-xx-xx)
+
+### Changed
+- Updated `rocket` to `v0.5.1` (#149, #148)
+- Updated `rocket_http` to `0.5.1`
+- Updated `rocket_db_pools` to `0.2.0`
+- Updated `rocket_dyn_templates` to `0.2.0`
+- Updated `rocket_ws` to `0.1.1`
+
+### Removed
+- Removed `rocket_sync_db_pools::example::ExampleDb` implementation for `OpenApiFromRequest`.
+
 ## Version 0.8.0 (2024-01-14)
 
 ### Added
