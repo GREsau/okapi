@@ -82,7 +82,7 @@ A: This is because the parameter does not show up in the path, query or body.
 So this is considered a [Request Guard](https://rocket.rs/v0.5/guide/requests/#request-guards).
 There is a [derive macro](https://github.com/GREsau/okapi/blob/master/examples/secure_request_guard/src/no_auth.rs)
 for this, but this does not work in combination with the `#[database("...")]` marco.
-You can solve this my implementing it manually, like this:
+You can solve this by implementing it manually, like this:
 <details>
     <summary>Implement `OpenApiFromRequest` for Diesel DB</summary>
 
