@@ -16,7 +16,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 
 ### Security
 
-## Version 0.9.0 (2024-xx-xx)
+## Version 0.9.0 (2024-11-12)
 
 ### Changed
 - Updated `rocket` to `v0.5.1` (#149, #148)
