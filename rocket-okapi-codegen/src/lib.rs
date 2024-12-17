@@ -12,6 +12,7 @@
 mod openapi_attr;
 mod openapi_spec;
 mod parse_routes;
+mod responder_derive;
 
 use proc_macro::TokenStream;
 use quote::quote;
@@ -134,6 +135,17 @@ pub fn open_api_from_request_derive(input: TokenStream) -> TokenStream {
         }
     };
     gen.into()
+}
+
+/// TODO
+#[proc_macro_derive(OpenApiResponder, attributes(responder))]
+pub fn open_api_responder_derive(input: TokenStream) -> TokenStream {
+    let ast: syn::DeriveInput = syn::parse(input).unwrap();
+
+    match responder_derive::derive(ast) {
+        Ok(v) => v.into(),
+        Err(err) => err.to_compile_error().into(),
+    }
 }
 
 fn get_add_operation_fn_name(route_fn_name: &Ident) -> Ident {
