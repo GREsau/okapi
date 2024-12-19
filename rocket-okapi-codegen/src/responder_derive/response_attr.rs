@@ -50,11 +50,9 @@ pub struct ContentType(pub rocket_http::ContentType);
 
 impl FromMeta for ContentType {
     fn from_string(value: &str) -> darling::Result<Self> {
-        Ok(Self(
-            value
-                .parse()
-                .map_err(|_| darling::Error::unsupported_format(value))?,
-        ))
+        rocket_http::ContentType::parse_flexible(value)
+            .map(Self)
+            .ok_or_else(|| darling::Error::unsupported_format(value))
     }
 }
 

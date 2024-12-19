@@ -5,7 +5,7 @@ use darling::{FromMeta, Result};
 use proc_macro2::TokenStream;
 use quote::quote;
 use response_attr::ResponseAttribute;
-use syn::{parse_quote, Attribute, DeriveInput, Field, Fields, GenericParam, Generics, Type};
+use syn::{parse_quote, Attribute, DeriveInput, Fields, GenericParam, Generics};
 
 pub fn derive(input: DeriveInput) -> Result<TokenStream> {
     let responses_variants: Vec<(Vec<Attribute>, Fields)> = match input.data {
