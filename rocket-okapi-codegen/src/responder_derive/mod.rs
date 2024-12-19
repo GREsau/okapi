@@ -1,22 +1,22 @@
-mod attribute;
-mod utils;
+mod response_attr;
 
-use attribute::ResponseAttribute;
+use crate::doc_attr::get_doc;
+use darling::{FromMeta, Result};
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{spanned::Spanned, Attribute, DeriveInput, Error, Field, Fields, Result};
-use utils::{parse_attribute, parse_doc};
+use response_attr::ResponseAttribute;
+use syn::{Attribute, DeriveInput, Fields};
 
-pub(crate) fn derive(input: DeriveInput) -> Result<TokenStream> {
-    let variants: Vec<(Vec<Attribute>, Fields)> = match input.data {
-        syn::Data::Struct(s) => vec![(input.attrs.clone(), s.fields)],
-        syn::Data::Enum(e) => e
-            .variants
-            .into_iter()
-            .map(|v| (v.attrs, v.fields))
-            .collect(),
+pub fn derive(input: DeriveInput) -> Result<TokenStream> {
+    let responses_variants: Vec<(Vec<Attribute>, Fields)> = match input.data {
+        syn::Data::Struct(syn::DataStruct { fields, .. }) => {
+            [(input.attrs.clone(), fields)].to_vec()
+        }
+        syn::Data::Enum(syn::DataEnum { variants, .. }) => {
+            variants.into_iter().map(|v| (v.attrs, v.fields)).collect()
+        }
         syn::Data::Union(_) => {
-            return Err(Error::new(input.span(), "unions are not supported"));
+            return Err(darling::Error::custom("unions are not supported").with_span(&input));
         }
     };
 
@@ -24,13 +24,15 @@ pub(crate) fn derive(input: DeriveInput) -> Result<TokenStream> {
     let ident = input.ident;
     let generics = input.generics;
 
-    let responses = variants
+    let responses = responses_variants
         .into_iter()
-        .filter_map(|v| variant_to_responses(&attrs, v).transpose())
+        .filter_map(|(variant_attrs, variant_fields)| {
+            variant_to_responses(&attrs, variant_attrs, variant_fields).transpose()
+        })
         .collect::<Result<Vec<_>>>()?;
 
     Ok(quote! {
-        impl<#generics> ::rocket_okapi::response::OpenApiResponderInner for #ident {
+        impl #generics ::rocket_okapi::response::OpenApiResponderInner for #ident #generics {
             fn responses(
                 gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             ) -> ::rocket_okapi::Result<::rocket_okapi::okapi::openapi3::Responses> {
@@ -45,62 +47,55 @@ pub(crate) fn derive(input: DeriveInput) -> Result<TokenStream> {
 }
 
 fn variant_to_responses(
-    global_attrs: &[Attribute],
-    (attrs, fields): (Vec<Attribute>, Fields),
+    entity_attrs: &[Attribute],
+    attrs: Vec<Attribute>,
+    fields: Fields,
 ) -> Result<Option<TokenStream>> {
-    let ResponseAttribute {
-        ignore,
-        status,
-        content_type,
-    } = parse_response_attribute(&attrs)?;
+    let response_attribute = get_response_attr_or_default(&attrs)?;
 
-    if ignore {
-        return Ok(None);
-    }
+    let field = fields
+        .into_iter()
+        .next()
+        .ok_or(darling::Error::custom("need at least one field"))?;
+    let field_type = field.ty;
 
-    let Some(Field {
-        attrs: field_attrs,
-        ty: field_type,
-        ..
-    }) = first_field(fields)?
-    else {
-        return Ok(None);
-    };
+    let status = response_attribute.status;
+    let set_status =
+        status.map(|status| quote! { ::rocket_okapi::util::set_status_code(&mut r, #status)?; });
 
-    let set_status = (status.0 != rocket_http::Status::Ok)
-        .then(|| quote! { ::rocket_okapi::util::set_status_code(&mut r, #status)?; });
-
+    let content_type = response_attribute.content_type;
     let set_content_type =
         content_type.map(|ct| quote! { ::rocket_okapi::util::set_content_type(&mut r, #ct)?; });
 
-    let set_description = parse_doc(&field_attrs)
-        .or_else(|| parse_doc(&attrs))
-        .or_else(|| parse_doc(global_attrs))
-        .map(|doc| quote! { ::rocket_okapi::util::set_description(&mut r, #doc)?; });
+    let description = get_doc(&field.attrs)
+        .or_else(|| get_doc(&attrs))
+        .or_else(|| get_doc(entity_attrs));
+    let set_description =
+        description.map(|doc| quote! { ::rocket_okapi::util::set_description(&mut r, #doc)?; });
 
-    let responses = quote! {
+    Ok(Some(quote! {
         let mut r = <#field_type as ::rocket_okapi::response::OpenApiResponderInner>::responses(gen)?;
         #set_status
         #set_content_type
         #set_description
         r
+    }))
+}
+
+fn get_response_attr_or_default(attrs: &[Attribute]) -> Result<ResponseAttribute> {
+    let mut attrs = attrs.iter().filter(|a| a.path.is_ident("response"));
+
+    let Some(attr) = attrs.next() else {
+        return Ok(ResponseAttribute::default());
     };
 
-    Ok(Some(responses))
-}
-
-fn first_field(fields: Fields) -> Result<Option<Field>> {
-    for field in fields {
-        let ResponseAttribute { ignore, .. } = parse_response_attribute(&field.attrs)?;
-        if !ignore {
-            return Ok(Some(field));
-        }
+    if let Some(second_attr) = attrs.next() {
+        return Err(
+            darling::Error::custom("`response` attribute may be specified only once")
+                .with_span(second_attr),
+        );
     }
 
-    Ok(None)
-}
-
-#[inline(always)]
-fn parse_response_attribute(attrs: &[Attribute]) -> Result<ResponseAttribute> {
-    parse_attribute(&attrs, "response").map(Option::unwrap_or_default)
+    let meta = attr.parse_meta()?;
+    ResponseAttribute::from_meta(&meta)
 }

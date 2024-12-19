@@ -9,6 +9,7 @@
 //! - `#[derive(OpenApiFromRequest)]`: Implement `OpenApiFromRequest` trait for a given struct.
 //!
 
+mod doc_attr;
 mod openapi_attr;
 mod openapi_spec;
 mod parse_routes;
@@ -144,7 +145,7 @@ pub fn open_api_responder_derive(input: TokenStream) -> TokenStream {
 
     match responder_derive::derive(ast) {
         Ok(v) => v.into(),
-        Err(err) => err.to_compile_error().into(),
+        Err(err) => err.write_errors().into(),
     }
 }
 
