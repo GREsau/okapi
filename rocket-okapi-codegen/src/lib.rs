@@ -87,7 +87,7 @@ pub fn openapi_spec(input: TokenStream) -> TokenStream {
     .into()
 }
 
-/// Derive marco for the `OpenApiFromRequest` trait.
+/// Derive macro for the `OpenApiFromRequest` trait.
 ///
 /// This derive trait is a very simple implementation for anything that does not
 /// require any other special headers or parameters to be validated.
@@ -138,7 +138,11 @@ pub fn open_api_from_request_derive(input: TokenStream) -> TokenStream {
     gen.into()
 }
 
-/// TODO
+/// Derive for the [`OpenApiResponderInner`](rocket_okapi::response::OpenApiResponderInner) trait.
+///
+/// Derive is fully compatible with the syntax of the
+/// [`#[response]`](https://api.rocket.rs/v0.5/rocket/derive.Responder#field-attribute) attribute
+/// from Rocket and does not require any code changes.
 #[proc_macro_derive(OpenApiResponder, attributes(responder))]
 pub fn open_api_responder_derive(input: TokenStream) -> TokenStream {
     let ast: syn::DeriveInput = syn::parse(input).unwrap();
