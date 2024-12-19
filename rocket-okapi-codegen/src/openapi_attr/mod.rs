@@ -1,7 +1,6 @@
-mod doc_attr;
 mod route_attr;
 
-use crate::get_add_operation_fn_name;
+use crate::{doc_attr::get_title_and_desc_from_doc, get_add_operation_fn_name};
 use darling::FromMeta;
 use proc_macro::TokenStream;
 use proc_macro2::Span;
@@ -295,7 +294,7 @@ fn create_route_operation_fn(
         .replace("..>", "}")
         .replace('>', "}");
     let method = Ident::new(&to_pascal_case_string(route.method), Span::call_site());
-    let (title, desc) = doc_attr::get_title_and_desc_from_doc(&route_fn.attrs);
+    let (title, desc) = get_title_and_desc_from_doc(&route_fn.attrs);
     let title = match title {
         Some(x) => quote!(Some(#x.to_owned())),
         None => quote!(None),

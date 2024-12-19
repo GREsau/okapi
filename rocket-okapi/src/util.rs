@@ -123,6 +123,15 @@ pub fn set_content_type(responses: &mut Responses, content_type: impl ToString) 
     Ok(())
 }
 
+/// Replaces the description for all responses.
+pub fn set_description(responses: &mut Responses, description: impl ToString) -> Result<()> {
+    for ref mut resp_refor in responses.responses.values_mut() {
+        let response = ensure_not_ref(resp_refor)?;
+        response.description = description.to_string();
+    }
+    Ok(())
+}
+
 /// Adds a `Response` to a `Responses` object with the given status code, Content-Type and `SchemaObject`.
 pub fn add_schema_response(
     responses: &mut Responses,

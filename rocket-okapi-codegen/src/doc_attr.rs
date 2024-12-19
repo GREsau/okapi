@@ -31,7 +31,7 @@ fn merge_description_lines(doc: &str) -> Option<String> {
     none_if_empty(desc)
 }
 
-fn get_doc(attrs: &[Attribute]) -> Option<String> {
+pub fn get_doc(attrs: &[Attribute]) -> Option<String> {
     let doc = attrs
         .iter()
         .filter_map(|attr| {
