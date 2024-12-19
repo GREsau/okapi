@@ -5,7 +5,7 @@ use darling::{FromMeta, Result};
 use proc_macro2::TokenStream;
 use quote::quote;
 use response_attr::ResponseAttribute;
-use syn::{Attribute, DeriveInput, Fields};
+use syn::{parse_quote, Attribute, DeriveInput, Field, Fields, GenericParam, Generics, Type};
 
 pub fn derive(input: DeriveInput) -> Result<TokenStream> {
     let responses_variants: Vec<(Vec<Attribute>, Fields)> = match input.data {
@@ -20,19 +20,20 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream> {
         }
     };
 
-    let attrs = input.attrs;
-    let ident = input.ident;
-    let generics = input.generics;
+    let name = input.ident;
+
+    let generics = add_trait_bound(input.generics);
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let responses = responses_variants
         .into_iter()
         .filter_map(|(variant_attrs, variant_fields)| {
-            variant_to_responses(&attrs, variant_attrs, variant_fields).transpose()
+            variant_to_responses(&input.attrs, variant_attrs, variant_fields).transpose()
         })
         .collect::<Result<Vec<_>>>()?;
 
     Ok(quote! {
-        impl #generics ::rocket_okapi::response::OpenApiResponderInner for #ident #generics {
+        impl #impl_generics ::rocket_okapi::response::OpenApiResponderInner for #name #ty_generics #where_clause {
             fn responses(
                 gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
             ) -> ::rocket_okapi::Result<::rocket_okapi::okapi::openapi3::Responses> {
@@ -46,6 +47,17 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream> {
     })
 }
 
+fn add_trait_bound(mut generics: Generics) -> Generics {
+    for param in generics.params.iter_mut() {
+        if let GenericParam::Type(param) = param {
+            param.bounds.push(parse_quote!(
+                ::rocket_okapi::response::OpenApiResponderInner
+            ));
+        }
+    }
+    generics
+}
+
 fn variant_to_responses(
     entity_attrs: &[Attribute],
     attrs: Vec<Attribute>,
@@ -57,7 +69,7 @@ fn variant_to_responses(
         .into_iter()
         .next()
         .ok_or(darling::Error::custom("need at least one field"))?;
-    let field_type = field.ty;
+    let response_type = &field.ty;
 
     let status = response_attribute.status;
     let set_status =
@@ -74,7 +86,7 @@ fn variant_to_responses(
         description.map(|doc| quote! { ::rocket_okapi::util::set_description(&mut r, #doc)?; });
 
     Ok(Some(quote! {
-        let mut r = <#field_type as ::rocket_okapi::response::OpenApiResponderInner>::responses(gen)?;
+        let mut r = <#response_type as ::rocket_okapi::response::OpenApiResponderInner>::responses(gen)?;
         #set_status
         #set_content_type
         #set_description
