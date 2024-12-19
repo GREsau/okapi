@@ -25,12 +25,16 @@ impl Default for Status {
 
 impl FromMeta for Status {
     fn from_value(value: &syn::Lit) -> darling::Result<Self> {
-        if let syn::Lit::Int(int) = value {
-            let code = int.base10_parse::<u16>()?;
-            Ok(Self(rocket_http::Status::new(code)))
-        } else {
-            Err(darling::Error::unexpected_lit_type(value))
+        let syn::Lit::Int(int) = value else {
+            return Err(darling::Error::unexpected_lit_type(value));
+        };
+
+        let code = int.base10_parse::<u16>()?;
+        if code < 100 || code >= 600 {
+            return Err(darling::Error::custom("status must be in range [100, 599]").with_span(int));
         }
+
+        Ok(Self(rocket_http::Status::new(code)))
     }
 }
 
