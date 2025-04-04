@@ -210,12 +210,15 @@ pub struct Responses {
     pub extensions: Object,
 }
 
+pub type SchemasType = serde_json::Value;
+// pub type SchemasType = Map<String, SchemaObject>;
+
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Components {
-    #[serde(default, skip_serializing_if = "Map::is_empty")]
-    pub schemas: Map<String, SchemaObject>,
+    // #[serde(default, skip_serializing_if = "Map::is_empty")]
+    pub schemas: SchemasType,
     #[serde(default, skip_serializing_if = "Map::is_empty")]
     pub responses: Map<String, RefOr<Response>>,
     #[serde(default, skip_serializing_if = "Map::is_empty")]

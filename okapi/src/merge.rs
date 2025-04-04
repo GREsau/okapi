@@ -151,7 +151,7 @@ pub fn merge_components(
     } else {
         if let Some(s1) = s1 {
             let s2 = s2.as_ref().unwrap();
-            merge_map(&mut s1.schemas, &s2.schemas, "schemas");
+            merge_map_json(&mut s1.schemas, s2.schemas.clone(), "schemas");
             merge_map(&mut s1.responses, &s2.responses, "responses");
             merge_map(&mut s1.parameters, &s2.parameters, "parameters");
             merge_map(&mut s1.examples, &s2.examples, "examples");
@@ -262,6 +262,25 @@ pub fn merge_option<T: Clone>(s1: &mut Option<T>, s2: &Option<T>) {
     if s1.is_none() {
         *s1 = s2.clone();
     }
+}
+
+pub fn merge_map_json(s1: &mut serde_json::Value, s2: serde_json::Value, name: &str) {
+    if let serde_json::Value::Object(s1) = s1 {
+        if let serde_json::Value::Object(s2) = s2 {
+            for (k, v) in s2 {
+                if v.is_null() {
+                    s1.remove(&k);
+                }
+                else {
+                    merge_map_json(s1.entry(k).or_insert(serde_json::Value::Null), v, name);
+                }
+            } 
+
+            return;
+        }
+    }
+
+    *s1 = s2;
 }
 
 /// Merge `Map<String, _>`/`&Map<String, _>`:
