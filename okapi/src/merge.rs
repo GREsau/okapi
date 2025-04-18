@@ -151,7 +151,10 @@ pub fn merge_components(
     } else {
         if let Some(s1) = s1 {
             let s2 = s2.as_ref().unwrap();
+            #[cfg(feature = "schemars-alpha")]
             merge_map_json(&mut s1.schemas, s2.schemas.clone(), "schemas");
+            #[cfg(not(feature = "schemars-alpha"))]
+            merge_map(&mut s1.schemas, &s2.schemas, "schemas");
             merge_map(&mut s1.responses, &s2.responses, "responses");
             merge_map(&mut s1.parameters, &s2.parameters, "parameters");
             merge_map(&mut s1.examples, &s2.examples, "examples");
@@ -264,6 +267,7 @@ pub fn merge_option<T: Clone>(s1: &mut Option<T>, s2: &Option<T>) {
     }
 }
 
+#[cfg(feature = "schemars-alpha")]
 pub fn merge_map_json(s1: &mut serde_json::Value, s2: serde_json::Value, name: &str) {
     if let serde_json::Value::Object(s1) = s1 {
         if let serde_json::Value::Object(s2) = s2 {
