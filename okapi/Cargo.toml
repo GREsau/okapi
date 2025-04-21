@@ -21,6 +21,7 @@ log = { workspace = true }
 impl_json_schema = ["schemars/impl_json_schema"]
 # Preserve the order of items in schema and other part of the OpenAPI documentation.
 preserve_order = ["schemars/preserve_order"]
+schemars-alpha = []
 
 [package.metadata.docs.rs]
 all-features = true
