@@ -214,6 +214,9 @@ pub struct Responses {
 #[cfg_attr(feature = "impl_json_schema", derive(JsonSchema))]
 #[serde(default, rename_all = "camelCase")]
 pub struct Components {
+    #[cfg(feature = "schemars-alpha")]
+    pub schemas: serde_json::Value,
+    #[cfg(not(feature = "schemars-alpha"))]
     #[serde(default, skip_serializing_if = "Map::is_empty")]
     pub schemas: Map<String, SchemaObject>,
     #[serde(default, skip_serializing_if = "Map::is_empty")]

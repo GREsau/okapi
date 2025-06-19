@@ -109,6 +109,7 @@ impl OpenApiGenerator {
                 paths
             },
             components: Some(Components {
+                #[cfg(not(feature = "schemars-alpha"))]
                 schemas: schemas.into_iter().map(|(k, v)| (k, v.into())).collect(),
                 security_schemes: schemes,
                 ..Default::default()
