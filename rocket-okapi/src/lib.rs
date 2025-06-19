@@ -65,7 +65,7 @@
 //! - `openapi_get_spec![...]`: To generate and return the openapi spec.
 //!
 //! The last 3 macros have very similar behavior, but differ in what they return.
-//! Here is a list of the marcos and what they return:
+//! Here is a list of the macros and what they return:
 //! - `openapi_get_routes![...]`: `Vec<rocket::Route>` (adds route for `openapi.json`)
 //! - `openapi_get_routes_spec![...]`: `(Vec<rocket::Route>, okapi::openapi3::OpenApi)`
 //! - `openapi_get_spec![...]`: `okapi::openapi3::OpenApi`
@@ -128,7 +128,7 @@ pub fn get_openapi_route(
 
 /// Mount endpoints and mount merged OpenAPI documentation.
 ///
-/// This marco just makes to code look cleaner and improves readability
+/// This macro just makes to code look cleaner and improves readability
 /// for bigger codebases.
 ///
 /// The macro expects the following arguments:
@@ -289,7 +289,7 @@ macro_rules! openapi_get_routes {
 /// - `Vec<rocket::Route>`: A list of all the routes that `rocket::routes![]` would have provided.
 /// - `OpenApi`: The `okapi::openapi3::OpenApi` spec for all the routes.
 ///
-/// NOTE: This marco is different from `openapi_get_routes` in that this does not add
+/// NOTE: This macro is different from `openapi_get_routes` in that this does not add
 /// the `openapi.json` file to the list of routes. This is done so the `OpenApi` spec can be changed
 /// before serving it.
 ///
