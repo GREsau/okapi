@@ -10,9 +10,9 @@ pub fn create_openapi_spec(routes: TokenStream) -> Result<TokenStream2> {
     let add_operations = create_add_operations(paths);
     Ok(quote! {
         |settings: &::rocket_okapi::settings::OpenApiSettings| -> ::rocket_okapi::okapi::openapi3::OpenApi {
-            let mut gen = ::rocket_okapi::gen::OpenApiGenerator::new(settings);
+            let mut generator = ::rocket_okapi::r#gen::OpenApiGenerator::new(settings);
             #add_operations
-            let mut spec = gen.into_openapi();
+            let mut spec = generator.into_openapi();
             let mut info = ::rocket_okapi::okapi::openapi3::Info {
                 title: env!("CARGO_PKG_NAME").to_owned(),
                 version: env!("CARGO_PKG_VERSION").to_owned(),
@@ -47,7 +47,7 @@ fn create_add_operations(paths: Punctuated<Path, Comma>) -> TokenStream2 {
         let fn_name = fn_name_for_add_operation(path.clone());
         let operation_id = operation_id(&path);
         quote! {
-            #fn_name(&mut gen, #operation_id.to_owned())
+            #fn_name(&mut generator, #operation_id.to_owned())
                 .expect(&format!("Could not generate OpenAPI operation for `{}`.", stringify!(#path)));
         }
     });

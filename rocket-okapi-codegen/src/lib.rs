@@ -122,10 +122,10 @@ pub fn open_api_from_request_derive(input: TokenStream) -> TokenStream {
     let ast: syn::DeriveInput = syn::parse(input).unwrap();
     let name = &ast.ident;
 
-    let gen = quote! {
+    let generator = quote! {
         impl<'r> rocket_okapi::request::OpenApiFromRequest<'r> for #name {
             fn from_request_input(
-                _gen: &mut rocket_okapi::gen::OpenApiGenerator,
+                _gen: &mut rocket_okapi::r#gen::OpenApiGenerator,
                 _name: String,
                 _required: bool,
             ) -> rocket_okapi::Result<rocket_okapi::request::RequestHeaderInput> {
@@ -133,7 +133,7 @@ pub fn open_api_from_request_derive(input: TokenStream) -> TokenStream {
             }
         }
     };
-    gen.into()
+    generator.into()
 }
 
 fn get_add_operation_fn_name(route_fn_name: &Ident) -> Ident {
