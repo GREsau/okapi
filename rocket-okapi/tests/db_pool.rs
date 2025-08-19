@@ -1,6 +1,6 @@
 //! This test should just compile.
 
-use rocket_okapi::gen::OpenApiGenerator;
+use rocket_okapi::generator::OpenApiGenerator;
 use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
 use rocket_sync_db_pools::{database, diesel};
 

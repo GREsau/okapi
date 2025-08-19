@@ -1,5 +1,5 @@
 use super::OpenApiFromData;
-use crate::gen::OpenApiGenerator;
+use crate::generator::OpenApiGenerator;
 use okapi::{
     openapi3::{MediaType, RequestBody},
     Map,

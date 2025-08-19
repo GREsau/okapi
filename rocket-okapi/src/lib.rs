@@ -78,7 +78,7 @@ mod error;
 
 /// Contains the `Generator` struct, which you can use to manually control the way a struct is
 /// represented in the documentation.
-pub mod gen;
+pub mod generator;
 /// Contains several `Rocket` `Handler`s, which are used for serving the json files and the swagger
 /// interface.
 pub mod handlers;

@@ -7,6 +7,7 @@ This project follows the [Semantic Versioning standard](https://semver.org/).
 ### Added
 
 ### Changed
+- Changed usages of the `gen` module to `generator` for Edition 2025 compatibility
 
 ### Deprecated
 

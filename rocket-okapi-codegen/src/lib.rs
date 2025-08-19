@@ -101,7 +101,7 @@ pub fn openapi_spec(input: TokenStream) -> TokenStream {
 /// This code is equivalent to:
 /// ```rust,ignore
 /// use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
-/// use rocket_okapi::gen::OpenApiGenerator;
+/// use rocket_okapi::generator::OpenApiGenerator;
 ///
 /// pub struct MyStructName;
 ///
@@ -125,7 +125,7 @@ pub fn open_api_from_request_derive(input: TokenStream) -> TokenStream {
     let gen = quote! {
         impl<'r> rocket_okapi::request::OpenApiFromRequest<'r> for #name {
             fn from_request_input(
-                _gen: &mut rocket_okapi::gen::OpenApiGenerator,
+                _gen: &mut rocket_okapi::generator::OpenApiGenerator,
                 _name: String,
                 _required: bool,
             ) -> rocket_okapi::Result<rocket_okapi::request::RequestHeaderInput> {

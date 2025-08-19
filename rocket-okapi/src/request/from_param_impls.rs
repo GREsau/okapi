@@ -2,7 +2,7 @@
 //! <https://docs.rs/rocket/latest/rocket/request/trait.FromParam.html#foreign-impls>
 
 use super::OpenApiFromParam;
-use crate::gen::OpenApiGenerator;
+use crate::generator::OpenApiGenerator;
 use okapi::openapi3::{Object, Parameter, ParameterValue};
 use schemars::JsonSchema;
 

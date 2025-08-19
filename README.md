@@ -88,7 +88,7 @@ You can solve this by implementing it manually, like this:
 
 ```rust
 use rocket_okapi::request::{OpenApiFromRequest, RequestHeaderInput};
-use rocket_okapi::gen::OpenApiGenerator;
+use rocket_okapi::generator::OpenApiGenerator;
 use rocket_sync_db_pools::{diesel, database};
 
 #[database("sqlite_logs")]

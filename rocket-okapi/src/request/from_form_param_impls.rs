@@ -2,7 +2,7 @@
 //! <https://docs.rs/rocket/latest/rocket/form/trait.FromForm.html#foreign-impls>
 
 use super::{get_nested_form_parameters, OpenApiFromForm, OpenApiFromFormField};
-use crate::gen::OpenApiGenerator;
+use crate::generator::OpenApiGenerator;
 use okapi::openapi3::{Object, Parameter, ParameterValue};
 use schemars::JsonSchema;
 

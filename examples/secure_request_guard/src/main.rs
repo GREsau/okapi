@@ -1,7 +1,7 @@
 use rocket::config::Config;
 use rocket::Request;
 use rocket::{catch, catchers, response, response::Responder, Response};
-use rocket_okapi::gen::OpenApiGenerator;
+use rocket_okapi::generator::OpenApiGenerator;
 use rocket_okapi::okapi;
 use rocket_okapi::okapi::openapi3::{MediaType, Responses};
 use rocket_okapi::okapi::schemars;

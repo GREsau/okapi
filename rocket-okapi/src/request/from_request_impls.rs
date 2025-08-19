@@ -1,5 +1,5 @@
 use super::{OpenApiFromRequest, RequestHeaderInput};
-use crate::gen::OpenApiGenerator;
+use crate::generator::OpenApiGenerator;
 use okapi::openapi3::*;
 use std::result::Result as StdResult;
 

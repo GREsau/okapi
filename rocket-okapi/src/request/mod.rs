@@ -5,7 +5,7 @@ mod from_param_impls;
 mod from_request_impls;
 mod from_segments_impls;
 
-use super::gen::OpenApiGenerator;
+use super::generator::OpenApiGenerator;
 use super::Result;
 use okapi::openapi3::{Parameter, RequestBody, Responses, SecurityRequirement, SecurityScheme};
 

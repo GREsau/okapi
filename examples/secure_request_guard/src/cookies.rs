@@ -9,7 +9,7 @@ use rocket::{
 };
 use rocket_okapi::okapi::openapi3::{Object, Parameter, ParameterValue};
 use rocket_okapi::{
-    gen::OpenApiGenerator,
+    generator::OpenApiGenerator,
     openapi,
     request::{OpenApiFromRequest, RequestHeaderInput},
 };

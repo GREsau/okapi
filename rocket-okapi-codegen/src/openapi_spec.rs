@@ -10,7 +10,7 @@ pub fn create_openapi_spec(routes: TokenStream) -> Result<TokenStream2> {
     let add_operations = create_add_operations(paths);
     Ok(quote! {
         |settings: &::rocket_okapi::settings::OpenApiSettings| -> ::rocket_okapi::okapi::openapi3::OpenApi {
-            let mut gen = ::rocket_okapi::gen::OpenApiGenerator::new(settings);
+            let mut gen = ::rocket_okapi::generator::OpenApiGenerator::new(settings);
             #add_operations
             let mut spec = gen.into_openapi();
             let mut info = ::rocket_okapi::okapi::openapi3::Info {

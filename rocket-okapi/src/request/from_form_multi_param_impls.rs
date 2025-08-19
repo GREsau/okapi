@@ -1,4 +1,4 @@
-use crate::gen::OpenApiGenerator;
+use crate::generator::OpenApiGenerator;
 use okapi::openapi3::{Object, Parameter, ParameterValue};
 use schemars::schema::{InstanceType, Schema, SchemaObject, SingleOrVec};
 use schemars::JsonSchema;

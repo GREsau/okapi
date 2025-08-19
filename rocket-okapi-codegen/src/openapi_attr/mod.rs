@@ -68,7 +68,7 @@ fn create_empty_route_operation_fn(route_fn: ItemFn) -> TokenStream {
     TokenStream::from(quote! {
         #[doc(hidden)]
         pub fn #fn_name(
-            _gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
+            _gen: &mut ::rocket_okapi::generator::OpenApiGenerator,
             _op_id: String,
         ) -> ::rocket_okapi::Result<()> {
             Ok(())
@@ -323,7 +323,7 @@ fn create_route_operation_fn(
     TokenStream::from(quote! {
         #[doc(hidden)]
         pub fn #fn_name(
-            gen: &mut ::rocket_okapi::gen::OpenApiGenerator,
+            gen: &mut ::rocket_okapi::generator::OpenApiGenerator,
             operation_id: String,
         ) -> ::rocket_okapi::Result<()> {
             let mut responses = <#return_type as ::rocket_okapi::response::OpenApiResponder>::responses(gen)?;

@@ -10,7 +10,7 @@ use rocket_okapi::okapi::openapi3::{
     Object, Responses, SecurityRequirement, SecurityScheme, SecuritySchemeData,
 };
 use rocket_okapi::{
-    gen::OpenApiGenerator,
+    generator::OpenApiGenerator,
     openapi,
     request::{OpenApiFromRequest, RequestHeaderInput},
 };

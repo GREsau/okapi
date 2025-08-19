@@ -1,6 +1,6 @@
 use super::OpenApiResponderInner;
 use crate::{
-    gen::OpenApiGenerator,
+    generator::OpenApiGenerator,
     util::{
         add_default_response_code, add_schema_response, change_all_responses_to_default,
         ensure_status_code_exists, produce_any_responses, set_content_type, set_status_code,
